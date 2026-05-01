@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { readPrefs } from "@/components/NotificationSettings";
 
 export interface NotificationItem {
   id: string;
@@ -49,66 +50,71 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
   const refresh = async () => {
     if (!profile) { setCounters(EMPTY); setRecent([]); return; }
 
+    const prefs = readPrefs(profile.profile_data);
     const next: Counters = { ...EMPTY };
     const items: NotificationItem[] = [];
 
     // Messages: unread received
-    const { data: msgs } = await supabase
-      .from("messages")
-      .select("id, content, created_at, sender_id")
-      .eq("receiver_id", profile.id)
-      .eq("read", false)
-      .order("created_at", { ascending: false })
-      .limit(10);
-    next.messages = msgs?.length ?? 0;
-    msgs?.forEach((m) => items.push({
-      id: `msg-${m.id}`,
-      kind: "message",
-      title: "Nuevo mensaje",
-      body: (m.content ?? "").slice(0, 80),
-      href: `${baseHref}/mensajes`,
-      created_at: m.created_at,
-    }));
-
-    // Appointments pending
-    if (isPlayer) {
-      const { data } = await supabase
-        .from("appointments")
-        .select("id, scheduled_at, status, created_at")
-        .eq("player_id", profile.id)
-        .eq("status", "requested")
+    if (prefs.messages) {
+      const { data: msgs } = await supabase
+        .from("messages")
+        .select("id, content, created_at, sender_id")
+        .eq("receiver_id", profile.id)
+        .eq("read", false)
         .order("created_at", { ascending: false })
         .limit(10);
-      next.appointments = data?.length ?? 0;
-      data?.forEach((a) => items.push({
-        id: `apt-${a.id}`,
-        kind: "appointment",
-        title: "Cita en revisión",
-        body: new Date(a.scheduled_at).toLocaleString("es-ES"),
-        href: `${baseHref}/citas`,
-        created_at: a.created_at,
-      }));
-    } else if (isPhysio) {
-      const { data } = await supabase
-        .from("appointments")
-        .select("id, scheduled_at, status, created_at")
-        .eq("physio_id", profile.id)
-        .eq("status", "requested")
-        .order("created_at", { ascending: false })
-        .limit(10);
-      next.appointments = data?.length ?? 0;
-      data?.forEach((a) => items.push({
-        id: `apt-${a.id}`,
-        kind: "appointment",
-        title: "Nueva solicitud de cita",
-        body: new Date(a.scheduled_at).toLocaleString("es-ES"),
-        href: `${baseHref}/agenda`,
-        created_at: a.created_at,
+      next.messages = msgs?.length ?? 0;
+      msgs?.forEach((m) => items.push({
+        id: `msg-${m.id}`,
+        kind: "message",
+        title: "Nuevo mensaje",
+        body: (m.content ?? "").slice(0, 80),
+        href: `${baseHref}/mensajes`,
+        created_at: m.created_at,
       }));
     }
 
+    // Appointments pending
+    if (prefs.appointments) {
+      if (isPlayer) {
+        const { data } = await supabase
+          .from("appointments")
+          .select("id, scheduled_at, status, created_at")
+          .eq("player_id", profile.id)
+          .eq("status", "requested")
+          .order("created_at", { ascending: false })
+          .limit(10);
+        next.appointments = data?.length ?? 0;
+        data?.forEach((a) => items.push({
+          id: `apt-${a.id}`,
+          kind: "appointment",
+          title: "Cita en revisión",
+          body: new Date(a.scheduled_at).toLocaleString("es-ES"),
+          href: `${baseHref}/citas`,
+          created_at: a.created_at,
+        }));
+      } else if (isPhysio) {
+        const { data } = await supabase
+          .from("appointments")
+          .select("id, scheduled_at, status, created_at")
+          .eq("physio_id", profile.id)
+          .eq("status", "requested")
+          .order("created_at", { ascending: false })
+          .limit(10);
+        next.appointments = data?.length ?? 0;
+        data?.forEach((a) => items.push({
+          id: `apt-${a.id}`,
+          kind: "appointment",
+          title: "Nueva solicitud de cita",
+          body: new Date(a.scheduled_at).toLocaleString("es-ES"),
+          href: `${baseHref}/agenda`,
+          created_at: a.created_at,
+        }));
+      }
+    }
+
     // Forms (player)
-    if (isPlayer) {
+    if (prefs.forms && isPlayer) {
       const { data } = await supabase
         .from("form_assignments")
         .select("id, assigned_at, completed, form_id, forms(title)")
@@ -128,25 +134,27 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     }
 
     // Documents received since lastSeen
-    const { data: docs } = await supabase
-      .from("documents")
-      .select("id, title, created_at")
-      .eq("recipient_id", profile.id)
-      .gt("created_at", lastSeen)
-      .order("created_at", { ascending: false })
-      .limit(10);
-    next.documents = docs?.length ?? 0;
-    docs?.forEach((d) => items.push({
-      id: `doc-${d.id}`,
-      kind: "document",
-      title: "Nuevo documento",
-      body: d.title,
-      href: `${baseHref}/documentos`,
-      created_at: d.created_at,
-    }));
+    if (prefs.documents) {
+      const { data: docs } = await supabase
+        .from("documents")
+        .select("id, title, created_at")
+        .eq("recipient_id", profile.id)
+        .gt("created_at", lastSeen)
+        .order("created_at", { ascending: false })
+        .limit(10);
+      next.documents = docs?.length ?? 0;
+      docs?.forEach((d) => items.push({
+        id: `doc-${d.id}`,
+        kind: "document",
+        title: "Nuevo documento",
+        body: d.title,
+        href: `${baseHref}/documentos`,
+        created_at: d.created_at,
+      }));
+    }
 
     // Invoices (physio: sent unpaid)
-    if (isPhysio) {
+    if (prefs.invoices && isPhysio) {
       const { data } = await supabase
         .from("invoices")
         .select("id, amount, currency, status, issued_at")
@@ -185,7 +193,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
 
     return () => { supabase.removeChannel(channel); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile?.id, profile?.role]);
+  }, [profile?.id, profile?.role, JSON.stringify((profile?.profile_data as any)?.notifications ?? {})]);
 
   const total = counters.messages + counters.appointments + counters.forms + counters.documents + counters.invoices;
 
