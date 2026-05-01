@@ -193,7 +193,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
 
     return () => { supabase.removeChannel(channel); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile?.id, profile?.role]);
+  }, [profile?.id, profile?.role, JSON.stringify((profile?.profile_data as any)?.notifications ?? {})]);
 
   const total = counters.messages + counters.appointments + counters.forms + counters.documents + counters.invoices;
 
