@@ -13,6 +13,13 @@ export interface Profile {
   role: AppRole;
   status: AccountStatus;
   profile_data: Record<string, unknown>;
+  club_id: string | null;
+}
+
+export interface Club {
+  id: string;
+  name: string;
+  code: string;
 }
 
 interface AuthContextValue {
