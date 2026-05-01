@@ -106,10 +106,9 @@ function RegisterPage() {
       return;
     }
 
-    // If physio created a club, fetch the generated code to show them
+    // If physio created a club, attempt to fetch the generated code (best-effort)
     if (role === "physio" && clubMode === "create") {
-      // Wait briefly for trigger, then login to fetch
-      setTimeout(async () => {
+      try {
         const { data: authData } = await supabase.auth.signInWithPassword({ email, password });
         if (authData?.user) {
           const { data: prof } = await supabase.from("profiles").select("club_id").eq("id", authData.user.id).maybeSingle();
@@ -119,7 +118,7 @@ function RegisterPage() {
           }
           await supabase.auth.signOut();
         }
-      }, 800);
+      } catch { /* code will be visible on dashboard once approved */ }
     }
 
     setStep(3);
