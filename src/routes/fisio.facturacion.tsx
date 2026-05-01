@@ -66,16 +66,13 @@ function PhysioInvoices() {
     const [pRes, aRes, iRes] = await Promise.all([
       supabase.from("profiles").select("id, full_name, email").eq("role", "player"),
       supabase.from("appointments").select("id, scheduled_at, player_id").eq("physio_id", user.id).order("scheduled_at", { ascending: false }),
-      supabase.from("invoices").select("*, player:profiles!invoices_player_id_fkey(full_name, email)").eq("physio_id", user.id).order("issued_at", { ascending: false }),
+      supabase.from("invoices").select("*").eq("physio_id", user.id).order("issued_at", { ascending: false }),
     ]);
     setPlayers((pRes.data as Player[]) ?? []);
     setAppointments((aRes.data as Appointment[]) ?? []);
-    // Fallback: load player names if join missing
     const inv = (iRes.data as Invoice[]) ?? [];
-    if (inv.length && !inv[0].player) {
-      const map = new Map((pRes.data as Player[] ?? []).map((p) => [p.id, p]));
-      inv.forEach((i) => { i.player = map.get(i.player_id) ?? null; });
-    }
+    const map = new Map(((pRes.data as Player[]) ?? []).map((p) => [p.id, p]));
+    inv.forEach((i) => { i.player = map.get(i.player_id) ?? null; });
     setInvoices(inv);
     setLoading(false);
   };
