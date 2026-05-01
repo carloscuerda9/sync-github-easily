@@ -327,6 +327,84 @@ function RegisterPage() {
               ))}
             </div>
 
+            {/* Club section */}
+            <div className="mt-6 rounded-lg border border-border bg-muted/30 p-4">
+              <div className="mb-3 text-sm font-semibold">
+                {role === "physio" ? "Tu club / equipo" : "Club al que perteneces"}
+              </div>
+
+              {role === "physio" ? (
+                <>
+                  <div className="mb-3 flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setClubMode("create")}
+                      className={cn(
+                        "flex-1 rounded-md border px-3 py-2 text-sm font-medium transition-colors",
+                        clubMode === "create" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background"
+                      )}
+                    >
+                      Crear club nuevo
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setClubMode("join")}
+                      className={cn(
+                        "flex-1 rounded-md border px-3 py-2 text-sm font-medium transition-colors",
+                        clubMode === "join" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background"
+                      )}
+                    >
+                      Unirme a uno existente
+                    </button>
+                  </div>
+                  {clubMode === "create" ? (
+                    <div className="space-y-2">
+                      <Label htmlFor="clubName">Nombre del club *</Label>
+                      <Input
+                        id="clubName"
+                        required
+                        placeholder="Ej. Club Deportivo Madrid"
+                        value={clubName}
+                        onChange={(e) => setClubName(e.target.value)}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Generaremos un código único para que invites a tus jugadores.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Label htmlFor="clubCodeJoin">Código del club *</Label>
+                      <Input
+                        id="clubCodeJoin"
+                        required
+                        placeholder="ABC123"
+                        maxLength={6}
+                        className="font-mono uppercase tracking-widest"
+                        value={clubCode}
+                        onChange={(e) => setClubCode(e.target.value.toUpperCase())}
+                      />
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="space-y-2">
+                  <Label htmlFor="clubCode">Código del club *</Label>
+                  <Input
+                    id="clubCode"
+                    required
+                    placeholder="ABC123"
+                    maxLength={6}
+                    className="font-mono uppercase tracking-widest"
+                    value={clubCode}
+                    onChange={(e) => setClubCode(e.target.value.toUpperCase())}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Pídele a tu fisio el código de invitación de su club.
+                  </p>
+                </div>
+              )}
+            </div>
+
             <Button type="submit" className="mt-6 w-full" disabled={loading}>
               {loading ? "Creando cuenta…" : "Crear cuenta"}
             </Button>
