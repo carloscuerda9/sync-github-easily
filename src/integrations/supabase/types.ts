@@ -68,6 +68,30 @@ export type Database = {
           },
         ]
       }
+      clubs: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       documents: {
         Row: {
           created_at: string
@@ -367,6 +391,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          club_id: string | null
           created_at: string
           email: string
           full_name: string | null
@@ -378,6 +403,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          club_id?: string | null
           created_at?: string
           email: string
           full_name?: string | null
@@ -389,6 +415,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          club_id?: string | null
           created_at?: string
           email?: string
           full_name?: string | null
@@ -399,7 +426,15 @@ export type Database = {
           status?: Database["public"]["Enums"]["account_status"]
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       registration_questions: {
         Row: {
@@ -501,6 +536,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      find_club_by_code: {
+        Args: { _code: string }
+        Returns: {
+          id: string
+          name: string
+        }[]
+      }
+      get_user_club: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -511,6 +554,10 @@ export type Database = {
       is_approved: { Args: { _user_id: string }; Returns: boolean }
       physio_treats_player: {
         Args: { _physio_id: string; _player_id: string }
+        Returns: boolean
+      }
+      same_club: {
+        Args: { _user_a: string; _user_b: string }
         Returns: boolean
       }
     }
