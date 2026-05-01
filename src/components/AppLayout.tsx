@@ -63,6 +63,25 @@ export function AppLayout({ role, items, children }: AppLayoutProps) {
             </Link>
           ))}
         </nav>
+        {club && (
+          <div className="border-t border-border bg-muted/40 p-3">
+            <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <Building2 className="h-3 w-3" /> Club
+            </div>
+            <div className="mt-1 truncate text-sm font-semibold">{club.name}</div>
+            {role === "physio" && (
+              <button
+                type="button"
+                onClick={copyClubCode}
+                className="mt-1.5 flex w-full items-center justify-between rounded-md border border-dashed border-primary/40 bg-background px-2 py-1.5 text-left transition-colors hover:bg-primary/5"
+                aria-label="Copiar código del club"
+              >
+                <span className="font-mono text-sm font-bold tracking-widest text-primary">{club.code}</span>
+                <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+              </button>
+            )}
+          </div>
+        )}
         <div className="border-t border-border p-4">
           <div className="mb-2 truncate text-sm font-medium">{profile?.full_name ?? profile?.email}</div>
           <div className="mb-3 truncate text-xs text-muted-foreground">{profile?.email}</div>
@@ -75,7 +94,23 @@ export function AppLayout({ role, items, children }: AppLayoutProps) {
       {/* Main content */}
       <div className="flex w-full flex-1 flex-col">
         <header className="flex items-center justify-between border-b border-border bg-background px-4 py-3 md:hidden">
-          <Logo compact />
+          <div className="flex items-center gap-3 min-w-0">
+            <Logo compact />
+            {club && (
+              <div className="min-w-0 leading-tight">
+                <div className="truncate text-xs font-semibold">{club.name}</div>
+                {role === "physio" && (
+                  <button
+                    type="button"
+                    onClick={copyClubCode}
+                    className="font-mono text-[10px] font-bold tracking-widest text-primary"
+                  >
+                    {club.code}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
           <Button variant="ghost" size="icon" onClick={handleLogout} aria-label="Cerrar sesión">
             <LogOut className="h-4 w-4" />
           </Button>
