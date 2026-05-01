@@ -40,6 +40,12 @@ function RegisterPage() {
   const [phone, setPhone] = useState("");
   const [profileData, setProfileData] = useState<Record<string, string | string[]>>({});
 
+  // Club fields
+  const [clubMode, setClubMode] = useState<"create" | "join">("create");
+  const [clubName, setClubName] = useState("");
+  const [clubCode, setClubCode] = useState("");
+  const [createdClubCode, setCreatedClubCode] = useState<string | null>(null);
+
   useEffect(() => {
     if (!role) return;
     supabase
@@ -59,25 +65,62 @@ function RegisterPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!role) return;
+
+    // Validate club fields
+    const meta: Record<string, unknown> = {
+      role,
+      full_name: fullName,
+      phone,
+      profile_data: profileData,
+    };
+
+    if (role === "physio") {
+      if (clubMode === "create") {
+        if (!clubName.trim()) { toast.error("Introduce el nombre del club"); return; }
+        meta.club_name = clubName.trim();
+      } else {
+        if (!clubCode.trim()) { toast.error("Introduce el código del club"); return; }
+        meta.club_code = clubCode.trim().toUpperCase();
+      }
+    } else {
+      if (!clubCode.trim()) { toast.error("Introduce el código del club que te dio tu fisio"); return; }
+      meta.club_code = clubCode.trim().toUpperCase();
+    }
+
     setLoading(true);
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/`,
-        data: {
-          role,
-          full_name: fullName,
-          phone,
-          profile_data: profileData,
-        },
+        data: meta,
       },
     });
     setLoading(false);
     if (error) {
-      toast.error(error.message.includes("already") ? "Este email ya está registrado" : error.message);
+      const msg = error.message;
+      if (msg.includes("already")) toast.error("Este email ya está registrado");
+      else if (msg.includes("Código")) toast.error(msg);
+      else if (msg.includes("club")) toast.error("Error con el código de club. Comprueba que es correcto.");
+      else toast.error(msg);
       return;
     }
+
+    // If physio created a club, attempt to fetch the generated code (best-effort)
+    if (role === "physio" && clubMode === "create") {
+      try {
+        const { data: authData } = await supabase.auth.signInWithPassword({ email, password });
+        if (authData?.user) {
+          const { data: prof } = await supabase.from("profiles").select("club_id").eq("id", authData.user.id).maybeSingle();
+          if (prof?.club_id) {
+            const { data: club } = await supabase.from("clubs").select("code").eq("id", prof.club_id).maybeSingle();
+            if (club?.code) setCreatedClubCode(club.code);
+          }
+          await supabase.auth.signOut();
+        }
+      } catch { /* code will be visible on dashboard once approved */ }
+    }
+
     setStep(3);
   };
 
@@ -95,10 +138,21 @@ function RegisterPage() {
           </div>
           <h1 className="text-2xl font-bold">¡Cuenta creada!</h1>
           {isPhysio ? (
-            <p className="mt-3 text-sm text-muted-foreground">
-              Tu cuenta de fisioterapeuta está <strong>en revisión</strong>. Te avisaremos cuando
-              el equipo de We Fix You apruebe tu acceso.
-            </p>
+            <>
+              <p className="mt-3 text-sm text-muted-foreground">
+                Tu cuenta de fisioterapeuta está <strong>en revisión</strong>. Te avisaremos cuando
+                el equipo de We Fix You apruebe tu acceso.
+              </p>
+              {createdClubCode && (
+                <div className="mt-5 rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-4">
+                  <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Código de tu club</div>
+                  <div className="mt-1 font-mono text-2xl font-bold tracking-widest text-primary">{createdClubCode}</div>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Compártelo con tus jugadores para que se registren en tu club.
+                  </p>
+                </div>
+              )}
+            </>
           ) : (
             <p className="mt-3 text-sm text-muted-foreground">
               Ya puedes empezar a usar We Fix You. Inicia sesión para acceder a tu panel.
@@ -270,6 +324,84 @@ function RegisterPage() {
                   )}
                 </div>
               ))}
+            </div>
+
+            {/* Club section */}
+            <div className="mt-6 rounded-lg border border-border bg-muted/30 p-4">
+              <div className="mb-3 text-sm font-semibold">
+                {role === "physio" ? "Tu club / equipo" : "Club al que perteneces"}
+              </div>
+
+              {role === "physio" ? (
+                <>
+                  <div className="mb-3 flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setClubMode("create")}
+                      className={cn(
+                        "flex-1 rounded-md border px-3 py-2 text-sm font-medium transition-colors",
+                        clubMode === "create" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background"
+                      )}
+                    >
+                      Crear club nuevo
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setClubMode("join")}
+                      className={cn(
+                        "flex-1 rounded-md border px-3 py-2 text-sm font-medium transition-colors",
+                        clubMode === "join" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background"
+                      )}
+                    >
+                      Unirme a uno existente
+                    </button>
+                  </div>
+                  {clubMode === "create" ? (
+                    <div className="space-y-2">
+                      <Label htmlFor="clubName">Nombre del club *</Label>
+                      <Input
+                        id="clubName"
+                        required
+                        placeholder="Ej. Club Deportivo Madrid"
+                        value={clubName}
+                        onChange={(e) => setClubName(e.target.value)}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Generaremos un código único para que invites a tus jugadores.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Label htmlFor="clubCodeJoin">Código del club *</Label>
+                      <Input
+                        id="clubCodeJoin"
+                        required
+                        placeholder="ABC123"
+                        maxLength={6}
+                        className="font-mono uppercase tracking-widest"
+                        value={clubCode}
+                        onChange={(e) => setClubCode(e.target.value.toUpperCase())}
+                      />
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="space-y-2">
+                  <Label htmlFor="clubCode">Código del club *</Label>
+                  <Input
+                    id="clubCode"
+                    required
+                    placeholder="ABC123"
+                    maxLength={6}
+                    className="font-mono uppercase tracking-widest"
+                    value={clubCode}
+                    onChange={(e) => setClubCode(e.target.value.toUpperCase())}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Pídele a tu fisio el código de invitación de su club.
+                  </p>
+                </div>
+              )}
             </div>
 
             <Button type="submit" className="mt-6 w-full" disabled={loading}>
