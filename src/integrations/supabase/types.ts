@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_config: {
+        Row: {
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
       appointments: {
         Row: {
           created_at: string
@@ -436,6 +454,39 @@ export type Database = {
           },
         ]
       }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          id: string
+          last_used_at: string
+          p256dh: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          last_used_at?: string
+          p256dh: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          last_used_at?: string
+          p256dh?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       registration_questions: {
         Row: {
           active: boolean
@@ -537,6 +588,16 @@ export type Database = {
     }
     Functions: {
       can_access_document_path: { Args: { _path: string }; Returns: boolean }
+      dispatch_push_notification: {
+        Args: {
+          _body: string
+          _href: string
+          _kind: string
+          _title: string
+          _user_id: string
+        }
+        Returns: undefined
+      }
       find_club_by_code: {
         Args: { _code: string }
         Returns: {
@@ -559,6 +620,10 @@ export type Database = {
       }
       same_club: {
         Args: { _user_a: string; _user_b: string }
+        Returns: boolean
+      }
+      user_wants_notification: {
+        Args: { _key: string; _user_id: string }
         Returns: boolean
       }
     }
