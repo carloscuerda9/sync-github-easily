@@ -65,25 +65,63 @@ function RegisterPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!role) return;
+
+    // Validate club fields
+    const meta: Record<string, unknown> = {
+      role,
+      full_name: fullName,
+      phone,
+      profile_data: profileData,
+    };
+
+    if (role === "physio") {
+      if (clubMode === "create") {
+        if (!clubName.trim()) { toast.error("Introduce el nombre del club"); return; }
+        meta.club_name = clubName.trim();
+      } else {
+        if (!clubCode.trim()) { toast.error("Introduce el código del club"); return; }
+        meta.club_code = clubCode.trim().toUpperCase();
+      }
+    } else {
+      if (!clubCode.trim()) { toast.error("Introduce el código del club que te dio tu fisio"); return; }
+      meta.club_code = clubCode.trim().toUpperCase();
+    }
+
     setLoading(true);
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/`,
-        data: {
-          role,
-          full_name: fullName,
-          phone,
-          profile_data: profileData,
-        },
+        data: meta,
       },
     });
     setLoading(false);
     if (error) {
-      toast.error(error.message.includes("already") ? "Este email ya está registrado" : error.message);
+      const msg = error.message;
+      if (msg.includes("already")) toast.error("Este email ya está registrado");
+      else if (msg.includes("Código")) toast.error(msg);
+      else if (msg.includes("club")) toast.error("Error con el código de club. Comprueba que es correcto.");
+      else toast.error(msg);
       return;
     }
+
+    // If physio created a club, fetch the generated code to show them
+    if (role === "physio" && clubMode === "create") {
+      // Wait briefly for trigger, then login to fetch
+      setTimeout(async () => {
+        const { data: authData } = await supabase.auth.signInWithPassword({ email, password });
+        if (authData?.user) {
+          const { data: prof } = await supabase.from("profiles").select("club_id").eq("id", authData.user.id).maybeSingle();
+          if (prof?.club_id) {
+            const { data: club } = await supabase.from("clubs").select("code").eq("id", prof.club_id).maybeSingle();
+            if (club?.code) setCreatedClubCode(club.code);
+          }
+          await supabase.auth.signOut();
+        }
+      }, 800);
+    }
+
     setStep(3);
   };
 
