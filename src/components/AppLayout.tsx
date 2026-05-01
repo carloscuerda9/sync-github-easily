@@ -23,8 +23,18 @@ interface AppLayoutProps {
 
 export function AppLayout({ role, items, children }: AppLayoutProps) {
   const { profile, club, signOut } = useAuth();
+  const { counters } = useNotifications();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  const badgeFor = (to: string): number => {
+    if (to.endsWith("/mensajes")) return counters.messages;
+    if (to === "/jugador/citas" || to === "/fisio/agenda") return counters.appointments;
+    if (to.endsWith("/formularios") && to.startsWith("/jugador")) return counters.forms;
+    if (to.endsWith("/documentos")) return counters.documents;
+    if (to === "/fisio/facturacion") return counters.invoices;
+    return 0;
+  };
 
   const handleLogout = async () => {
     await signOut();
