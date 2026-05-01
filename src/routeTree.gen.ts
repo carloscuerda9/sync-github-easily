@@ -11,7 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RegistroRouteImport } from './routes/registro'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as JugadorRouteImport } from './routes/jugador'
+import { Route as FisioRouteImport } from './routes/fisio'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as JugadorIndexRouteImport } from './routes/jugador.index'
+import { Route as FisioIndexRouteImport } from './routes/fisio.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 
 const RegistroRoute = RegistroRouteImport.update({
   id: '/registro',
@@ -23,38 +30,122 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JugadorRoute = JugadorRouteImport.update({
+  id: '/jugador',
+  path: '/jugador',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FisioRoute = FisioRouteImport.update({
+  id: '/fisio',
+  path: '/fisio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JugadorIndexRoute = JugadorIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => JugadorRoute,
+} as any)
+const FisioIndexRoute = FisioIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => FisioRoute,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
+  id: '/usuarios',
+  path: '/usuarios',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/fisio': typeof FisioRouteWithChildren
+  '/jugador': typeof JugadorRouteWithChildren
   '/login': typeof LoginRoute
   '/registro': typeof RegistroRoute
+  '/admin/usuarios': typeof AdminUsuariosRoute
+  '/admin/': typeof AdminIndexRoute
+  '/fisio/': typeof FisioIndexRoute
+  '/jugador/': typeof JugadorIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/registro': typeof RegistroRoute
+  '/admin/usuarios': typeof AdminUsuariosRoute
+  '/admin': typeof AdminIndexRoute
+  '/fisio': typeof FisioIndexRoute
+  '/jugador': typeof JugadorIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/fisio': typeof FisioRouteWithChildren
+  '/jugador': typeof JugadorRouteWithChildren
   '/login': typeof LoginRoute
   '/registro': typeof RegistroRoute
+  '/admin/usuarios': typeof AdminUsuariosRoute
+  '/admin/': typeof AdminIndexRoute
+  '/fisio/': typeof FisioIndexRoute
+  '/jugador/': typeof JugadorIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/registro'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/fisio'
+    | '/jugador'
+    | '/login'
+    | '/registro'
+    | '/admin/usuarios'
+    | '/admin/'
+    | '/fisio/'
+    | '/jugador/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/registro'
-  id: '__root__' | '/' | '/login' | '/registro'
+  to:
+    | '/'
+    | '/login'
+    | '/registro'
+    | '/admin/usuarios'
+    | '/admin'
+    | '/fisio'
+    | '/jugador'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/fisio'
+    | '/jugador'
+    | '/login'
+    | '/registro'
+    | '/admin/usuarios'
+    | '/admin/'
+    | '/fisio/'
+    | '/jugador/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  FisioRoute: typeof FisioRouteWithChildren
+  JugadorRoute: typeof JugadorRouteWithChildren
   LoginRoute: typeof LoginRoute
   RegistroRoute: typeof RegistroRoute
 }
@@ -75,6 +166,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/jugador': {
+      id: '/jugador'
+      path: '/jugador'
+      fullPath: '/jugador'
+      preLoaderRoute: typeof JugadorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fisio': {
+      id: '/fisio'
+      path: '/fisio'
+      fullPath: '/fisio'
+      preLoaderRoute: typeof FisioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -82,11 +194,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/jugador/': {
+      id: '/jugador/'
+      path: '/'
+      fullPath: '/jugador/'
+      preLoaderRoute: typeof JugadorIndexRouteImport
+      parentRoute: typeof JugadorRoute
+    }
+    '/fisio/': {
+      id: '/fisio/'
+      path: '/'
+      fullPath: '/fisio/'
+      preLoaderRoute: typeof FisioIndexRouteImport
+      parentRoute: typeof FisioRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/usuarios': {
+      id: '/admin/usuarios'
+      path: '/usuarios'
+      fullPath: '/admin/usuarios'
+      preLoaderRoute: typeof AdminUsuariosRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminUsuariosRoute: typeof AdminUsuariosRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminUsuariosRoute: AdminUsuariosRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface FisioRouteChildren {
+  FisioIndexRoute: typeof FisioIndexRoute
+}
+
+const FisioRouteChildren: FisioRouteChildren = {
+  FisioIndexRoute: FisioIndexRoute,
+}
+
+const FisioRouteWithChildren = FisioRoute._addFileChildren(FisioRouteChildren)
+
+interface JugadorRouteChildren {
+  JugadorIndexRoute: typeof JugadorIndexRoute
+}
+
+const JugadorRouteChildren: JugadorRouteChildren = {
+  JugadorIndexRoute: JugadorIndexRoute,
+}
+
+const JugadorRouteWithChildren =
+  JugadorRoute._addFileChildren(JugadorRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
+  FisioRoute: FisioRouteWithChildren,
+  JugadorRoute: JugadorRouteWithChildren,
   LoginRoute: LoginRoute,
   RegistroRoute: RegistroRoute,
 }
