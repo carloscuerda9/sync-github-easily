@@ -9,38 +9,352 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RegistroRouteImport } from './routes/registro'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as JugadorRouteImport } from './routes/jugador'
+import { Route as FisioRouteImport } from './routes/fisio'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as JugadorIndexRouteImport } from './routes/jugador.index'
+import { Route as FisioIndexRouteImport } from './routes/fisio.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as JugadorMensajesRouteImport } from './routes/jugador.mensajes'
+import { Route as JugadorHistorialRouteImport } from './routes/jugador.historial'
+import { Route as JugadorFormulariosRouteImport } from './routes/jugador.formularios'
+import { Route as JugadorDocumentosRouteImport } from './routes/jugador.documentos'
+import { Route as JugadorCitasRouteImport } from './routes/jugador.citas'
+import { Route as FisioMensajesRouteImport } from './routes/fisio.mensajes'
+import { Route as FisioJugadoresRouteImport } from './routes/fisio.jugadores'
+import { Route as FisioFormulariosRouteImport } from './routes/fisio.formularios'
+import { Route as FisioFacturacionRouteImport } from './routes/fisio.facturacion'
+import { Route as FisioDocumentosRouteImport } from './routes/fisio.documentos'
+import { Route as FisioAgendaRouteImport } from './routes/fisio.agenda'
+import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
+import { Route as AdminPreguntasRouteImport } from './routes/admin.preguntas'
+import { Route as AdminFacturasRouteImport } from './routes/admin.facturas'
+import { Route as AdminCitasRouteImport } from './routes/admin.citas'
 
+const RegistroRoute = RegistroRouteImport.update({
+  id: '/registro',
+  path: '/registro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JugadorRoute = JugadorRouteImport.update({
+  id: '/jugador',
+  path: '/jugador',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FisioRoute = FisioRouteImport.update({
+  id: '/fisio',
+  path: '/fisio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JugadorIndexRoute = JugadorIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => JugadorRoute,
+} as any)
+const FisioIndexRoute = FisioIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => FisioRoute,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const JugadorMensajesRoute = JugadorMensajesRouteImport.update({
+  id: '/mensajes',
+  path: '/mensajes',
+  getParentRoute: () => JugadorRoute,
+} as any)
+const JugadorHistorialRoute = JugadorHistorialRouteImport.update({
+  id: '/historial',
+  path: '/historial',
+  getParentRoute: () => JugadorRoute,
+} as any)
+const JugadorFormulariosRoute = JugadorFormulariosRouteImport.update({
+  id: '/formularios',
+  path: '/formularios',
+  getParentRoute: () => JugadorRoute,
+} as any)
+const JugadorDocumentosRoute = JugadorDocumentosRouteImport.update({
+  id: '/documentos',
+  path: '/documentos',
+  getParentRoute: () => JugadorRoute,
+} as any)
+const JugadorCitasRoute = JugadorCitasRouteImport.update({
+  id: '/citas',
+  path: '/citas',
+  getParentRoute: () => JugadorRoute,
+} as any)
+const FisioMensajesRoute = FisioMensajesRouteImport.update({
+  id: '/mensajes',
+  path: '/mensajes',
+  getParentRoute: () => FisioRoute,
+} as any)
+const FisioJugadoresRoute = FisioJugadoresRouteImport.update({
+  id: '/jugadores',
+  path: '/jugadores',
+  getParentRoute: () => FisioRoute,
+} as any)
+const FisioFormulariosRoute = FisioFormulariosRouteImport.update({
+  id: '/formularios',
+  path: '/formularios',
+  getParentRoute: () => FisioRoute,
+} as any)
+const FisioFacturacionRoute = FisioFacturacionRouteImport.update({
+  id: '/facturacion',
+  path: '/facturacion',
+  getParentRoute: () => FisioRoute,
+} as any)
+const FisioDocumentosRoute = FisioDocumentosRouteImport.update({
+  id: '/documentos',
+  path: '/documentos',
+  getParentRoute: () => FisioRoute,
+} as any)
+const FisioAgendaRoute = FisioAgendaRouteImport.update({
+  id: '/agenda',
+  path: '/agenda',
+  getParentRoute: () => FisioRoute,
+} as any)
+const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
+  id: '/usuarios',
+  path: '/usuarios',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPreguntasRoute = AdminPreguntasRouteImport.update({
+  id: '/preguntas',
+  path: '/preguntas',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFacturasRoute = AdminFacturasRouteImport.update({
+  id: '/facturas',
+  path: '/facturas',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCitasRoute = AdminCitasRouteImport.update({
+  id: '/citas',
+  path: '/citas',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/fisio': typeof FisioRouteWithChildren
+  '/jugador': typeof JugadorRouteWithChildren
+  '/login': typeof LoginRoute
+  '/registro': typeof RegistroRoute
+  '/admin/citas': typeof AdminCitasRoute
+  '/admin/facturas': typeof AdminFacturasRoute
+  '/admin/preguntas': typeof AdminPreguntasRoute
+  '/admin/usuarios': typeof AdminUsuariosRoute
+  '/fisio/agenda': typeof FisioAgendaRoute
+  '/fisio/documentos': typeof FisioDocumentosRoute
+  '/fisio/facturacion': typeof FisioFacturacionRoute
+  '/fisio/formularios': typeof FisioFormulariosRoute
+  '/fisio/jugadores': typeof FisioJugadoresRoute
+  '/fisio/mensajes': typeof FisioMensajesRoute
+  '/jugador/citas': typeof JugadorCitasRoute
+  '/jugador/documentos': typeof JugadorDocumentosRoute
+  '/jugador/formularios': typeof JugadorFormulariosRoute
+  '/jugador/historial': typeof JugadorHistorialRoute
+  '/jugador/mensajes': typeof JugadorMensajesRoute
+  '/admin/': typeof AdminIndexRoute
+  '/fisio/': typeof FisioIndexRoute
+  '/jugador/': typeof JugadorIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/registro': typeof RegistroRoute
+  '/admin/citas': typeof AdminCitasRoute
+  '/admin/facturas': typeof AdminFacturasRoute
+  '/admin/preguntas': typeof AdminPreguntasRoute
+  '/admin/usuarios': typeof AdminUsuariosRoute
+  '/fisio/agenda': typeof FisioAgendaRoute
+  '/fisio/documentos': typeof FisioDocumentosRoute
+  '/fisio/facturacion': typeof FisioFacturacionRoute
+  '/fisio/formularios': typeof FisioFormulariosRoute
+  '/fisio/jugadores': typeof FisioJugadoresRoute
+  '/fisio/mensajes': typeof FisioMensajesRoute
+  '/jugador/citas': typeof JugadorCitasRoute
+  '/jugador/documentos': typeof JugadorDocumentosRoute
+  '/jugador/formularios': typeof JugadorFormulariosRoute
+  '/jugador/historial': typeof JugadorHistorialRoute
+  '/jugador/mensajes': typeof JugadorMensajesRoute
+  '/admin': typeof AdminIndexRoute
+  '/fisio': typeof FisioIndexRoute
+  '/jugador': typeof JugadorIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/fisio': typeof FisioRouteWithChildren
+  '/jugador': typeof JugadorRouteWithChildren
+  '/login': typeof LoginRoute
+  '/registro': typeof RegistroRoute
+  '/admin/citas': typeof AdminCitasRoute
+  '/admin/facturas': typeof AdminFacturasRoute
+  '/admin/preguntas': typeof AdminPreguntasRoute
+  '/admin/usuarios': typeof AdminUsuariosRoute
+  '/fisio/agenda': typeof FisioAgendaRoute
+  '/fisio/documentos': typeof FisioDocumentosRoute
+  '/fisio/facturacion': typeof FisioFacturacionRoute
+  '/fisio/formularios': typeof FisioFormulariosRoute
+  '/fisio/jugadores': typeof FisioJugadoresRoute
+  '/fisio/mensajes': typeof FisioMensajesRoute
+  '/jugador/citas': typeof JugadorCitasRoute
+  '/jugador/documentos': typeof JugadorDocumentosRoute
+  '/jugador/formularios': typeof JugadorFormulariosRoute
+  '/jugador/historial': typeof JugadorHistorialRoute
+  '/jugador/mensajes': typeof JugadorMensajesRoute
+  '/admin/': typeof AdminIndexRoute
+  '/fisio/': typeof FisioIndexRoute
+  '/jugador/': typeof JugadorIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/fisio'
+    | '/jugador'
+    | '/login'
+    | '/registro'
+    | '/admin/citas'
+    | '/admin/facturas'
+    | '/admin/preguntas'
+    | '/admin/usuarios'
+    | '/fisio/agenda'
+    | '/fisio/documentos'
+    | '/fisio/facturacion'
+    | '/fisio/formularios'
+    | '/fisio/jugadores'
+    | '/fisio/mensajes'
+    | '/jugador/citas'
+    | '/jugador/documentos'
+    | '/jugador/formularios'
+    | '/jugador/historial'
+    | '/jugador/mensajes'
+    | '/admin/'
+    | '/fisio/'
+    | '/jugador/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/login'
+    | '/registro'
+    | '/admin/citas'
+    | '/admin/facturas'
+    | '/admin/preguntas'
+    | '/admin/usuarios'
+    | '/fisio/agenda'
+    | '/fisio/documentos'
+    | '/fisio/facturacion'
+    | '/fisio/formularios'
+    | '/fisio/jugadores'
+    | '/fisio/mensajes'
+    | '/jugador/citas'
+    | '/jugador/documentos'
+    | '/jugador/formularios'
+    | '/jugador/historial'
+    | '/jugador/mensajes'
+    | '/admin'
+    | '/fisio'
+    | '/jugador'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/fisio'
+    | '/jugador'
+    | '/login'
+    | '/registro'
+    | '/admin/citas'
+    | '/admin/facturas'
+    | '/admin/preguntas'
+    | '/admin/usuarios'
+    | '/fisio/agenda'
+    | '/fisio/documentos'
+    | '/fisio/facturacion'
+    | '/fisio/formularios'
+    | '/fisio/jugadores'
+    | '/fisio/mensajes'
+    | '/jugador/citas'
+    | '/jugador/documentos'
+    | '/jugador/formularios'
+    | '/jugador/historial'
+    | '/jugador/mensajes'
+    | '/admin/'
+    | '/fisio/'
+    | '/jugador/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  FisioRoute: typeof FisioRouteWithChildren
+  JugadorRoute: typeof JugadorRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  RegistroRoute: typeof RegistroRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/registro': {
+      id: '/registro'
+      path: '/registro'
+      fullPath: '/registro'
+      preLoaderRoute: typeof RegistroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jugador': {
+      id: '/jugador'
+      path: '/jugador'
+      fullPath: '/jugador'
+      preLoaderRoute: typeof JugadorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fisio': {
+      id: '/fisio'
+      path: '/fisio'
+      fullPath: '/fisio'
+      preLoaderRoute: typeof FisioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,21 +362,204 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/jugador/': {
+      id: '/jugador/'
+      path: '/'
+      fullPath: '/jugador/'
+      preLoaderRoute: typeof JugadorIndexRouteImport
+      parentRoute: typeof JugadorRoute
+    }
+    '/fisio/': {
+      id: '/fisio/'
+      path: '/'
+      fullPath: '/fisio/'
+      preLoaderRoute: typeof FisioIndexRouteImport
+      parentRoute: typeof FisioRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/jugador/mensajes': {
+      id: '/jugador/mensajes'
+      path: '/mensajes'
+      fullPath: '/jugador/mensajes'
+      preLoaderRoute: typeof JugadorMensajesRouteImport
+      parentRoute: typeof JugadorRoute
+    }
+    '/jugador/historial': {
+      id: '/jugador/historial'
+      path: '/historial'
+      fullPath: '/jugador/historial'
+      preLoaderRoute: typeof JugadorHistorialRouteImport
+      parentRoute: typeof JugadorRoute
+    }
+    '/jugador/formularios': {
+      id: '/jugador/formularios'
+      path: '/formularios'
+      fullPath: '/jugador/formularios'
+      preLoaderRoute: typeof JugadorFormulariosRouteImport
+      parentRoute: typeof JugadorRoute
+    }
+    '/jugador/documentos': {
+      id: '/jugador/documentos'
+      path: '/documentos'
+      fullPath: '/jugador/documentos'
+      preLoaderRoute: typeof JugadorDocumentosRouteImport
+      parentRoute: typeof JugadorRoute
+    }
+    '/jugador/citas': {
+      id: '/jugador/citas'
+      path: '/citas'
+      fullPath: '/jugador/citas'
+      preLoaderRoute: typeof JugadorCitasRouteImport
+      parentRoute: typeof JugadorRoute
+    }
+    '/fisio/mensajes': {
+      id: '/fisio/mensajes'
+      path: '/mensajes'
+      fullPath: '/fisio/mensajes'
+      preLoaderRoute: typeof FisioMensajesRouteImport
+      parentRoute: typeof FisioRoute
+    }
+    '/fisio/jugadores': {
+      id: '/fisio/jugadores'
+      path: '/jugadores'
+      fullPath: '/fisio/jugadores'
+      preLoaderRoute: typeof FisioJugadoresRouteImport
+      parentRoute: typeof FisioRoute
+    }
+    '/fisio/formularios': {
+      id: '/fisio/formularios'
+      path: '/formularios'
+      fullPath: '/fisio/formularios'
+      preLoaderRoute: typeof FisioFormulariosRouteImport
+      parentRoute: typeof FisioRoute
+    }
+    '/fisio/facturacion': {
+      id: '/fisio/facturacion'
+      path: '/facturacion'
+      fullPath: '/fisio/facturacion'
+      preLoaderRoute: typeof FisioFacturacionRouteImport
+      parentRoute: typeof FisioRoute
+    }
+    '/fisio/documentos': {
+      id: '/fisio/documentos'
+      path: '/documentos'
+      fullPath: '/fisio/documentos'
+      preLoaderRoute: typeof FisioDocumentosRouteImport
+      parentRoute: typeof FisioRoute
+    }
+    '/fisio/agenda': {
+      id: '/fisio/agenda'
+      path: '/agenda'
+      fullPath: '/fisio/agenda'
+      preLoaderRoute: typeof FisioAgendaRouteImport
+      parentRoute: typeof FisioRoute
+    }
+    '/admin/usuarios': {
+      id: '/admin/usuarios'
+      path: '/usuarios'
+      fullPath: '/admin/usuarios'
+      preLoaderRoute: typeof AdminUsuariosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/preguntas': {
+      id: '/admin/preguntas'
+      path: '/preguntas'
+      fullPath: '/admin/preguntas'
+      preLoaderRoute: typeof AdminPreguntasRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/facturas': {
+      id: '/admin/facturas'
+      path: '/facturas'
+      fullPath: '/admin/facturas'
+      preLoaderRoute: typeof AdminFacturasRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/citas': {
+      id: '/admin/citas'
+      path: '/citas'
+      fullPath: '/admin/citas'
+      preLoaderRoute: typeof AdminCitasRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminCitasRoute: typeof AdminCitasRoute
+  AdminFacturasRoute: typeof AdminFacturasRoute
+  AdminPreguntasRoute: typeof AdminPreguntasRoute
+  AdminUsuariosRoute: typeof AdminUsuariosRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminCitasRoute: AdminCitasRoute,
+  AdminFacturasRoute: AdminFacturasRoute,
+  AdminPreguntasRoute: AdminPreguntasRoute,
+  AdminUsuariosRoute: AdminUsuariosRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface FisioRouteChildren {
+  FisioAgendaRoute: typeof FisioAgendaRoute
+  FisioDocumentosRoute: typeof FisioDocumentosRoute
+  FisioFacturacionRoute: typeof FisioFacturacionRoute
+  FisioFormulariosRoute: typeof FisioFormulariosRoute
+  FisioJugadoresRoute: typeof FisioJugadoresRoute
+  FisioMensajesRoute: typeof FisioMensajesRoute
+  FisioIndexRoute: typeof FisioIndexRoute
+}
+
+const FisioRouteChildren: FisioRouteChildren = {
+  FisioAgendaRoute: FisioAgendaRoute,
+  FisioDocumentosRoute: FisioDocumentosRoute,
+  FisioFacturacionRoute: FisioFacturacionRoute,
+  FisioFormulariosRoute: FisioFormulariosRoute,
+  FisioJugadoresRoute: FisioJugadoresRoute,
+  FisioMensajesRoute: FisioMensajesRoute,
+  FisioIndexRoute: FisioIndexRoute,
+}
+
+const FisioRouteWithChildren = FisioRoute._addFileChildren(FisioRouteChildren)
+
+interface JugadorRouteChildren {
+  JugadorCitasRoute: typeof JugadorCitasRoute
+  JugadorDocumentosRoute: typeof JugadorDocumentosRoute
+  JugadorFormulariosRoute: typeof JugadorFormulariosRoute
+  JugadorHistorialRoute: typeof JugadorHistorialRoute
+  JugadorMensajesRoute: typeof JugadorMensajesRoute
+  JugadorIndexRoute: typeof JugadorIndexRoute
+}
+
+const JugadorRouteChildren: JugadorRouteChildren = {
+  JugadorCitasRoute: JugadorCitasRoute,
+  JugadorDocumentosRoute: JugadorDocumentosRoute,
+  JugadorFormulariosRoute: JugadorFormulariosRoute,
+  JugadorHistorialRoute: JugadorHistorialRoute,
+  JugadorMensajesRoute: JugadorMensajesRoute,
+  JugadorIndexRoute: JugadorIndexRoute,
+}
+
+const JugadorRouteWithChildren =
+  JugadorRoute._addFileChildren(JugadorRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
+  FisioRoute: FisioRouteWithChildren,
+  JugadorRoute: JugadorRouteWithChildren,
+  LoginRoute: LoginRoute,
+  RegistroRoute: RegistroRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
