@@ -56,10 +56,10 @@ export function NotificationSettings() {
   const save = async () => {
     if (!profile) return;
     setSaving(true);
-    const nextData = { ...(profile.profile_data ?? {}), notifications: prefs };
+    const nextData = { ...(profile.profile_data ?? {}), notifications: { ...prefs } } as Record<string, unknown>;
     const { error } = await supabase
       .from("profiles")
-      .update({ profile_data: nextData })
+      .update({ profile_data: nextData as never })
       .eq("id", profile.id);
     setSaving(false);
     if (error) {
