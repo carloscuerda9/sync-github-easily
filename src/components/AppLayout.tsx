@@ -59,21 +59,29 @@ export function AppLayout({ role, items, children }: AppLayoutProps) {
       <aside className="hidden w-64 shrink-0 border-r border-border bg-sidebar md:flex md:flex-col">
         <div className="border-b border-border p-4"><Logo /></div>
         <nav className="flex-1 space-y-1 p-3">
-          {items.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                isActive(item.to)
-                  ? "bg-primary text-primary-foreground"
-                  : "text-sidebar-foreground hover:bg-sidebar-accent"
-              )}
-            >
-              <item.icon className="h-4 w-4" />
-              {item.label}
-            </Link>
-          ))}
+          {items.map((item) => {
+            const count = badgeFor(item.to);
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  isActive(item.to)
+                    ? "bg-primary text-primary-foreground"
+                    : "text-sidebar-foreground hover:bg-sidebar-accent"
+                )}
+              >
+                <item.icon className="h-4 w-4" />
+                <span className="flex-1">{item.label}</span>
+                {count > 0 && (
+                  <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1.5 text-[10px] font-bold leading-none text-destructive-foreground">
+                    {count > 9 ? "9+" : count}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
         </nav>
         {club && (
           <div className="border-t border-border bg-muted/40 p-3">
@@ -105,6 +113,11 @@ export function AppLayout({ role, items, children }: AppLayoutProps) {
 
       {/* Main content */}
       <div className="flex w-full flex-1 flex-col">
+        {/* Desktop top bar with bell */}
+        <header className="hidden items-center justify-end border-b border-border bg-background px-6 py-2 md:flex">
+          <NotificationBell />
+        </header>
+
         <header className="flex items-center justify-between border-b border-border bg-background px-4 py-3 md:hidden">
           <div className="flex items-center gap-3 min-w-0">
             <Logo compact />
@@ -123,9 +136,12 @@ export function AppLayout({ role, items, children }: AppLayoutProps) {
               </div>
             )}
           </div>
-          <Button variant="ghost" size="icon" onClick={handleLogout} aria-label="Cerrar sesión">
-            <LogOut className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-1">
+            <NotificationBell />
+            <Button variant="ghost" size="icon" onClick={handleLogout} aria-label="Cerrar sesión">
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </div>
         </header>
 
         <main className="flex-1 px-4 pb-24 pt-4 md:px-8 md:pb-8 md:pt-6">
@@ -134,19 +150,29 @@ export function AppLayout({ role, items, children }: AppLayoutProps) {
 
         {/* Mobile bottom nav */}
         <nav className="fixed bottom-0 left-0 right-0 z-30 grid grid-cols-5 border-t border-border bg-background md:hidden">
-          {items.slice(0, 5).map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className={cn(
-                "flex flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium",
-                isActive(item.to) ? "text-primary" : "text-muted-foreground"
-              )}
-            >
-              <item.icon className="h-5 w-5" />
-              <span className="leading-tight">{item.label}</span>
-            </Link>
-          ))}
+          {items.slice(0, 5).map((item) => {
+            const count = badgeFor(item.to);
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={cn(
+                  "relative flex flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium",
+                  isActive(item.to) ? "text-primary" : "text-muted-foreground"
+                )}
+              >
+                <div className="relative">
+                  <item.icon className="h-5 w-5" />
+                  {count > 0 && (
+                    <span className="absolute -right-2 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-bold leading-none text-destructive-foreground">
+                      {count > 9 ? "9+" : count}
+                    </span>
+                  )}
+                </div>
+                <span className="leading-tight">{item.label}</span>
+              </Link>
+            );
+          })}
         </nav>
       </div>
     </div>
