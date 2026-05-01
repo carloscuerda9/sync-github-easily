@@ -40,6 +40,12 @@ function RegisterPage() {
   const [phone, setPhone] = useState("");
   const [profileData, setProfileData] = useState<Record<string, string | string[]>>({});
 
+  // Club fields
+  const [clubMode, setClubMode] = useState<"create" | "join">("create");
+  const [clubName, setClubName] = useState("");
+  const [clubCode, setClubCode] = useState("");
+  const [createdClubCode, setCreatedClubCode] = useState<string | null>(null);
+
   useEffect(() => {
     if (!role) return;
     supabase
