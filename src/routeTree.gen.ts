@@ -21,6 +21,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as JugadorMensajesRouteImport } from './routes/jugador.mensajes'
 import { Route as JugadorHistorialRouteImport } from './routes/jugador.historial'
 import { Route as JugadorFormulariosRouteImport } from './routes/jugador.formularios'
+import { Route as JugadorFacturasRouteImport } from './routes/jugador.facturas'
 import { Route as JugadorDocumentosRouteImport } from './routes/jugador.documentos'
 import { Route as JugadorCitasRouteImport } from './routes/jugador.citas'
 import { Route as FisioMensajesRouteImport } from './routes/fisio.mensajes'
@@ -92,6 +93,11 @@ const JugadorHistorialRoute = JugadorHistorialRouteImport.update({
 const JugadorFormulariosRoute = JugadorFormulariosRouteImport.update({
   id: '/formularios',
   path: '/formularios',
+  getParentRoute: () => JugadorRoute,
+} as any)
+const JugadorFacturasRoute = JugadorFacturasRouteImport.update({
+  id: '/facturas',
+  path: '/facturas',
   getParentRoute: () => JugadorRoute,
 } as any)
 const JugadorDocumentosRoute = JugadorDocumentosRouteImport.update({
@@ -174,6 +180,7 @@ export interface FileRoutesByFullPath {
   '/fisio/mensajes': typeof FisioMensajesRoute
   '/jugador/citas': typeof JugadorCitasRoute
   '/jugador/documentos': typeof JugadorDocumentosRoute
+  '/jugador/facturas': typeof JugadorFacturasRoute
   '/jugador/formularios': typeof JugadorFormulariosRoute
   '/jugador/historial': typeof JugadorHistorialRoute
   '/jugador/mensajes': typeof JugadorMensajesRoute
@@ -197,6 +204,7 @@ export interface FileRoutesByTo {
   '/fisio/mensajes': typeof FisioMensajesRoute
   '/jugador/citas': typeof JugadorCitasRoute
   '/jugador/documentos': typeof JugadorDocumentosRoute
+  '/jugador/facturas': typeof JugadorFacturasRoute
   '/jugador/formularios': typeof JugadorFormulariosRoute
   '/jugador/historial': typeof JugadorHistorialRoute
   '/jugador/mensajes': typeof JugadorMensajesRoute
@@ -224,6 +232,7 @@ export interface FileRoutesById {
   '/fisio/mensajes': typeof FisioMensajesRoute
   '/jugador/citas': typeof JugadorCitasRoute
   '/jugador/documentos': typeof JugadorDocumentosRoute
+  '/jugador/facturas': typeof JugadorFacturasRoute
   '/jugador/formularios': typeof JugadorFormulariosRoute
   '/jugador/historial': typeof JugadorHistorialRoute
   '/jugador/mensajes': typeof JugadorMensajesRoute
@@ -252,6 +261,7 @@ export interface FileRouteTypes {
     | '/fisio/mensajes'
     | '/jugador/citas'
     | '/jugador/documentos'
+    | '/jugador/facturas'
     | '/jugador/formularios'
     | '/jugador/historial'
     | '/jugador/mensajes'
@@ -275,6 +285,7 @@ export interface FileRouteTypes {
     | '/fisio/mensajes'
     | '/jugador/citas'
     | '/jugador/documentos'
+    | '/jugador/facturas'
     | '/jugador/formularios'
     | '/jugador/historial'
     | '/jugador/mensajes'
@@ -301,6 +312,7 @@ export interface FileRouteTypes {
     | '/fisio/mensajes'
     | '/jugador/citas'
     | '/jugador/documentos'
+    | '/jugador/facturas'
     | '/jugador/formularios'
     | '/jugador/historial'
     | '/jugador/mensajes'
@@ -402,6 +414,13 @@ declare module '@tanstack/react-router' {
       path: '/formularios'
       fullPath: '/jugador/formularios'
       preLoaderRoute: typeof JugadorFormulariosRouteImport
+      parentRoute: typeof JugadorRoute
+    }
+    '/jugador/facturas': {
+      id: '/jugador/facturas'
+      path: '/facturas'
+      fullPath: '/jugador/facturas'
+      preLoaderRoute: typeof JugadorFacturasRouteImport
       parentRoute: typeof JugadorRoute
     }
     '/jugador/documentos': {
@@ -534,6 +553,7 @@ const FisioRouteWithChildren = FisioRoute._addFileChildren(FisioRouteChildren)
 interface JugadorRouteChildren {
   JugadorCitasRoute: typeof JugadorCitasRoute
   JugadorDocumentosRoute: typeof JugadorDocumentosRoute
+  JugadorFacturasRoute: typeof JugadorFacturasRoute
   JugadorFormulariosRoute: typeof JugadorFormulariosRoute
   JugadorHistorialRoute: typeof JugadorHistorialRoute
   JugadorMensajesRoute: typeof JugadorMensajesRoute
@@ -543,6 +563,7 @@ interface JugadorRouteChildren {
 const JugadorRouteChildren: JugadorRouteChildren = {
   JugadorCitasRoute: JugadorCitasRoute,
   JugadorDocumentosRoute: JugadorDocumentosRoute,
+  JugadorFacturasRoute: JugadorFacturasRoute,
   JugadorFormulariosRoute: JugadorFormulariosRoute,
   JugadorHistorialRoute: JugadorHistorialRoute,
   JugadorMensajesRoute: JugadorMensajesRoute,
