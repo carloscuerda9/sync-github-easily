@@ -1,27 +1,16 @@
 import { cn } from "@/lib/utils";
-import logoMark from "@/assets/logo-mark.png";
+import logoFull from "@/assets/wefixyou-logo.png";
+import logoMark from "@/assets/wefixyou-mark.png";
 
 export function Logo({ className, compact = false }: { className?: string; compact?: boolean }) {
   return (
-    <div className={cn("flex items-center gap-2.5", className)}>
+    <div className={cn("flex items-center", className)}>
       <img
-        src={logoMark}
-        alt="We Fix You"
-        width={40}
-        height={40}
+        src={compact ? logoMark : logoFull}
+        alt="We Fix You — Fisioterapia"
         loading="lazy"
-        className="h-10 w-10 shrink-0 object-contain"
+        className={cn("object-contain", compact ? "h-9 w-auto" : "h-14 w-auto")}
       />
-      {!compact && (
-        <div className="leading-tight">
-          <div className="text-sm font-extrabold uppercase tracking-tight text-foreground">
-            We Fix You.
-          </div>
-          <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
-            Fisioterapia
-          </div>
-        </div>
-      )}
     </div>
   );
 }
