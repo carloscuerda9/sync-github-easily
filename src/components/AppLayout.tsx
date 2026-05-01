@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { LogOut, Copy, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { NotificationBell } from "@/components/NotificationBell";
+import { useNotifications } from "@/lib/notifications-context";
 import type { ReactNode, ComponentType } from "react";
 
 export interface NavItem {
