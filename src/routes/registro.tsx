@@ -139,10 +139,21 @@ function RegisterPage() {
           </div>
           <h1 className="text-2xl font-bold">¡Cuenta creada!</h1>
           {isPhysio ? (
-            <p className="mt-3 text-sm text-muted-foreground">
-              Tu cuenta de fisioterapeuta está <strong>en revisión</strong>. Te avisaremos cuando
-              el equipo de We Fix You apruebe tu acceso.
-            </p>
+            <>
+              <p className="mt-3 text-sm text-muted-foreground">
+                Tu cuenta de fisioterapeuta está <strong>en revisión</strong>. Te avisaremos cuando
+                el equipo de We Fix You apruebe tu acceso.
+              </p>
+              {createdClubCode && (
+                <div className="mt-5 rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-4">
+                  <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Código de tu club</div>
+                  <div className="mt-1 font-mono text-2xl font-bold tracking-widest text-primary">{createdClubCode}</div>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Compártelo con tus jugadores para que se registren en tu club.
+                  </p>
+                </div>
+              )}
+            </>
           ) : (
             <p className="mt-3 text-sm text-muted-foreground">
               Ya puedes empezar a usar We Fix You. Inicia sesión para acceder a tu panel.
