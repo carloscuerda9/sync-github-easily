@@ -19,14 +19,24 @@ interface AppLayoutProps {
   children: ReactNode;
 }
 
-export function AppLayout({ items, children }: AppLayoutProps) {
-  const { profile, signOut } = useAuth();
+export function AppLayout({ role, items, children }: AppLayoutProps) {
+  const { profile, club, signOut } = useAuth();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const handleLogout = async () => {
     await signOut();
     navigate({ to: "/" });
+  };
+
+  const copyClubCode = async () => {
+    if (!club) return;
+    try {
+      await navigator.clipboard.writeText(club.code);
+      toast.success("Código copiado");
+    } catch {
+      toast.error("No se pudo copiar");
+    }
   };
 
   const isActive = (to: string) => pathname === to || pathname.startsWith(to + "/");
