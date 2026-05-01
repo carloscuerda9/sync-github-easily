@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { NotificationSettings } from "@/components/NotificationSettings";
+import { PushNotificationsCard } from "@/components/PushNotificationsCard";
 import { useAuth } from "@/lib/auth-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -24,6 +25,7 @@ function PerfilJugador() {
         </CardContent>
       </Card>
       <NotificationSettings />
+      <PushNotificationsCard />
     </div>
   );
 }
