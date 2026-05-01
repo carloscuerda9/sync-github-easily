@@ -127,10 +127,10 @@ function PhysioInvoices() {
   };
 
   const updateStatus = async (id: string, status: InvoiceStatus) => {
-    const patch: Record<string, unknown> = { status };
-    if (status === "paid") patch.paid_at = new Date().toISOString();
-    if (status !== "paid") patch.paid_at = null;
-    const { error } = await supabase.from("invoices").update(patch).eq("id", id);
+    const { error } = await supabase
+      .from("invoices")
+      .update({ status, paid_at: status === "paid" ? new Date().toISOString() : null })
+      .eq("id", id);
     if (error) { toast.error(error.message); return; }
     toast.success(`Factura marcada como ${STATUS_LABEL[status].toLowerCase()}`);
     load();
