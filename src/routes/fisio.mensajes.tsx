@@ -1,3 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ComingSoon } from "@/components/ComingSoon";
-export const Route = createFileRoute("/fisio/mensajes")({ component: () => <ComingSoon title="Mensajes" desc="Chat con jugadores, con adjuntos." /> });
+import { MessagesView } from "@/components/MessagesView";
+
+export const Route = createFileRoute("/fisio/mensajes")({
+  component: () => (
+    <MessagesView
+      contactRole="player"
+      emptyTitle="Selecciona un jugador"
+      emptyDesc="Comunícate con cualquier jugador de tu club desde la lista de la izquierda."
+    />
+  ),
+});
