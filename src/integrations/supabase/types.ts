@@ -536,6 +536,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_access_document_path: { Args: { _path: string }; Returns: boolean }
       find_club_by_code: {
         Args: { _code: string }
         Returns: {

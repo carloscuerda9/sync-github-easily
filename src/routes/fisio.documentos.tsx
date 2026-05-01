@@ -1,3 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ComingSoon } from "@/components/ComingSoon";
-export const Route = createFileRoute("/fisio/documentos")({ component: () => <ComingSoon title="Documentos" desc="Subir y compartir informes con jugadores." /> });
+import { DocumentsView } from "@/components/DocumentsView";
+
+export const Route = createFileRoute("/fisio/documentos")({
+  component: () => <DocumentsView contactRole="player" />,
+});
