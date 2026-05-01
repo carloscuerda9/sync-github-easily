@@ -26,6 +26,7 @@ interface AuthContextValue {
   session: Session | null;
   user: User | null;
   profile: Profile | null;
+  club: Club | null;
   loading: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -37,7 +38,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [club, setClub] = useState<Club | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const loadClub = async (clubId: string | null) => {
+    if (!clubId) { setClub(null); return; }
+    const { data } = await supabase.from("clubs").select("id,name,code").eq("id", clubId).maybeSingle();
+    setClub(data as Club | null);
+  };
 
   const loadProfile = async (userId: string) => {
     const { data, error } = await supabase
@@ -48,25 +56,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) {
       console.error("Profile load error", error);
       setProfile(null);
+      setClub(null);
       return;
     }
-    setProfile(data as Profile | null);
+    const p = data as Profile | null;
+    setProfile(p);
+    await loadClub(p?.club_id ?? null);
   };
 
   useEffect(() => {
-    // 1) Set listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession);
       setUser(newSession?.user ?? null);
       if (newSession?.user) {
-        // defer to avoid deadlock
         setTimeout(() => { loadProfile(newSession.user.id); }, 0);
       } else {
         setProfile(null);
+        setClub(null);
       }
     });
 
-    // 2) THEN check existing session
     supabase.auth.getSession().then(({ data: { session: existing } }) => {
       setSession(existing);
       setUser(existing?.user ?? null);
@@ -83,6 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     await supabase.auth.signOut();
     setProfile(null);
+    setClub(null);
   };
 
   const refreshProfile = async () => {
@@ -90,7 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, profile, loading, signOut, refreshProfile }}>
+    <AuthContext.Provider value={{ session, user, profile, club, loading, signOut, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );
