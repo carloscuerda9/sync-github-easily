@@ -1,9 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
+import { deleteUser } from "@/lib/admin-users.functions";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { CheckCircle2, XCircle, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/usuarios")({
   component: UsersAdmin,
@@ -21,6 +33,9 @@ interface Row {
 function UsersAdmin() {
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
+  const [toDelete, setToDelete] = useState<Row | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const removeUser = useServerFn(deleteUser);
 
   const load = async () => {
     setLoading(true);
@@ -40,6 +55,21 @@ function UsersAdmin() {
     if (error) { toast.error("Error actualizando"); return; }
     toast.success(status === "approved" ? "Aprobado" : "Rechazado");
     load();
+  };
+
+  const confirmDelete = async () => {
+    if (!toDelete) return;
+    setDeleting(true);
+    try {
+      await removeUser({ data: { userId: toDelete.id } });
+      toast.success("Usuario eliminado");
+      setToDelete(null);
+      load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error eliminando usuario");
+    } finally {
+      setDeleting(false);
+    }
   };
 
   return (
@@ -86,8 +116,13 @@ function UsersAdmin() {
                       </Button>
                     )}
                     {r.status !== "rejected" && (
-                      <Button size="sm" variant="outline" onClick={() => updateStatus(r.id, "rejected")}>
+                      <Button size="sm" variant="outline" className="mr-2" onClick={() => updateStatus(r.id, "rejected")}>
                         <XCircle className="mr-1 h-3.5 w-3.5" /> Rechazar
+                      </Button>
+                    )}
+                    {r.role !== "superadmin" && (
+                      <Button size="sm" variant="destructive" onClick={() => setToDelete(r)}>
+                        <Trash2 className="mr-1 h-3.5 w-3.5" /> Eliminar
                       </Button>
                     )}
                   </td>
@@ -97,6 +132,28 @@ function UsersAdmin() {
           </table>
         </div>
       )}
+
+      <AlertDialog open={!!toDelete} onOpenChange={(open) => !open && setToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Eliminar usuario</AlertDialogTitle>
+            <AlertDialogDescription>
+              Se eliminará permanentemente la cuenta de{" "}
+              <span className="font-semibold">{toDelete?.full_name ?? toDelete?.email}</span> y todos sus datos asociados. Esta acción no se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => { e.preventDefault(); confirmDelete(); }}
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? "Eliminando…" : "Eliminar"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
