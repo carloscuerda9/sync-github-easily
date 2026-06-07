@@ -132,8 +132,10 @@ function UsersAdmin() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
+
 
       <AlertDialog open={!!toDelete} onOpenChange={(open) => !open && setToDelete(null)}>
         <AlertDialogContent>
