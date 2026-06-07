@@ -136,7 +136,7 @@
     -webkit-font-smoothing: antialiased;
   }
   /* Media never overflows its container */
-  img, video, svg, canvas {
+  img, video {
     max-width: 100%;
     height: auto;
   }
