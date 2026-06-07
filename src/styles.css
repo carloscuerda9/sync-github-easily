@@ -121,10 +121,29 @@
 
 @layer base {
   * { border-color: var(--color-border); }
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
+  /* Media never overflows its container */
+  img, video, svg, canvas {
+    max-width: 100%;
+    height: auto;
+  }
+  /* Keep an active form field clear of the virtual keyboard */
+  input, textarea, select {
+    scroll-margin-bottom: 6rem;
+    scroll-margin-top: 5rem;
+  }
 }
+
