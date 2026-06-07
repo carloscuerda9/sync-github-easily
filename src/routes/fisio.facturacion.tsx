@@ -174,7 +174,7 @@ function PhysioInvoices() {
               </div>
               <div className="space-y-2">
                 <Label>Importe (EUR) *</Label>
-                <Input type="number" step="0.01" min="0" placeholder="50.00" value={amount} onChange={(e) => setAmount(e.target.value)} />
+                <Input type="number" inputMode="decimal" step="0.01" min="0" placeholder="50.00" value={amount} onChange={(e) => setAmount(e.target.value)} />
               </div>
               <div className="space-y-2">
                 <Label>Concepto</Label>
