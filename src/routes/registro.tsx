@@ -316,11 +316,25 @@ function RegisterPage() {
                   ) : (
                     <Input
                       id={q.field_key}
-                      type={q.field_type === "number" ? "number" : q.field_type === "date" ? "date" : "text"}
+                      type={
+                        q.field_type === "number" ? "number"
+                        : q.field_type === "date" ? "date"
+                        : q.field_type === "email" ? "email"
+                        : q.field_type === "tel" || q.field_type === "phone" ? "tel"
+                        : q.field_type === "url" ? "url"
+                        : "text"
+                      }
+                      inputMode={
+                        q.field_type === "number" ? "numeric"
+                        : q.field_type === "tel" || q.field_type === "phone" ? "tel"
+                        : q.field_type === "email" ? "email"
+                        : undefined
+                      }
                       required={q.required}
                       value={(profileData[q.field_key] as string) ?? ""}
                       onChange={(e) => updateField(q.field_key, e.target.value)}
                     />
+
                   )}
                 </div>
               ))}
