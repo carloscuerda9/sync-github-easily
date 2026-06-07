@@ -113,8 +113,8 @@ function RegisterPage() {
         if (authData?.user) {
           const { data: prof } = await supabase.from("profiles").select("club_id").eq("id", authData.user.id).maybeSingle();
           if (prof?.club_id) {
-            const { data: club } = await supabase.from("clubs").select("code").eq("id", prof.club_id).maybeSingle();
-            if (club?.code) setCreatedClubCode(club.code);
+            const { data: code } = await supabase.rpc("get_club_code", { _club_id: prof.club_id });
+            if (code) setCreatedClubCode(code as string);
           }
           await supabase.auth.signOut();
         }
