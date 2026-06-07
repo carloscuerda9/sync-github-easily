@@ -77,7 +77,8 @@ function UsersAdmin() {
       <h1 className="mb-6 text-2xl font-bold">Usuarios</h1>
 
       {loading ? (
-        <div className="text-sm text-muted-foreground">Cargando…</div>
+        <ListSkeleton rows={5} />
+
       ) : rows.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
           No hay usuarios todavía.
