@@ -4,6 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { deleteUser } from "@/lib/admin-users.functions";
 import { Button } from "@/components/ui/button";
+import { ListSkeleton } from "@/components/ListSkeleton";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -77,14 +79,17 @@ function UsersAdmin() {
       <h1 className="mb-6 text-2xl font-bold">Usuarios</h1>
 
       {loading ? (
-        <div className="text-sm text-muted-foreground">Cargando…</div>
+        <ListSkeleton rows={5} />
+
       ) : rows.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
           No hay usuarios todavía.
         </div>
       ) : (
         <div className="overflow-hidden rounded-xl border border-border bg-card">
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[680px] text-sm">
+
             <thead className="bg-muted/50 text-left text-xs uppercase text-muted-foreground">
               <tr>
                 <th className="px-4 py-3">Nombre</th>
@@ -130,8 +135,10 @@ function UsersAdmin() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
+
 
       <AlertDialog open={!!toDelete} onOpenChange={(open) => !open && setToDelete(null)}>
         <AlertDialogContent>

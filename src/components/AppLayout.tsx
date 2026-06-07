@@ -149,7 +149,7 @@ export function AppLayout({ role, items, children }: AppLayoutProps) {
         </main>
 
         {/* Mobile bottom nav */}
-        <nav className="fixed bottom-0 left-0 right-0 z-30 grid grid-cols-5 border-t border-border bg-background md:hidden">
+        <nav className="fixed bottom-0 left-0 right-0 z-30 grid grid-cols-5 border-t border-border bg-background pb-[env(safe-area-inset-bottom)] md:hidden">
           {items.slice(0, 5).map((item) => {
             const count = badgeFor(item.to);
             return (

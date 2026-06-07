@@ -288,7 +288,7 @@ function PlayerDetail({ playerId }: { playerId: string }) {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="grid gap-1.5">
                       <Label>Días de recuperación</Label>
-                      <Input type="number" min="0" value={recoveryDays} onChange={(e) => setRecoveryDays(e.target.value)} />
+                      <Input type="number" inputMode="numeric" min="0" value={recoveryDays} onChange={(e) => setRecoveryDays(e.target.value)} />
                     </div>
                   </div>
                   <div className="grid gap-1.5">

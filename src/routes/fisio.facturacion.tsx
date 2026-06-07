@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { ListSkeleton } from "@/components/ListSkeleton";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Receipt, Plus, Euro, Send, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
@@ -174,7 +176,7 @@ function PhysioInvoices() {
               </div>
               <div className="space-y-2">
                 <Label>Importe (EUR) *</Label>
-                <Input type="number" step="0.01" min="0" placeholder="50.00" value={amount} onChange={(e) => setAmount(e.target.value)} />
+                <Input type="number" inputMode="decimal" step="0.01" min="0" placeholder="50.00" value={amount} onChange={(e) => setAmount(e.target.value)} />
               </div>
               <div className="space-y-2">
                 <Label>Concepto</Label>
@@ -206,7 +208,8 @@ function PhysioInvoices() {
         {(["all", "draft", "sent", "paid"] as const).map((tab) => (
           <TabsContent key={tab} value={tab} className="mt-4">
             {loading ? (
-              <p className="text-muted-foreground text-center py-8">Cargando...</p>
+              <ListSkeleton rows={4} />
+
             ) : filtered(tab).length === 0 ? (
               <div className="text-center py-12 border rounded-lg bg-card">
                 <Receipt className="h-12 w-12 mx-auto text-muted-foreground mb-3" />

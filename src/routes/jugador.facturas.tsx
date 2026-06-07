@@ -5,6 +5,8 @@ import { useAuth } from "@/lib/auth-context";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Receipt, Euro, CheckCircle2 } from "lucide-react";
+import { ListSkeleton } from "@/components/ListSkeleton";
+
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/jugador/facturas")({ component: PlayerInvoices });
@@ -107,7 +109,8 @@ function PlayerInvoices() {
         {(["sent", "paid", "all"] as const).map((tab) => (
           <TabsContent key={tab} value={tab} className="mt-4">
             {loading ? (
-              <p className="text-muted-foreground text-center py-8">Cargando...</p>
+              <ListSkeleton rows={4} />
+
             ) : filtered(tab).length === 0 ? (
               <div className="text-center py-12 border rounded-lg bg-card">
                 <Receipt className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
