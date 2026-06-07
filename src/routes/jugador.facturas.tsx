@@ -5,6 +5,8 @@ import { useAuth } from "@/lib/auth-context";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Receipt, Euro, CheckCircle2 } from "lucide-react";
+import { ListSkeleton } from "@/components/ListSkeleton";
+
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/jugador/facturas")({ component: PlayerInvoices });
