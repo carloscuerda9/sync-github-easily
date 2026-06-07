@@ -605,6 +605,7 @@ export type Database = {
           name: string
         }[]
       }
+      get_club_code: { Args: { _club_id: string }; Returns: string }
       get_user_club: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {

@@ -42,7 +42,7 @@ export function AppLayout({ role, items, children }: AppLayoutProps) {
   };
 
   const copyClubCode = async () => {
-    if (!club) return;
+    if (!club || !club.code) return;
     try {
       await navigator.clipboard.writeText(club.code);
       toast.success("Código copiado");
