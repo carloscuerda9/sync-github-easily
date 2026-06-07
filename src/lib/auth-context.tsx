@@ -43,8 +43,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loadClub = async (clubId: string | null) => {
     if (!clubId) { setClub(null); return; }
-    const { data } = await supabase.from("clubs").select("id,name,code").eq("id", clubId).maybeSingle();
-    setClub(data as Club | null);
+    const { data } = await supabase.from("clubs").select("id,name").eq("id", clubId).maybeSingle();
+    if (!data) { setClub(null); return; }
+    // The join code is only readable by physios/superadmins via a secure helper.
+    const { data: code } = await supabase.rpc("get_club_code", { _club_id: clubId });
+    setClub({ ...(data as Club), code: (code as string | null) ?? null });
   };
 
   const loadProfile = async (userId: string) => {
