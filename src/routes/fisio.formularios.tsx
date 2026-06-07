@@ -186,7 +186,7 @@ function PhysioForms() {
               </div>
               <div className="grid gap-1.5">
                 <Label>URL externa *</Label>
-                <Input value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} placeholder="https://forms.gle/…" />
+                <Input type="url" inputMode="url" value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} placeholder="https://forms.gle/…" />
               </div>
             </div>
             <DialogFooter>
