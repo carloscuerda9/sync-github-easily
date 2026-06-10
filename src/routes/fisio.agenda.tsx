@@ -11,7 +11,7 @@ import {
   type AppointmentStatus, type AppointmentType,
   formatDateTime,
 } from "@/lib/appointments";
-import { AppointmentsCalendar } from "@/components/AppointmentsCalendar";
+import { AppointmentsCalendar, type AppointmentChanges } from "@/components/AppointmentsCalendar";
 
 export const Route = createFileRoute("/fisio/agenda")({ component: PhysioAgenda });
 
