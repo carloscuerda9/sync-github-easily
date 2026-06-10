@@ -103,7 +103,7 @@ function PhysioAgenda() {
 
         <TabsContent value="calendar" className="mt-4">
           {loading ? <Skeleton /> : (
-            <AppointmentsCalendar appointments={confirmed} />
+            <AppointmentsCalendar appointments={confirmed} onSave={saveAppt} onCancel={cancelAppt} />
           )}
         </TabsContent>
 
