@@ -4,13 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, User, Clock, MapPin, Check, X, CheckCircle2, CalendarOff } from "lucide-react";
+import { Calendar, User, Clock, MapPin, Check, X, CheckCircle2, CalendarOff, CalendarDays } from "lucide-react";
 import { toast } from "sonner";
 import {
   STATUS_LABEL, STATUS_COLOR, TYPE_LABEL,
   type AppointmentStatus, type AppointmentType,
   formatDateTime,
 } from "@/lib/appointments";
+import { AppointmentsCalendar } from "@/components/AppointmentsCalendar";
 
 export const Route = createFileRoute("/fisio/agenda")({ component: PhysioAgenda });
 
@@ -71,6 +72,8 @@ function PhysioAgenda() {
               .sort((a,b)=>+new Date(b.scheduled_at)-+new Date(a.scheduled_at)),
     [appts, pending, upcoming],
   );
+  const confirmed = useMemo(() => appts.filter((a) => a.status === "confirmed"), [appts]);
+
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -79,12 +82,20 @@ function PhysioAgenda() {
         <p className="mt-1 text-sm text-muted-foreground">Solicitudes y citas de tus jugadores.</p>
       </div>
 
-      <Tabs defaultValue="pending">
+      <Tabs defaultValue="calendar">
         <TabsList>
+          <TabsTrigger value="calendar"><CalendarDays className="mr-1 h-3.5 w-3.5" /> Calendario</TabsTrigger>
           <TabsTrigger value="pending">Pendientes ({pending.length})</TabsTrigger>
           <TabsTrigger value="upcoming">Próximas ({upcoming.length})</TabsTrigger>
           <TabsTrigger value="past">Historial ({past.length})</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="calendar" className="mt-4">
+          {loading ? <Skeleton /> : (
+            <AppointmentsCalendar appointments={confirmed} />
+          )}
+        </TabsContent>
+
 
         <TabsContent value="pending" className="mt-4 space-y-3">
           {loading ? <Skeleton /> : pending.length === 0 ? (
