@@ -1,6 +1,12 @@
-import { useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, User, Clock, MapPin } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight, User, Clock, MapPin, Pencil, X, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 import {
   Sheet,
   SheetContent,
@@ -9,7 +15,12 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import {
-  STATUS_LABEL, STATUS_COLOR, TYPE_LABEL,
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  STATUS_LABEL, STATUS_COLOR, TYPE_LABEL, DURATIONS,
   type AppointmentStatus, type AppointmentType,
   formatDate, formatTime,
 } from "@/lib/appointments";
@@ -24,20 +35,49 @@ export interface CalendarAppointment {
   player?: { full_name: string | null; email: string } | null;
 }
 
+export interface AppointmentChanges {
+  scheduled_at: string;
+  duration_minutes: number;
+  type: AppointmentType;
+  notes: string | null;
+}
+
+interface AppointmentsCalendarProps {
+  appointments: CalendarAppointment[];
+  onSave?: (id: string, changes: AppointmentChanges) => Promise<void> | void;
+  onCancel?: (id: string) => Promise<void> | void;
+}
+
 const WEEKDAYS = ["L", "M", "X", "J", "V", "S", "D"];
 const MONTHS = [
   "enero", "febrero", "marzo", "abril", "mayo", "junio",
   "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
 ];
 
+function pad(n: number) {
+  return String(n).padStart(2, "0");
+}
 function ymd(d: Date) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+function toDateInput(iso: string) {
+  return ymd(new Date(iso));
+}
+function toTimeInput(iso: string) {
+  const d = new Date(iso);
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-export function AppointmentsCalendar({ appointments }: { appointments: CalendarAppointment[] }) {
+export function AppointmentsCalendar({ appointments, onSave, onCancel }: AppointmentsCalendarProps) {
   const today = new Date();
   const [cursor, setCursor] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
   const [selected, setSelected] = useState<string | null>(null);
+
+  const [editing, setEditing] = useState<string | null>(null);
+  const [form, setForm] = useState<{ date: string; time: string; duration: number; type: AppointmentType; notes: string }>({
+    date: "", time: "", duration: 60, type: "in_person", notes: "",
+  });
+  const [busy, setBusy] = useState(false);
 
   const byDay = useMemo(() => {
     const map = new Map<string, CalendarAppointment[]>();
@@ -69,6 +109,54 @@ export function AppointmentsCalendar({ appointments }: { appointments: CalendarA
 
   const todayKey = ymd(today);
   const selectedAppts = selected ? byDay.get(selected) ?? [] : [];
+
+  // Close the day sheet automatically when its appointments are gone (e.g. after cancelling).
+  useEffect(() => {
+    if (selected && (byDay.get(selected)?.length ?? 0) === 0) {
+      setSelected(null);
+      setEditing(null);
+    }
+  }, [byDay, selected]);
+
+  const startEdit = (a: CalendarAppointment) => {
+    setEditing(a.id);
+    setForm({
+      date: toDateInput(a.scheduled_at),
+      time: toTimeInput(a.scheduled_at),
+      duration: a.duration_minutes,
+      type: a.type,
+      notes: a.notes ?? "",
+    });
+  };
+
+  const submitEdit = async (id: string) => {
+    if (!onSave || !form.date || !form.time) return;
+    const scheduled = new Date(`${form.date}T${form.time}`);
+    if (isNaN(scheduled.getTime())) return;
+    setBusy(true);
+    try {
+      await onSave(id, {
+        scheduled_at: scheduled.toISOString(),
+        duration_minutes: form.duration,
+        type: form.type,
+        notes: form.notes.trim() ? form.notes.trim() : null,
+      });
+      setEditing(null);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const cancelAppointment = async (id: string) => {
+    if (!onCancel) return;
+    setBusy(true);
+    try {
+      await onCancel(id);
+      setEditing(null);
+    } finally {
+      setBusy(false);
+    }
+  };
 
   return (
     <div className="rounded-xl border border-border bg-card">
@@ -149,8 +237,8 @@ export function AppointmentsCalendar({ appointments }: { appointments: CalendarA
         })}
       </div>
 
-      <Sheet open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
-        <SheetContent side="bottom" className="max-h-[80vh] overflow-y-auto">
+      <Sheet open={!!selected} onOpenChange={(o) => { if (!o) { setSelected(null); setEditing(null); } }}>
+        <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto">
           <SheetHeader className="text-left">
             <SheetTitle className="capitalize">{selected && formatDate(selected)}</SheetTitle>
             <SheetDescription>
@@ -160,22 +248,110 @@ export function AppointmentsCalendar({ appointments }: { appointments: CalendarA
           <div className="mt-4 space-y-3">
             {selectedAppts.map((a) => (
               <div key={a.id} className="rounded-xl border border-border bg-card p-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 text-sm font-semibold">
-                      <User className="h-4 w-4 shrink-0 text-muted-foreground" />
-                      <span className="truncate">{a.player?.full_name || a.player?.email || "Jugador"}</span>
+                {editing === a.id ? (
+                  <div className="space-y-3">
+                    <div className="text-sm font-semibold">{a.player?.full_name || a.player?.email || "Jugador"}</div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <Label htmlFor={`date-${a.id}`} className="text-xs">Fecha</Label>
+                        <Input id={`date-${a.id}`} type="date" value={form.date}
+                          onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} />
+                      </div>
+                      <div className="space-y-1">
+                        <Label htmlFor={`time-${a.id}`} className="text-xs">Hora</Label>
+                        <Input id={`time-${a.id}`} type="time" value={form.time}
+                          onChange={(e) => setForm((f) => ({ ...f, time: e.target.value }))} />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Duración</Label>
+                        <Select value={String(form.duration)}
+                          onValueChange={(v) => setForm((f) => ({ ...f, duration: Number(v) }))}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            {DURATIONS.map((d) => (
+                              <SelectItem key={d} value={String(d)}>{d} min</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Tipo</Label>
+                        <Select value={form.type}
+                          onValueChange={(v) => setForm((f) => ({ ...f, type: v as AppointmentType }))}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            {(Object.keys(TYPE_LABEL) as AppointmentType[]).map((t) => (
+                              <SelectItem key={t} value={t}>{TYPE_LABEL[t]}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
-                    <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                      <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{formatTime(a.scheduled_at)} · {a.duration_minutes} min</span>
-                      <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{TYPE_LABEL[a.type]}</span>
+                    <div className="space-y-1">
+                      <Label htmlFor={`notes-${a.id}`} className="text-xs">Notas</Label>
+                      <Textarea id={`notes-${a.id}`} rows={2} value={form.notes}
+                        onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} />
                     </div>
-                    {a.notes && <p className="mt-2 text-sm text-foreground/80">{a.notes}</p>}
+                    <div className="flex flex-wrap justify-end gap-2">
+                      <Button size="sm" variant="outline" disabled={busy} onClick={() => setEditing(null)}>
+                        Cancelar
+                      </Button>
+                      <Button size="sm" disabled={busy} onClick={() => submitEdit(a.id)}>
+                        <Save className="mr-1 h-3.5 w-3.5" /> Guardar
+                      </Button>
+                    </div>
                   </div>
-                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ${STATUS_COLOR[a.status]}`}>
-                    {STATUS_LABEL[a.status]}
-                  </span>
-                </div>
+                ) : (
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 text-sm font-semibold">
+                        <User className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        <span className="truncate">{a.player?.full_name || a.player?.email || "Jugador"}</span>
+                      </div>
+                      <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                        <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{formatTime(a.scheduled_at)} · {a.duration_minutes} min</span>
+                        <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{TYPE_LABEL[a.type]}</span>
+                      </div>
+                      {a.notes && <p className="mt-2 text-sm text-foreground/80">{a.notes}</p>}
+                      {(onSave || onCancel) && (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {onSave && (
+                            <Button size="sm" variant="outline" disabled={busy} onClick={() => startEdit(a)}>
+                              <Pencil className="mr-1 h-3.5 w-3.5" /> Editar
+                            </Button>
+                          )}
+                          {onCancel && (
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button size="sm" variant="outline" disabled={busy}
+                                  className="text-destructive hover:text-destructive">
+                                  <X className="mr-1 h-3.5 w-3.5" /> Rechazar
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>¿Rechazar esta cita?</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    La cita se cancelará y el jugador será notificado. Esta acción no se puede deshacer.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Volver</AlertDialogCancel>
+                                  <AlertDialogAction onClick={() => cancelAppointment(a.id)}>
+                                    Rechazar cita
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ${STATUS_COLOR[a.status]}`}>
+                      {STATUS_LABEL[a.status]}
+                    </span>
+                  </div>
+                )}
               </div>
             ))}
           </div>
