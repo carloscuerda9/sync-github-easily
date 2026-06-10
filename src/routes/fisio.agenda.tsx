@@ -82,12 +82,20 @@ function PhysioAgenda() {
         <p className="mt-1 text-sm text-muted-foreground">Solicitudes y citas de tus jugadores.</p>
       </div>
 
-      <Tabs defaultValue="pending">
+      <Tabs defaultValue="calendar">
         <TabsList>
+          <TabsTrigger value="calendar"><CalendarDays className="mr-1 h-3.5 w-3.5" /> Calendario</TabsTrigger>
           <TabsTrigger value="pending">Pendientes ({pending.length})</TabsTrigger>
           <TabsTrigger value="upcoming">Próximas ({upcoming.length})</TabsTrigger>
           <TabsTrigger value="past">Historial ({past.length})</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="calendar" className="mt-4">
+          {loading ? <Skeleton /> : (
+            <AppointmentsCalendar appointments={confirmed} />
+          )}
+        </TabsContent>
+
 
         <TabsContent value="pending" className="mt-4 space-y-3">
           {loading ? <Skeleton /> : pending.length === 0 ? (
