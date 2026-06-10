@@ -11,7 +11,7 @@ import {
   type AppointmentStatus, type AppointmentType,
   formatDateTime,
 } from "@/lib/appointments";
-import { AppointmentsCalendar } from "@/components/AppointmentsCalendar";
+import { AppointmentsCalendar, type AppointmentChanges } from "@/components/AppointmentsCalendar";
 
 export const Route = createFileRoute("/fisio/agenda")({ component: PhysioAgenda });
 
@@ -60,6 +60,20 @@ function PhysioAgenda() {
     load();
   };
 
+  const saveAppt = async (id: string, changes: AppointmentChanges) => {
+    const { error } = await supabase.from("appointments").update(changes).eq("id", id);
+    if (error) {
+      toast.error("No se pudo actualizar la cita");
+      return;
+    }
+    toast.success("Cita actualizada");
+    await load();
+  };
+
+  const cancelAppt = async (id: string) => {
+    await update(id, "cancelled", "Cita rechazada");
+  };
+
   const now = Date.now();
   const pending = useMemo(() => appts.filter((a) => a.status === "requested"), [appts]);
   const upcoming = useMemo(
@@ -92,7 +106,7 @@ function PhysioAgenda() {
 
         <TabsContent value="calendar" className="mt-4">
           {loading ? <Skeleton /> : (
-            <AppointmentsCalendar appointments={confirmed} />
+            <AppointmentsCalendar appointments={confirmed} onSave={saveAppt} onCancel={cancelAppt} />
           )}
         </TabsContent>
 
