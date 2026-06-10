@@ -4,13 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, User, Clock, MapPin, Check, X, CheckCircle2, CalendarOff } from "lucide-react";
+import { Calendar, User, Clock, MapPin, Check, X, CheckCircle2, CalendarOff, CalendarDays } from "lucide-react";
 import { toast } from "sonner";
 import {
   STATUS_LABEL, STATUS_COLOR, TYPE_LABEL,
   type AppointmentStatus, type AppointmentType,
   formatDateTime,
 } from "@/lib/appointments";
+import { AppointmentsCalendar } from "@/components/AppointmentsCalendar";
 
 export const Route = createFileRoute("/fisio/agenda")({ component: PhysioAgenda });
 
