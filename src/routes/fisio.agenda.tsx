@@ -72,6 +72,8 @@ function PhysioAgenda() {
               .sort((a,b)=>+new Date(b.scheduled_at)-+new Date(a.scheduled_at)),
     [appts, pending, upcoming],
   );
+  const confirmed = useMemo(() => appts.filter((a) => a.status === "confirmed"), [appts]);
+
 
   return (
     <div className="mx-auto max-w-4xl">
