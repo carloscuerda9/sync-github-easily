@@ -60,6 +60,17 @@ function PhysioAgenda() {
     load();
   };
 
+  const saveAppt = async (id: string, changes: AppointmentChanges) => {
+    const { error } = await supabase.from("appointments").update(changes).eq("id", id);
+    if (error) return toast.error("No se pudo actualizar la cita");
+    toast.success("Cita actualizada");
+    await load();
+  };
+
+  const cancelAppt = async (id: string) => {
+    await update(id, "cancelled", "Cita rechazada");
+  };
+
   const now = Date.now();
   const pending = useMemo(() => appts.filter((a) => a.status === "requested"), [appts]);
   const upcoming = useMemo(
