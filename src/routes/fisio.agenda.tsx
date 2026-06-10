@@ -62,7 +62,10 @@ function PhysioAgenda() {
 
   const saveAppt = async (id: string, changes: AppointmentChanges) => {
     const { error } = await supabase.from("appointments").update(changes).eq("id", id);
-    if (error) return toast.error("No se pudo actualizar la cita");
+    if (error) {
+      toast.error("No se pudo actualizar la cita");
+      return;
+    }
     toast.success("Cita actualizada");
     await load();
   };
