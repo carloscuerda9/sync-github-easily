@@ -13,7 +13,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   ClipboardList, Plus, User, Clock, CheckCircle2, AlertCircle, Pencil,
-  Ban, Stethoscope, FileText, Upload, Download, Trash2,
+  Ban, Stethoscope, FileText, Upload, Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { formatDateTime, TYPE_LABEL, type AppointmentType } from "@/lib/appointments";
