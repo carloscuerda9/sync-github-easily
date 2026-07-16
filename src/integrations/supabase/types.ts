@@ -449,6 +449,33 @@ export type Database = {
         }
         Relationships: []
       }
+      player_tags: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          physio_id: string
+          player_id: string
+          updated_at: string
+        }
+        Insert: {
+          color: string
+          created_at?: string
+          id?: string
+          physio_id: string
+          player_id: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          id?: string
+          physio_id?: string
+          player_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           club_id: string | null
