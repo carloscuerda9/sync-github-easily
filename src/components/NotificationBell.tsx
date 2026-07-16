@@ -1,4 +1,4 @@
-import { Bell, MessageSquare, Calendar, ClipboardList, FileText, Receipt } from "lucide-react";
+import { Bell, MessageSquare, Calendar, ClipboardList, FileText, Receipt, HeartPulse } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ const ICONS: Record<NotificationItem["kind"], typeof Bell> = {
   form: ClipboardList,
   document: FileText,
   invoice: Receipt,
+  treatment: HeartPulse,
 };
 
 function timeAgo(iso: string) {
