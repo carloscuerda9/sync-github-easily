@@ -29,6 +29,14 @@ interface Player {
   profile_data: Record<string, unknown>;
   created_at: string;
 }
+type TagColor = "green" | "yellow" | "orange" | "red";
+const TAG_COLORS: { value: TagColor; label: string; dot: string; ring: string }[] = [
+  { value: "green", label: "Verde", dot: "bg-green-500", ring: "ring-green-500" },
+  { value: "yellow", label: "Amarillo", dot: "bg-yellow-400", ring: "ring-yellow-400" },
+  { value: "orange", label: "Naranja", dot: "bg-orange-500", ring: "ring-orange-500" },
+  { value: "red", label: "Rojo", dot: "bg-red-500", ring: "ring-red-500" },
+];
+
 interface Injury {
   id: string;
   injury_date: string;
@@ -47,6 +55,7 @@ interface Appt {
   notes: string | null;
 }
 
+
 function PhysioPlayers() {
   const { id } = Route.useSearch();
   return id ? <PlayerDetail playerId={id} /> : <PlayersList />;
@@ -58,23 +67,78 @@ function PlayersList() {
   const { user, club } = useAuth();
   const navigate = useNavigate();
   const [players, setPlayers] = useState<Player[]>([]);
+  const [tags, setTags] = useState<Record<string, TagColor>>({});
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
+  const [openTagFor, setOpenTagFor] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
     (async () => {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id,full_name,email,phone,profile_data,created_at")
-        .eq("role", "player")
-        .order("full_name", { ascending: true, nullsFirst: false });
-      if (error) toast.error("Error cargando jugadores");
-      setPlayers((data ?? []) as Player[]);
+      const [pRes, tRes] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("id,full_name,email,phone,profile_data,created_at")
+          .eq("role", "player")
+          .order("full_name", { ascending: true, nullsFirst: false }),
+        supabase
+          .from("player_tags")
+          .select("player_id,color")
+          .eq("physio_id", user.id),
+      ]);
+      if (pRes.error) toast.error("Error cargando jugadores");
+      setPlayers((pRes.data ?? []) as Player[]);
+      const map: Record<string, TagColor> = {};
+      ((tRes.data ?? []) as { player_id: string; color: TagColor }[]).forEach((t) => {
+        map[t.player_id] = t.color;
+      });
+      setTags(map);
       setLoading(false);
     })();
   }, [user?.id]);
+
+  const setTag = async (playerId: string, color: TagColor) => {
+    if (!user) return;
+    const prev = tags[playerId];
+    setTags((t) => ({ ...t, [playerId]: color }));
+    setOpenTagFor(null);
+    const { error } = await supabase
+      .from("player_tags")
+      .upsert(
+        { physio_id: user.id, player_id: playerId, color },
+        { onConflict: "physio_id,player_id" },
+      );
+    if (error) {
+      setTags((t) => {
+        const copy = { ...t };
+        if (prev) copy[playerId] = prev;
+        else delete copy[playerId];
+        return copy;
+      });
+      toast.error("No se pudo guardar el color");
+    }
+  };
+
+  const clearTag = async (playerId: string) => {
+    if (!user) return;
+    const prev = tags[playerId];
+    setTags((t) => {
+      const copy = { ...t };
+      delete copy[playerId];
+      return copy;
+    });
+    setOpenTagFor(null);
+    const { error } = await supabase
+      .from("player_tags")
+      .delete()
+      .eq("physio_id", user.id)
+      .eq("player_id", playerId);
+    if (error) {
+      if (prev) setTags((t) => ({ ...t, [playerId]: prev }));
+      toast.error("No se pudo quitar el color");
+    }
+  };
 
   const filtered = useMemo(() => {
     const t = q.trim().toLowerCase();
@@ -114,27 +178,81 @@ function PlayersList() {
         />
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
-          {filtered.map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => navigate({ to: "/fisio/jugadores", search: { id: p.id } })}
-              className="group flex items-center gap-3 rounded-xl border border-border bg-card p-3.5 text-left transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-sm"
-            >
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <User className="h-5 w-5" />
+          {filtered.map((p) => {
+            const current = tags[p.id];
+            const currentMeta = TAG_COLORS.find((c) => c.value === current);
+            return (
+              <div
+                key={p.id}
+                className="group relative flex items-center gap-3 rounded-xl border border-border bg-card p-3.5 transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-sm"
+              >
+                <button
+                  type="button"
+                  onClick={() => navigate({ to: "/fisio/jugadores", search: { id: p.id } })}
+                  className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                >
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <User className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-semibold">{p.full_name || p.email}</div>
+                    <div className="truncate text-xs text-muted-foreground">{p.email}</div>
+                  </div>
+                </button>
+
+                <div className="relative shrink-0">
+                  <button
+                    type="button"
+                    aria-label="Cambiar color"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenTagFor((cur) => (cur === p.id ? null : p.id));
+                    }}
+                    className={`h-6 w-6 rounded-full border border-border transition ${
+                      currentMeta ? currentMeta.dot : "bg-muted"
+                    } ${openTagFor === p.id ? "ring-2 ring-offset-1 ring-primary" : ""}`}
+                  />
+                  {openTagFor === p.id && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-10"
+                        onClick={() => setOpenTagFor(null)}
+                      />
+                      <div className="absolute right-0 top-8 z-20 flex items-center gap-1.5 rounded-lg border border-border bg-popover p-1.5 shadow-md">
+                        {TAG_COLORS.map((c) => (
+                          <button
+                            key={c.value}
+                            type="button"
+                            aria-label={c.label}
+                            title={c.label}
+                            onClick={() => setTag(p.id, c.value)}
+                            className={`h-6 w-6 rounded-full ${c.dot} ${
+                              current === c.value ? "ring-2 ring-offset-1 ring-primary" : ""
+                            }`}
+                          />
+                        ))}
+                        {current && (
+                          <button
+                            type="button"
+                            onClick={() => clearTag(p.id)}
+                            className="ml-1 rounded px-1.5 py-0.5 text-[11px] text-muted-foreground hover:bg-muted"
+                          >
+                            Quitar
+                          </button>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
-              <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-semibold">{p.full_name || p.email}</div>
-                <div className="truncate text-xs text-muted-foreground">{p.email}</div>
-              </div>
-            </button>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
   );
 }
+
 
 /* ---------- DETAIL ---------- */
 
