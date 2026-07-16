@@ -5,7 +5,7 @@ import { readPrefs } from "@/components/NotificationSettings";
 
 export interface NotificationItem {
   id: string;
-  kind: "message" | "appointment" | "form" | "document" | "invoice";
+  kind: "message" | "appointment" | "form" | "document" | "invoice" | "treatment";
   title: string;
   body: string;
   href: string;
@@ -18,6 +18,7 @@ export interface Counters {
   forms: number;        // unfinished assignments (player only)
   documents: number;    // received in last 7d (proxy: created_at > last seen)
   invoices: number;     // sent unpaid (physio only)
+  treatments: number;   // completed appointments without session (physio only)
 }
 
 interface Ctx {
@@ -29,7 +30,7 @@ interface Ctx {
 
 const NotificationsContext = createContext<Ctx | undefined>(undefined);
 
-const EMPTY: Counters = { messages: 0, appointments: 0, forms: 0, documents: 0, invoices: 0 };
+const EMPTY: Counters = { messages: 0, appointments: 0, forms: 0, documents: 0, invoices: 0, treatments: 0 };
 
 const SEEN_KEY = "wfy:notif:lastSeen";
 
@@ -173,6 +174,36 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       }));
     }
 
+    // Treatments pending (physio): completed appointments without a session
+    if (prefs.treatments && isPhysio) {
+      const { data: completed } = await supabase
+        .from("appointments")
+        .select("id, scheduled_at, player_id, updated_at")
+        .eq("physio_id", profile.id)
+        .eq("status", "completed")
+        .order("scheduled_at", { ascending: false })
+        .limit(30);
+      const ids = (completed ?? []).map((a) => a.id);
+      let withSession = new Set<string>();
+      if (ids.length) {
+        const { data: sess } = await supabase
+          .from("sessions")
+          .select("appointment_id")
+          .in("appointment_id", ids);
+        withSession = new Set((sess ?? []).map((s: any) => s.appointment_id as string));
+      }
+      const pending = (completed ?? []).filter((a) => !withSession.has(a.id));
+      next.treatments = pending.length;
+      pending.slice(0, 10).forEach((a) => items.push({
+        id: `treat-${a.id}`,
+        kind: "treatment",
+        title: "Rellena el tratamiento",
+        body: new Date(a.scheduled_at).toLocaleString("es-ES"),
+        href: `/fisio/historico`,
+        created_at: a.updated_at ?? a.scheduled_at,
+      }));
+    }
+
     items.sort((a, b) => b.created_at.localeCompare(a.created_at));
     setCounters(next);
     setRecent(items.slice(0, 15));
@@ -189,13 +220,14 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       .on("postgres_changes", { event: "*", schema: "public", table: "documents", filter: `recipient_id=eq.${profile.id}` }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "form_assignments", filter: isPlayer ? `player_id=eq.${profile.id}` : undefined }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "invoices", filter: isPhysio ? `physio_id=eq.${profile.id}` : `player_id=eq.${profile.id}` }, refresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "sessions" }, refresh)
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile?.id, profile?.role, JSON.stringify((profile?.profile_data as any)?.notifications ?? {})]);
 
-  const total = counters.messages + counters.appointments + counters.forms + counters.documents + counters.invoices;
+  const total = counters.messages + counters.appointments + counters.forms + counters.documents + counters.invoices + counters.treatments;
 
   const markAllSeen = () => {
     const now = new Date().toISOString();
