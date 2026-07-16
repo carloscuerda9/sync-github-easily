@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Bell, MessageSquare, Calendar, ClipboardList, FileText, Receipt } from "lucide-react";
+import { Bell, MessageSquare, Calendar, ClipboardList, FileText, Receipt, HeartPulse } from "lucide-react";
 import { toast } from "sonner";
 
 export interface NotificationPrefs {
@@ -14,6 +14,7 @@ export interface NotificationPrefs {
   forms: boolean;
   documents: boolean;
   invoices: boolean;
+  treatments: boolean;
 }
 
 export const DEFAULT_NOTIFICATION_PREFS: NotificationPrefs = {
@@ -22,6 +23,7 @@ export const DEFAULT_NOTIFICATION_PREFS: NotificationPrefs = {
   forms: true,
   documents: true,
   invoices: true,
+  treatments: true,
 };
 
 export function readPrefs(profileData: Record<string, unknown> | null | undefined): NotificationPrefs {
@@ -33,6 +35,7 @@ const ITEMS: Array<{ key: keyof NotificationPrefs; label: string; desc: string; 
   { key: "messages", label: "Nuevos mensajes", desc: "Te avisamos cuando recibas un mensaje.", icon: MessageSquare },
   { key: "appointments", label: "Citas", desc: "Confirmaciones y nuevas solicitudes de cita.", icon: Calendar },
   { key: "forms", label: "Formularios", desc: "Cuando te asignen un cuestionario nuevo.", icon: ClipboardList, rolesOnly: "player" },
+  { key: "treatments", label: "Tratamientos pendientes", desc: "Aviso para rellenar el tratamiento tras una cita completada.", icon: HeartPulse, rolesOnly: "physio" },
   { key: "documents", label: "Documentos", desc: "Cuando recibas un documento nuevo.", icon: FileText },
   { key: "invoices", label: "Facturación", desc: "Facturas emitidas o pendientes de cobro.", icon: Receipt },
 ];
