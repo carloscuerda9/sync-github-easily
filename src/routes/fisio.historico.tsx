@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,10 @@ import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { HeartPulse, ClipboardList, Plus, User, Clock, CheckCircle2, AlertCircle, Pencil } from "lucide-react";
+import {
+  ClipboardList, Plus, User, Clock, CheckCircle2, AlertCircle, Pencil,
+  Ban, Stethoscope, FileText, Upload, Download, Trash2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { formatDateTime, TYPE_LABEL, type AppointmentType } from "@/lib/appointments";
 
@@ -35,24 +38,21 @@ interface SessionRow {
   duration_actual: number | null;
 }
 interface Player { id: string; full_name: string | null; email: string }
-interface Injury {
+
+type LeaveType = "deportiva" | "medica";
+interface Leave {
   id: string;
   player_id: string;
-  injury_date: string;
-  body_part: string;
-  injury_type: string;
-  severity: string | null;
-  treatment: string | null;
-  recovery_days: number | null;
-  notes: string | null;
+  physio_id: string;
+  type: LeaveType;
+  reason: string | null;
+  document_url: string | null;
+  start_date: string;
+  end_date: string | null;
+  active: boolean;
+  created_at: string;
   player?: Player | null;
 }
-
-const SEVERITIES = [
-  { value: "leve", label: "Leve" },
-  { value: "moderada", label: "Moderada" },
-  { value: "grave", label: "Grave" },
-];
 
 function FisioHistorico() {
   return (
@@ -60,7 +60,7 @@ function FisioHistorico() {
       <div className="mb-6">
         <h1 className="text-2xl font-extrabold tracking-tight">Histórico</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Registra tratamientos por cita y mantén el listado de lesiones.
+          Tratamientos por cita y gestión de bajas deportivas y médicas.
         </p>
       </div>
 
@@ -69,16 +69,22 @@ function FisioHistorico() {
           <TabsTrigger value="treatments">
             <ClipboardList className="mr-1 h-3.5 w-3.5" /> Tratamientos
           </TabsTrigger>
-          <TabsTrigger value="injuries">
-            <HeartPulse className="mr-1 h-3.5 w-3.5" /> Lesiones
+          <TabsTrigger value="deportiva">
+            <Ban className="mr-1 h-3.5 w-3.5" /> Baja deportiva
+          </TabsTrigger>
+          <TabsTrigger value="medica">
+            <Stethoscope className="mr-1 h-3.5 w-3.5" /> Baja médica
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="treatments" className="mt-4">
           <TreatmentsTab />
         </TabsContent>
-        <TabsContent value="injuries" className="mt-4">
-          <InjuriesTab />
+        <TabsContent value="deportiva" className="mt-4">
+          <LeavesTab type="deportiva" />
+        </TabsContent>
+        <TabsContent value="medica" className="mt-4">
+          <LeavesTab type="medica" />
         </TabsContent>
       </Tabs>
     </div>
@@ -252,159 +258,231 @@ function TreatmentCard({ a, onSaved }: { a: Appt; onSaved: () => void }) {
   );
 }
 
-/* ---------------- Injuries ---------------- */
+/* ---------------- Leaves (deportiva / médica) ---------------- */
 
-function InjuriesTab() {
+const LEAVE_META: Record<LeaveType, { title: string; empty: string; docRequired: boolean; reasonRequired: boolean; icon: React.ReactNode }> = {
+  deportiva: {
+    title: "Baja deportiva",
+    empty: "Sin bajas deportivas registradas.",
+    docRequired: false,
+    reasonRequired: true,
+    icon: <Ban className="h-8 w-8" />,
+  },
+  medica: {
+    title: "Baja médica",
+    empty: "Sin bajas médicas registradas.",
+    docRequired: false,
+    reasonRequired: false,
+    icon: <Stethoscope className="h-8 w-8" />,
+  },
+};
+
+function LeavesTab({ type }: { type: LeaveType }) {
   const { user, club } = useAuth();
-  const [injuries, setInjuries] = useState<Injury[]>([]);
+  const [leaves, setLeaves] = useState<Leave[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<Injury | null>(null);
+  const [editing, setEditing] = useState<Leave | null>(null);
 
   const load = async () => {
     if (!user || !club) return;
     setLoading(true);
-    const [{ data: pData }, { data: iData }] = await Promise.all([
+    const [{ data: pData }, { data: lData }] = await Promise.all([
       supabase.from("profiles").select("id,full_name,email").eq("club_id", club.id).eq("role", "player"),
-      supabase.from("injuries").select("*").order("injury_date", { ascending: false }),
+      supabase.from("player_leaves").select("*").eq("type", type).order("start_date", { ascending: false }),
     ]);
     const pMap = new Map((pData ?? []).map((p: any) => [p.id, p as Player]));
-    const list = ((iData ?? []) as Injury[]).map((i) => ({ ...i, player: pMap.get(i.player_id) ?? null }));
+    const list = ((lData ?? []) as Leave[]).map((l) => ({ ...l, player: pMap.get(l.player_id) ?? null }));
     setPlayers((pData ?? []) as Player[]);
-    setInjuries(list);
+    setLeaves(list);
     setLoading(false);
   };
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [user?.id, club?.id]);
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [user?.id, club?.id, type]);
 
   const openNew = () => { setEditing(null); setOpen(true); };
-  const openEdit = (i: Injury) => { setEditing(i); setOpen(true); };
+  const openEdit = (l: Leave) => { setEditing(l); setOpen(true); };
+
+  const downloadDoc = async (path: string) => {
+    const { data, error } = await supabase.storage.from("documents").createSignedUrl(path, 60);
+    if (error || !data) return toast.error("No se pudo generar el enlace");
+    window.open(data.signedUrl, "_blank", "noopener");
+  };
+
+  const toggleActive = async (l: Leave) => {
+    const { error } = await supabase
+      .from("player_leaves")
+      .update({ active: !l.active, end_date: !l.active ? null : (l.end_date ?? new Date().toISOString().slice(0, 10)) })
+      .eq("id", l.id);
+    if (error) return toast.error("No se pudo actualizar");
+    toast.success(l.active ? "Baja finalizada" : "Baja reactivada");
+    load();
+  };
+
+  const meta = LEAVE_META[type];
 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">{injuries.length} lesión{injuries.length === 1 ? "" : "es"} registrada{injuries.length === 1 ? "" : "s"}</div>
-        <Button size="sm" onClick={openNew}><Plus className="mr-1 h-3.5 w-3.5" /> Nueva lesión</Button>
+        <div className="text-sm text-muted-foreground">
+          {leaves.length} registro{leaves.length === 1 ? "" : "s"} · {leaves.filter((l) => l.active).length} activa{leaves.filter((l) => l.active).length === 1 ? "" : "s"}
+        </div>
+        <Button size="sm" onClick={openNew}><Plus className="mr-1 h-3.5 w-3.5" /> Nueva {meta.title.toLowerCase()}</Button>
       </div>
 
-      {loading ? <Skeleton /> : injuries.length === 0 ? (
-        <Empty icon={<HeartPulse className="h-8 w-8" />} title="Sin lesiones" desc="Añade la primera lesión de un jugador." />
+      {loading ? <Skeleton /> : leaves.length === 0 ? (
+        <Empty icon={meta.icon} title={meta.title} desc={meta.empty} />
       ) : (
         <div className="space-y-2">
-          {injuries.map((i) => (
-            <div key={i.id} className="rounded-xl border border-border bg-card p-4">
+          {leaves.map((l) => (
+            <div key={l.id} className="rounded-xl border border-border bg-card p-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 text-sm font-semibold">
                     <User className="h-4 w-4 text-muted-foreground shrink-0" />
-                    <span className="truncate">{i.player?.full_name || i.player?.email || "Jugador"}</span>
-                  </div>
-                  <div className="mt-1 text-sm">
-                    <span className="font-medium">{i.body_part}</span> · {i.injury_type}
-                    {i.severity && <> · <span className="text-muted-foreground">{i.severity}</span></>}
+                    <span className="truncate">{l.player?.full_name || l.player?.email || "Jugador"}</span>
+                    <span className={`ml-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${l.active ? "bg-amber-100 text-amber-900 dark:bg-amber-500/20 dark:text-amber-200" : "bg-muted text-muted-foreground"}`}>
+                      {l.active ? "Activa" : "Finalizada"}
+                    </span>
                   </div>
                   <div className="mt-1 text-xs text-muted-foreground">
-                    {new Date(i.injury_date).toLocaleDateString("es-ES")}
-                    {i.recovery_days != null && <> · Recuperación estimada: {i.recovery_days} días</>}
+                    Desde {new Date(l.start_date).toLocaleDateString("es-ES")}
+                    {l.end_date && <> · hasta {new Date(l.end_date).toLocaleDateString("es-ES")}</>}
                   </div>
-                  {i.treatment && <p className="mt-2 line-clamp-2 whitespace-pre-wrap text-sm text-foreground/80"><span className="font-medium">Tratamiento: </span>{i.treatment}</p>}
-                  {i.notes && <p className="mt-1 line-clamp-2 whitespace-pre-wrap text-xs text-muted-foreground">{i.notes}</p>}
+                  {l.reason && <p className="mt-2 whitespace-pre-wrap text-sm text-foreground/80">{l.reason}</p>}
+                  {l.document_url && (
+                    <button
+                      type="button"
+                      onClick={() => downloadDoc(l.document_url!)}
+                      className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                    >
+                      <FileText className="h-3.5 w-3.5" /> Ver documento
+                    </button>
+                  )}
                 </div>
-                <Button size="sm" variant="outline" onClick={() => openEdit(i)}><Pencil className="mr-1 h-3.5 w-3.5" /> Editar</Button>
+                <div className="flex shrink-0 flex-col gap-1">
+                  <Button size="sm" variant="outline" onClick={() => openEdit(l)}><Pencil className="mr-1 h-3.5 w-3.5" /> Editar</Button>
+                  <Button size="sm" variant="ghost" onClick={() => toggleActive(l)}>
+                    {l.active ? "Finalizar" : "Reactivar"}
+                  </Button>
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      <InjuryDialog
+      <LeaveDialog
         open={open}
         onOpenChange={setOpen}
         editing={editing}
         players={players}
+        type={type}
         onSaved={load}
       />
     </div>
   );
 }
 
-function InjuryDialog({
-  open, onOpenChange, editing, players, onSaved,
+const MAX_BYTES = 20 * 1024 * 1024;
+
+function LeaveDialog({
+  open, onOpenChange, editing, players, type, onSaved,
 }: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
-  editing: Injury | null;
+  editing: Leave | null;
   players: Player[];
+  type: LeaveType;
   onSaved: () => void;
 }) {
   const { user } = useAuth();
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
     player_id: "",
-    injury_date: new Date().toISOString().slice(0, 10),
-    body_part: "",
-    injury_type: "",
-    severity: "leve",
-    treatment: "",
-    recovery_days: "",
-    notes: "",
+    start_date: new Date().toISOString().slice(0, 10),
+    end_date: "",
+    reason: "",
   });
+  const [file, setFile] = useState<File | null>(null);
+  const [existingDoc, setExistingDoc] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (open) {
       setForm(editing ? {
         player_id: editing.player_id,
-        injury_date: editing.injury_date,
-        body_part: editing.body_part,
-        injury_type: editing.injury_type,
-        severity: editing.severity ?? "leve",
-        treatment: editing.treatment ?? "",
-        recovery_days: editing.recovery_days != null ? String(editing.recovery_days) : "",
-        notes: editing.notes ?? "",
+        start_date: editing.start_date,
+        end_date: editing.end_date ?? "",
+        reason: editing.reason ?? "",
       } : {
         player_id: "",
-        injury_date: new Date().toISOString().slice(0, 10),
-        body_part: "",
-        injury_type: "",
-        severity: "leve",
-        treatment: "",
-        recovery_days: "",
-        notes: "",
+        start_date: new Date().toISOString().slice(0, 10),
+        end_date: "",
+        reason: "",
       });
+      setFile(null);
+      setExistingDoc(editing?.document_url ?? null);
+      if (fileRef.current) fileRef.current.value = "";
     }
   }, [open, editing]);
+
+  const removeExistingDoc = async () => {
+    if (!existingDoc) return;
+    await supabase.storage.from("documents").remove([existingDoc]);
+    setExistingDoc(null);
+  };
 
   const save = async () => {
     if (!user) return;
     if (!form.player_id) return toast.error("Selecciona un jugador");
-    if (!form.body_part.trim() || !form.injury_type.trim()) return toast.error("Completa zona y tipo de lesión");
+    if (type === "deportiva" && !form.reason.trim()) return toast.error("Añade el motivo de la baja");
+    if (file && file.size > MAX_BYTES) return toast.error("Máximo 20 MB por archivo");
+
     setSaving(true);
+    let docPath: string | null = existingDoc;
+    if (file) {
+      // remove old
+      if (existingDoc) await supabase.storage.from("documents").remove([existingDoc]);
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const path = `${form.player_id}/leaves/${Date.now()}-${safeName}`;
+      const up = await supabase.storage.from("documents").upload(path, file, {
+        cacheControl: "3600", upsert: false, contentType: file.type || undefined,
+      });
+      if (up.error) {
+        setSaving(false);
+        return toast.error("No se pudo subir el documento", { description: up.error.message });
+      }
+      docPath = path;
+    }
+
     const payload = {
       player_id: form.player_id,
       physio_id: user.id,
-      injury_date: form.injury_date,
-      body_part: form.body_part.trim(),
-      injury_type: form.injury_type.trim(),
-      severity: form.severity || null,
-      treatment: form.treatment.trim() || null,
-      recovery_days: form.recovery_days ? Number(form.recovery_days) : null,
-      notes: form.notes.trim() || null,
+      type,
+      reason: form.reason.trim() || null,
+      document_url: docPath,
+      start_date: form.start_date,
+      end_date: form.end_date || null,
+      active: true,
     };
     const { error } = editing
-      ? await supabase.from("injuries").update(payload).eq("id", editing.id)
-      : await supabase.from("injuries").insert(payload);
+      ? await supabase.from("player_leaves").update(payload).eq("id", editing.id)
+      : await supabase.from("player_leaves").insert(payload);
     setSaving(false);
     if (error) return toast.error(editing ? "No se pudo actualizar" : "No se pudo crear");
-    toast.success(editing ? "Lesión actualizada" : "Lesión registrada");
+    toast.success(editing ? "Baja actualizada" : "Baja registrada");
     onOpenChange(false);
     onSaved();
   };
+
+  const meta = LEAVE_META[type];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{editing ? "Editar lesión" : "Nueva lesión"}</DialogTitle>
+          <DialogTitle>{editing ? `Editar ${meta.title.toLowerCase()}` : `Nueva ${meta.title.toLowerCase()}`}</DialogTitle>
         </DialogHeader>
         <div className="space-y-3">
           <div>
@@ -420,45 +498,53 @@ function InjuryDialog({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label>Fecha *</Label>
-              <Input type="date" value={form.injury_date} onChange={(e) => setForm((f) => ({ ...f, injury_date: e.target.value }))} />
+              <Label>Fecha inicio *</Label>
+              <Input type="date" value={form.start_date} onChange={(e) => setForm((f) => ({ ...f, start_date: e.target.value }))} />
             </div>
             <div>
-              <Label>Gravedad</Label>
-              <Select value={form.severity} onValueChange={(v) => setForm((f) => ({ ...f, severity: v }))}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {SEVERITIES.map((s) => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label>Zona *</Label>
-              <Input value={form.body_part} onChange={(e) => setForm((f) => ({ ...f, body_part: e.target.value }))} placeholder="Ej.: Isquios der." />
-            </div>
-            <div>
-              <Label>Tipo *</Label>
-              <Input value={form.injury_type} onChange={(e) => setForm((f) => ({ ...f, injury_type: e.target.value }))} placeholder="Ej.: Contractura" />
+              <Label>Fecha fin</Label>
+              <Input type="date" value={form.end_date} onChange={(e) => setForm((f) => ({ ...f, end_date: e.target.value }))} />
             </div>
           </div>
           <div>
-            <Label>Días estimados de recuperación</Label>
-            <Input type="number" min={0} value={form.recovery_days} onChange={(e) => setForm((f) => ({ ...f, recovery_days: e.target.value }))} />
+            <Label>
+              {type === "deportiva" ? "Motivo *" : "Comentarios"}
+            </Label>
+            <Textarea
+              rows={4}
+              value={form.reason}
+              onChange={(e) => setForm((f) => ({ ...f, reason: e.target.value }))}
+              placeholder={type === "deportiva"
+                ? "Ej.: sobrecarga muscular, precaución tras lesión, decisión técnica..."
+                : "Comentarios sobre la baja médica..."}
+            />
           </div>
           <div>
-            <Label>Tratamiento</Label>
-            <Textarea rows={3} value={form.treatment} onChange={(e) => setForm((f) => ({ ...f, treatment: e.target.value }))} />
-          </div>
-          <div>
-            <Label>Notas</Label>
-            <Textarea rows={2} value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} />
+            <Label>Documento {type === "medica" ? "(PDF, informe médico...)" : "(opcional)"}</Label>
+            {existingDoc && !file && (
+              <div className="mb-2 flex items-center justify-between rounded-md border border-border bg-muted/40 px-2 py-1.5 text-xs">
+                <span className="inline-flex items-center gap-1 truncate"><FileText className="h-3.5 w-3.5" /> Documento actual</span>
+                <button type="button" onClick={removeExistingDoc} className="text-destructive hover:underline">
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <Input
+                ref={fileRef}
+                type="file"
+                accept="application/pdf,image/*"
+                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+              />
+              {file && <span className="text-xs text-muted-foreground truncate max-w-[8rem]">{file.name}</span>}
+            </div>
           </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>Cancelar</Button>
-          <Button onClick={save} disabled={saving}>{saving ? "Guardando..." : "Guardar"}</Button>
+          <Button onClick={save} disabled={saving}>
+            {saving ? "Guardando..." : (<><Upload className="mr-1 h-3.5 w-3.5" /> Guardar</>)}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
