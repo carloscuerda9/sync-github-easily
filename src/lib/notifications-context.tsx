@@ -5,7 +5,7 @@ import { readPrefs } from "@/components/NotificationSettings";
 
 export interface NotificationItem {
   id: string;
-  kind: "message" | "appointment" | "form" | "document" | "invoice";
+  kind: "message" | "appointment" | "form" | "document" | "invoice" | "treatment";
   title: string;
   body: string;
   href: string;
@@ -18,6 +18,7 @@ export interface Counters {
   forms: number;        // unfinished assignments (player only)
   documents: number;    // received in last 7d (proxy: created_at > last seen)
   invoices: number;     // sent unpaid (physio only)
+  treatments: number;   // completed appointments without session (physio only)
 }
 
 interface Ctx {
