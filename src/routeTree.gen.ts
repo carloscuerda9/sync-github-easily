@@ -28,6 +28,7 @@ import { Route as JugadorCitasRouteImport } from './routes/jugador.citas'
 import { Route as FisioPerfilRouteImport } from './routes/fisio.perfil'
 import { Route as FisioMensajesRouteImport } from './routes/fisio.mensajes'
 import { Route as FisioJugadoresRouteImport } from './routes/fisio.jugadores'
+import { Route as FisioHistoricoRouteImport } from './routes/fisio.historico'
 import { Route as FisioFormulariosRouteImport } from './routes/fisio.formularios'
 import { Route as FisioFacturacionRouteImport } from './routes/fisio.facturacion'
 import { Route as FisioDocumentosRouteImport } from './routes/fisio.documentos'
@@ -132,6 +133,11 @@ const FisioJugadoresRoute = FisioJugadoresRouteImport.update({
   path: '/jugadores',
   getParentRoute: () => FisioRoute,
 } as any)
+const FisioHistoricoRoute = FisioHistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
+  getParentRoute: () => FisioRoute,
+} as any)
 const FisioFormulariosRoute = FisioFormulariosRouteImport.update({
   id: '/formularios',
   path: '/formularios',
@@ -188,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/fisio/documentos': typeof FisioDocumentosRoute
   '/fisio/facturacion': typeof FisioFacturacionRoute
   '/fisio/formularios': typeof FisioFormulariosRoute
+  '/fisio/historico': typeof FisioHistoricoRoute
   '/fisio/jugadores': typeof FisioJugadoresRoute
   '/fisio/mensajes': typeof FisioMensajesRoute
   '/fisio/perfil': typeof FisioPerfilRoute
@@ -214,6 +221,7 @@ export interface FileRoutesByTo {
   '/fisio/documentos': typeof FisioDocumentosRoute
   '/fisio/facturacion': typeof FisioFacturacionRoute
   '/fisio/formularios': typeof FisioFormulariosRoute
+  '/fisio/historico': typeof FisioHistoricoRoute
   '/fisio/jugadores': typeof FisioJugadoresRoute
   '/fisio/mensajes': typeof FisioMensajesRoute
   '/fisio/perfil': typeof FisioPerfilRoute
@@ -244,6 +252,7 @@ export interface FileRoutesById {
   '/fisio/documentos': typeof FisioDocumentosRoute
   '/fisio/facturacion': typeof FisioFacturacionRoute
   '/fisio/formularios': typeof FisioFormulariosRoute
+  '/fisio/historico': typeof FisioHistoricoRoute
   '/fisio/jugadores': typeof FisioJugadoresRoute
   '/fisio/mensajes': typeof FisioMensajesRoute
   '/fisio/perfil': typeof FisioPerfilRoute
@@ -275,6 +284,7 @@ export interface FileRouteTypes {
     | '/fisio/documentos'
     | '/fisio/facturacion'
     | '/fisio/formularios'
+    | '/fisio/historico'
     | '/fisio/jugadores'
     | '/fisio/mensajes'
     | '/fisio/perfil'
@@ -301,6 +311,7 @@ export interface FileRouteTypes {
     | '/fisio/documentos'
     | '/fisio/facturacion'
     | '/fisio/formularios'
+    | '/fisio/historico'
     | '/fisio/jugadores'
     | '/fisio/mensajes'
     | '/fisio/perfil'
@@ -330,6 +341,7 @@ export interface FileRouteTypes {
     | '/fisio/documentos'
     | '/fisio/facturacion'
     | '/fisio/formularios'
+    | '/fisio/historico'
     | '/fisio/jugadores'
     | '/fisio/mensajes'
     | '/fisio/perfil'
@@ -489,6 +501,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FisioJugadoresRouteImport
       parentRoute: typeof FisioRoute
     }
+    '/fisio/historico': {
+      id: '/fisio/historico'
+      path: '/historico'
+      fullPath: '/fisio/historico'
+      preLoaderRoute: typeof FisioHistoricoRouteImport
+      parentRoute: typeof FisioRoute
+    }
     '/fisio/formularios': {
       id: '/fisio/formularios'
       path: '/formularios'
@@ -571,6 +590,7 @@ interface FisioRouteChildren {
   FisioDocumentosRoute: typeof FisioDocumentosRoute
   FisioFacturacionRoute: typeof FisioFacturacionRoute
   FisioFormulariosRoute: typeof FisioFormulariosRoute
+  FisioHistoricoRoute: typeof FisioHistoricoRoute
   FisioJugadoresRoute: typeof FisioJugadoresRoute
   FisioMensajesRoute: typeof FisioMensajesRoute
   FisioPerfilRoute: typeof FisioPerfilRoute
@@ -582,6 +602,7 @@ const FisioRouteChildren: FisioRouteChildren = {
   FisioDocumentosRoute: FisioDocumentosRoute,
   FisioFacturacionRoute: FisioFacturacionRoute,
   FisioFormulariosRoute: FisioFormulariosRoute,
+  FisioHistoricoRoute: FisioHistoricoRoute,
   FisioJugadoresRoute: FisioJugadoresRoute,
   FisioMensajesRoute: FisioMensajesRoute,
   FisioPerfilRoute: FisioPerfilRoute,
