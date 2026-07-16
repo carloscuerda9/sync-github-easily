@@ -226,7 +226,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile?.id, profile?.role, JSON.stringify((profile?.profile_data as any)?.notifications ?? {})]);
 
-  const total = counters.messages + counters.appointments + counters.forms + counters.documents + counters.invoices;
+  const total = counters.messages + counters.appointments + counters.forms + counters.documents + counters.invoices + counters.treatments;
 
   const markAllSeen = () => {
     const now = new Date().toISOString();
