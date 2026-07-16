@@ -174,6 +174,36 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       }));
     }
 
+    // Treatments pending (physio): completed appointments without a session
+    if (prefs.treatments && isPhysio) {
+      const { data: completed } = await supabase
+        .from("appointments")
+        .select("id, scheduled_at, player_id, updated_at")
+        .eq("physio_id", profile.id)
+        .eq("status", "completed")
+        .order("scheduled_at", { ascending: false })
+        .limit(30);
+      const ids = (completed ?? []).map((a) => a.id);
+      let withSession = new Set<string>();
+      if (ids.length) {
+        const { data: sess } = await supabase
+          .from("sessions")
+          .select("appointment_id")
+          .in("appointment_id", ids);
+        withSession = new Set((sess ?? []).map((s: any) => s.appointment_id as string));
+      }
+      const pending = (completed ?? []).filter((a) => !withSession.has(a.id));
+      next.treatments = pending.length;
+      pending.slice(0, 10).forEach((a) => items.push({
+        id: `treat-${a.id}`,
+        kind: "treatment",
+        title: "Rellena el tratamiento",
+        body: new Date(a.scheduled_at).toLocaleString("es-ES"),
+        href: `/fisio/historico`,
+        created_at: a.updated_at ?? a.scheduled_at,
+      }));
+    }
+
     items.sort((a, b) => b.created_at.localeCompare(a.created_at));
     setCounters(next);
     setRecent(items.slice(0, 15));
