@@ -220,6 +220,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       .on("postgres_changes", { event: "*", schema: "public", table: "documents", filter: `recipient_id=eq.${profile.id}` }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "form_assignments", filter: isPlayer ? `player_id=eq.${profile.id}` : undefined }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "invoices", filter: isPhysio ? `physio_id=eq.${profile.id}` : `player_id=eq.${profile.id}` }, refresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "sessions" }, refresh)
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
