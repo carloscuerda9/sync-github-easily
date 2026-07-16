@@ -30,7 +30,7 @@ interface Ctx {
 
 const NotificationsContext = createContext<Ctx | undefined>(undefined);
 
-const EMPTY: Counters = { messages: 0, appointments: 0, forms: 0, documents: 0, invoices: 0 };
+const EMPTY: Counters = { messages: 0, appointments: 0, forms: 0, documents: 0, invoices: 0, treatments: 0 };
 
 const SEEN_KEY = "wfy:notif:lastSeen";
 
