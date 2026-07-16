@@ -407,6 +407,48 @@ export type Database = {
           },
         ]
       }
+      player_leaves: {
+        Row: {
+          active: boolean
+          created_at: string
+          document_url: string | null
+          end_date: string | null
+          id: string
+          physio_id: string
+          player_id: string
+          reason: string | null
+          start_date: string
+          type: Database["public"]["Enums"]["leave_type"]
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          document_url?: string | null
+          end_date?: string | null
+          id?: string
+          physio_id: string
+          player_id: string
+          reason?: string | null
+          start_date?: string
+          type: Database["public"]["Enums"]["leave_type"]
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          document_url?: string | null
+          end_date?: string | null
+          id?: string
+          physio_id?: string
+          player_id?: string
+          reason?: string | null
+          start_date?: string
+          type?: Database["public"]["Enums"]["leave_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           club_id: string | null
@@ -639,6 +681,7 @@ export type Database = {
         | "rejected"
       appointment_type: "in_person" | "home_visit" | "sports_event"
       invoice_status: "draft" | "sent" | "paid"
+      leave_type: "deportiva" | "medica"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -777,6 +820,7 @@ export const Constants = {
       ],
       appointment_type: ["in_person", "home_visit", "sports_event"],
       invoice_status: ["draft", "sent", "paid"],
+      leave_type: ["deportiva", "medica"],
     },
   },
 } as const
