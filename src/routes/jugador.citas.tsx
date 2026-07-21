@@ -12,10 +12,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Plus, User, Clock, MapPin, X, CalendarOff } from "lucide-react";
 import { toast } from "sonner";
 import {
-  STATUS_LABEL, STATUS_COLOR, TYPE_LABEL, DURATIONS,
+  STATUS_LABEL, STATUS_COLOR, TYPE_LABEL, DURATIONS, TIME_SLOTS,
   type AppointmentStatus, type AppointmentType,
   formatDateTime,
 } from "@/lib/appointments";
+import { Calendar as CalendarUI } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/jugador/citas")({ component: PlayerAppointments });
 
