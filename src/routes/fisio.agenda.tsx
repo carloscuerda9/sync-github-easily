@@ -71,7 +71,51 @@ function PhysioAgenda() {
     setLoading(false);
   };
 
+  const loadPlayers = async () => {
+    if (!club?.id) return;
+    const { data } = await supabase
+      .from("profiles")
+      .select("id,full_name,email")
+      .eq("role", "player")
+      .eq("status", "approved")
+      .eq("club_id", club.id)
+      .order("full_name", { ascending: true });
+    setPlayers((data ?? []) as PlayerLite[]);
+  };
+
   useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [user?.id]);
+  useEffect(() => { loadPlayers(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [club?.id]);
+
+  const resetForm = () => {
+    setPlayerId(""); setDate(undefined); setTime(""); setDuration(60); setType("in_person"); setNotes("");
+  };
+
+  const createAppt = async () => {
+    if (!user) return;
+    if (!playerId) return toast.error("Elige un jugador");
+    if (!date || !time) return toast.error("Elige fecha y hora");
+    const [hh, mm] = time.split(":").map(Number);
+    const scheduledAt = new Date(date);
+    scheduledAt.setHours(hh, mm, 0, 0);
+    if (scheduledAt < new Date()) return toast.error("La cita debe ser en el futuro");
+    setSubmitting(true);
+    const { error } = await supabase.from("appointments").insert({
+      player_id: playerId,
+      physio_id: user.id,
+      scheduled_at: scheduledAt.toISOString(),
+      duration_minutes: duration,
+      type,
+      status: "confirmed",
+      notes: notes.trim() || null,
+    });
+    setSubmitting(false);
+    if (error) return toast.error("No se pudo crear la cita", { description: error.message });
+    toast.success("Cita creada");
+    setOpen(false);
+    resetForm();
+    load();
+  };
+
 
   const update = async (id: string, status: AppointmentStatus, label: string) => {
     const { error } = await supabase.from("appointments").update({ status }).eq("id", id);
