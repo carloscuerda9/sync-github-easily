@@ -155,10 +155,86 @@ function PhysioAgenda() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <div className="mb-6">
-        <h1 className="text-2xl font-extrabold tracking-tight">Agenda</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Solicitudes y citas de tus jugadores.</p>
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-extrabold tracking-tight">Agenda</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Solicitudes y citas de tus jugadores.</p>
+        </div>
+        <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
+          <DialogTrigger asChild>
+            <Button><Plus className="mr-2 h-4 w-4" /> Nueva cita</Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md">
+            <DialogHeader><DialogTitle>Reservar cita</DialogTitle></DialogHeader>
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label>Jugador</Label>
+                <Select value={playerId} onValueChange={setPlayerId}>
+                  <SelectTrigger><SelectValue placeholder="Selecciona un jugador" /></SelectTrigger>
+                  <SelectContent>
+                    {players.length === 0 && <div className="px-2 py-3 text-sm text-muted-foreground">No hay jugadores en tu club.</div>}
+                    {players.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>{p.full_name || p.email}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label>Fecha</Label>
+                <div className="rounded-lg border border-border">
+                  <CalendarUI
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    disabled={{ before: today }}
+                    className={cn("p-3 pointer-events-auto mx-auto")}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="grid gap-2">
+                  <Label>Hora</Label>
+                  <Select value={time} onValueChange={setTime}>
+                    <SelectTrigger><SelectValue placeholder="Selecciona hora" /></SelectTrigger>
+                    <SelectContent>
+                      {TIME_SLOTS.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label>Duración</Label>
+                  <Select value={String(duration)} onValueChange={(v) => setDuration(Number(v))}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {DURATIONS.map((d) => <SelectItem key={d} value={String(d)}>{d} min</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <Label>Tipo</Label>
+                <Select value={type} onValueChange={(v) => setType(v as AppointmentType)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {(Object.keys(TYPE_LABEL) as AppointmentType[]).map((t) => (
+                      <SelectItem key={t} value={t}>{TYPE_LABEL[t]}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label>Notas (opcional)</Label>
+                <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="ghost" onClick={() => setOpen(false)}>Cancelar</Button>
+              <Button onClick={createAppt} disabled={submitting}>{submitting ? "Creando…" : "Crear cita"}</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
+
 
       <Tabs defaultValue="calendar">
         <TabsList>
