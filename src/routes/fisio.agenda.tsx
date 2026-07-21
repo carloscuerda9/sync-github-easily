@@ -32,10 +32,24 @@ interface Appointment {
   player?: { full_name: string | null; email: string } | null;
 }
 
+interface PlayerLite { id: string; full_name: string | null; email: string }
+
 function PhysioAgenda() {
-  const { user } = useAuth();
+  const { user, club } = useAuth();
   const [appts, setAppts] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [players, setPlayers] = useState<PlayerLite[]>([]);
+
+  // form
+  const [open, setOpen] = useState(false);
+  const [playerId, setPlayerId] = useState<string>("");
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [time, setTime] = useState<string>("");
+  const [duration, setDuration] = useState<number>(60);
+  const [type, setType] = useState<AppointmentType>("in_person");
+  const [notes, setNotes] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const today = new Date(); today.setHours(0,0,0,0);
 
   const load = async () => {
     if (!user) return;
