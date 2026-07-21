@@ -88,14 +88,16 @@ function PlayerAppointments() {
   useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [user?.id]);
 
   const resetForm = () => {
-    setPhysioId(""); setDate(""); setTime(""); setDuration(60); setType("in_person"); setNotes("");
+    setPhysioId(""); setDate(undefined); setTime(""); setDuration(60); setType("in_person"); setNotes("");
   };
 
   const submit = async () => {
     if (!user) return;
     if (!physioId) return toast.error("Elige un fisioterapeuta");
     if (!date || !time) return toast.error("Elige fecha y hora");
-    const scheduledAt = new Date(`${date}T${time}:00`);
+    const [hh, mm] = time.split(":").map(Number);
+    const scheduledAt = new Date(date);
+    scheduledAt.setHours(hh, mm, 0, 0);
     if (scheduledAt < new Date()) return toast.error("La cita debe ser en el futuro");
 
     setSubmitting(true);
