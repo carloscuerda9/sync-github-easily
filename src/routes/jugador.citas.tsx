@@ -166,18 +166,28 @@ function PlayerAppointments() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="grid gap-2">
-                  <Label>Fecha</Label>
-                  <Input type="date" min={todayStr} value={date} onChange={(e) => setDate(e.target.value)} />
-                </div>
-                <div className="grid gap-2">
-                  <Label>Hora</Label>
-                  <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+              <div className="grid gap-2">
+                <Label>Fecha</Label>
+                <div className="rounded-lg border border-border">
+                  <CalendarUI
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    disabled={{ before: today }}
+                    className={cn("p-3 pointer-events-auto mx-auto")}
+                  />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="grid gap-2">
+                  <Label>Hora</Label>
+                  <Select value={time} onValueChange={setTime}>
+                    <SelectTrigger><SelectValue placeholder="Selecciona hora" /></SelectTrigger>
+                    <SelectContent>
+                      {TIME_SLOTS.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
                   <Label>Duración</Label>
                   <Select value={String(duration)} onValueChange={(v) => setDuration(Number(v))}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
