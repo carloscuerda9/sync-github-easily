@@ -3,15 +3,21 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, User, Clock, MapPin, Check, X, CheckCircle2, CalendarOff, CalendarDays } from "lucide-react";
+import { Calendar, User, Clock, MapPin, Check, X, CheckCircle2, CalendarOff, CalendarDays, Plus } from "lucide-react";
 import { toast } from "sonner";
 import {
-  STATUS_LABEL, STATUS_COLOR, TYPE_LABEL,
+  STATUS_LABEL, STATUS_COLOR, TYPE_LABEL, DURATIONS, TIME_SLOTS,
   type AppointmentStatus, type AppointmentType,
   formatDateTime,
 } from "@/lib/appointments";
 import { AppointmentsCalendar, type AppointmentChanges } from "@/components/AppointmentsCalendar";
+import { Calendar as CalendarUI } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/fisio/agenda")({ component: PhysioAgenda });
 
@@ -26,10 +32,24 @@ interface Appointment {
   player?: { full_name: string | null; email: string } | null;
 }
 
+interface PlayerLite { id: string; full_name: string | null; email: string }
+
 function PhysioAgenda() {
-  const { user } = useAuth();
+  const { user, club } = useAuth();
   const [appts, setAppts] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [players, setPlayers] = useState<PlayerLite[]>([]);
+
+  // form
+  const [open, setOpen] = useState(false);
+  const [playerId, setPlayerId] = useState<string>("");
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [time, setTime] = useState<string>("");
+  const [duration, setDuration] = useState<number>(60);
+  const [type, setType] = useState<AppointmentType>("in_person");
+  const [notes, setNotes] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const today = new Date(); today.setHours(0,0,0,0);
 
   const load = async () => {
     if (!user) return;
@@ -51,7 +71,51 @@ function PhysioAgenda() {
     setLoading(false);
   };
 
+  const loadPlayers = async () => {
+    if (!club?.id) return;
+    const { data } = await supabase
+      .from("profiles")
+      .select("id,full_name,email")
+      .eq("role", "player")
+      .eq("status", "approved")
+      .eq("club_id", club.id)
+      .order("full_name", { ascending: true });
+    setPlayers((data ?? []) as PlayerLite[]);
+  };
+
   useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [user?.id]);
+  useEffect(() => { loadPlayers(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [club?.id]);
+
+  const resetForm = () => {
+    setPlayerId(""); setDate(undefined); setTime(""); setDuration(60); setType("in_person"); setNotes("");
+  };
+
+  const createAppt = async () => {
+    if (!user) return;
+    if (!playerId) return toast.error("Elige un jugador");
+    if (!date || !time) return toast.error("Elige fecha y hora");
+    const [hh, mm] = time.split(":").map(Number);
+    const scheduledAt = new Date(date);
+    scheduledAt.setHours(hh, mm, 0, 0);
+    if (scheduledAt < new Date()) return toast.error("La cita debe ser en el futuro");
+    setSubmitting(true);
+    const { error } = await supabase.from("appointments").insert({
+      player_id: playerId,
+      physio_id: user.id,
+      scheduled_at: scheduledAt.toISOString(),
+      duration_minutes: duration,
+      type,
+      status: "confirmed",
+      notes: notes.trim() || null,
+    });
+    setSubmitting(false);
+    if (error) return toast.error("No se pudo crear la cita", { description: error.message });
+    toast.success("Cita creada");
+    setOpen(false);
+    resetForm();
+    load();
+  };
+
 
   const update = async (id: string, status: AppointmentStatus, label: string) => {
     const { error } = await supabase.from("appointments").update({ status }).eq("id", id);
@@ -91,10 +155,86 @@ function PhysioAgenda() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <div className="mb-6">
-        <h1 className="text-2xl font-extrabold tracking-tight">Agenda</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Solicitudes y citas de tus jugadores.</p>
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-extrabold tracking-tight">Agenda</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Solicitudes y citas de tus jugadores.</p>
+        </div>
+        <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
+          <DialogTrigger asChild>
+            <Button><Plus className="mr-2 h-4 w-4" /> Nueva cita</Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md">
+            <DialogHeader><DialogTitle>Reservar cita</DialogTitle></DialogHeader>
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label>Jugador</Label>
+                <Select value={playerId} onValueChange={setPlayerId}>
+                  <SelectTrigger><SelectValue placeholder="Selecciona un jugador" /></SelectTrigger>
+                  <SelectContent>
+                    {players.length === 0 && <div className="px-2 py-3 text-sm text-muted-foreground">No hay jugadores en tu club.</div>}
+                    {players.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>{p.full_name || p.email}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label>Fecha</Label>
+                <div className="rounded-lg border border-border">
+                  <CalendarUI
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    disabled={{ before: today }}
+                    className={cn("p-3 pointer-events-auto mx-auto")}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="grid gap-2">
+                  <Label>Hora</Label>
+                  <Select value={time} onValueChange={setTime}>
+                    <SelectTrigger><SelectValue placeholder="Selecciona hora" /></SelectTrigger>
+                    <SelectContent>
+                      {TIME_SLOTS.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label>Duración</Label>
+                  <Select value={String(duration)} onValueChange={(v) => setDuration(Number(v))}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {DURATIONS.map((d) => <SelectItem key={d} value={String(d)}>{d} min</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <Label>Tipo</Label>
+                <Select value={type} onValueChange={(v) => setType(v as AppointmentType)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {(Object.keys(TYPE_LABEL) as AppointmentType[]).map((t) => (
+                      <SelectItem key={t} value={t}>{TYPE_LABEL[t]}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label>Notas (opcional)</Label>
+                <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="ghost" onClick={() => setOpen(false)}>Cancelar</Button>
+              <Button onClick={createAppt} disabled={submitting}>{submitting ? "Creando…" : "Crear cita"}</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
+
 
       <Tabs defaultValue="calendar">
         <TabsList>

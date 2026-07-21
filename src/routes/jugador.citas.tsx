@@ -12,10 +12,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Plus, User, Clock, MapPin, X, CalendarOff } from "lucide-react";
 import { toast } from "sonner";
 import {
-  STATUS_LABEL, STATUS_COLOR, TYPE_LABEL, DURATIONS,
+  STATUS_LABEL, STATUS_COLOR, TYPE_LABEL, DURATIONS, TIME_SLOTS,
   type AppointmentStatus, type AppointmentType,
   formatDateTime,
 } from "@/lib/appointments";
+import { Calendar as CalendarUI } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/jugador/citas")({ component: PlayerAppointments });
 
@@ -40,14 +42,14 @@ function PlayerAppointments() {
 
   // form
   const [physioId, setPhysioId] = useState<string>("");
-  const [date, setDate] = useState<string>("");
+  const [date, setDate] = useState<Date | undefined>(undefined);
   const [time, setTime] = useState<string>("");
   const [duration, setDuration] = useState<number>(60);
   const [type, setType] = useState<AppointmentType>("in_person");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const today = new Date(); today.setHours(0,0,0,0);
 
   const load = async () => {
     if (!user) return;
@@ -86,14 +88,16 @@ function PlayerAppointments() {
   useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [user?.id]);
 
   const resetForm = () => {
-    setPhysioId(""); setDate(""); setTime(""); setDuration(60); setType("in_person"); setNotes("");
+    setPhysioId(""); setDate(undefined); setTime(""); setDuration(60); setType("in_person"); setNotes("");
   };
 
   const submit = async () => {
     if (!user) return;
     if (!physioId) return toast.error("Elige un fisioterapeuta");
     if (!date || !time) return toast.error("Elige fecha y hora");
-    const scheduledAt = new Date(`${date}T${time}:00`);
+    const [hh, mm] = time.split(":").map(Number);
+    const scheduledAt = new Date(date);
+    scheduledAt.setHours(hh, mm, 0, 0);
     if (scheduledAt < new Date()) return toast.error("La cita debe ser en el futuro");
 
     setSubmitting(true);
@@ -162,17 +166,28 @@ function PlayerAppointments() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="grid gap-2">
-                  <Label>Fecha</Label>
-                  <Input type="date" min={todayStr} value={date} onChange={(e) => setDate(e.target.value)} />
-                </div>
-                <div className="grid gap-2">
-                  <Label>Hora</Label>
-                  <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+              <div className="grid gap-2">
+                <Label>Fecha</Label>
+                <div className="rounded-lg border border-border">
+                  <CalendarUI
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    disabled={{ before: today }}
+                    className={cn("p-3 pointer-events-auto mx-auto")}
+                  />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
+                <div className="grid gap-2">
+                  <Label>Hora</Label>
+                  <Select value={time} onValueChange={setTime}>
+                    <SelectTrigger><SelectValue placeholder="Selecciona hora" /></SelectTrigger>
+                    <SelectContent>
+                      {TIME_SLOTS.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
                 <div className="grid gap-2">
                   <Label>Duración</Label>
                   <Select value={String(duration)} onValueChange={(v) => setDuration(Number(v))}>
