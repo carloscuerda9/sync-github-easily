@@ -188,6 +188,7 @@ function PlayerAppointments() {
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="grid gap-2">
                   <Label>Duración</Label>
                   <Select value={String(duration)} onValueChange={(v) => setDuration(Number(v))}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
