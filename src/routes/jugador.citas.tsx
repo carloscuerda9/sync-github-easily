@@ -42,14 +42,14 @@ function PlayerAppointments() {
 
   // form
   const [physioId, setPhysioId] = useState<string>("");
-  const [date, setDate] = useState<string>("");
+  const [date, setDate] = useState<Date | undefined>(undefined);
   const [time, setTime] = useState<string>("");
   const [duration, setDuration] = useState<number>(60);
   const [type, setType] = useState<AppointmentType>("in_person");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const today = new Date(); today.setHours(0,0,0,0);
 
   const load = async () => {
     if (!user) return;
