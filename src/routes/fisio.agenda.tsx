@@ -3,15 +3,21 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, User, Clock, MapPin, Check, X, CheckCircle2, CalendarOff, CalendarDays } from "lucide-react";
+import { Calendar, User, Clock, MapPin, Check, X, CheckCircle2, CalendarOff, CalendarDays, Plus } from "lucide-react";
 import { toast } from "sonner";
 import {
-  STATUS_LABEL, STATUS_COLOR, TYPE_LABEL,
+  STATUS_LABEL, STATUS_COLOR, TYPE_LABEL, DURATIONS, TIME_SLOTS,
   type AppointmentStatus, type AppointmentType,
   formatDateTime,
 } from "@/lib/appointments";
 import { AppointmentsCalendar, type AppointmentChanges } from "@/components/AppointmentsCalendar";
+import { Calendar as CalendarUI } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/fisio/agenda")({ component: PhysioAgenda });
 
