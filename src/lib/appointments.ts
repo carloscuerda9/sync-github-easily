@@ -25,6 +25,17 @@ export const TYPE_LABEL: Record<AppointmentType, string> = {
 
 export const DURATIONS = [30, 45, 60, 75, 90] as const;
 
+// Franja horaria de reserva: 18:30 – 21:30 en pasos de 30 min
+export const TIME_SLOTS: string[] = (() => {
+  const slots: string[] = [];
+  for (let m = 18 * 60 + 30; m <= 21 * 60 + 30; m += 30) {
+    const h = Math.floor(m / 60);
+    const mm = m % 60;
+    slots.push(`${String(h).padStart(2, "0")}:${String(mm).padStart(2, "0")}`);
+  }
+  return slots;
+})();
+
 export function formatDateTime(iso: string): string {
   const d = new Date(iso);
   return d.toLocaleString("es-ES", {
