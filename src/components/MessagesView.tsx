@@ -48,10 +48,11 @@ export function MessagesView({ contactRole, emptyTitle, emptyDesc, subtitle }: P
   const loadContacts = async () => {
     if (!user) return;
     setLoadingContacts(true);
+    const roles = Array.isArray(contactRole) ? contactRole : [contactRole];
     const { data: profs, error } = await supabase
       .from("profiles")
       .select("id,full_name,email")
-      .eq("role", contactRole)
+      .in("role", roles)
       .eq("status", "approved");
     if (error) { toast.error("Error cargando contactos"); setLoadingContacts(false); return; }
 
