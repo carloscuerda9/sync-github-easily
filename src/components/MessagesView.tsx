@@ -175,7 +175,7 @@ export function MessagesView({ contactRole, emptyTitle, emptyDesc, subtitle }: P
     <div className="mx-auto max-w-5xl">
       <div className="mb-4">
         <h1 className="text-2xl font-extrabold tracking-tight">Mensajes</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Conversaciones dentro de {club?.name ?? "tu club"}.</p>
+        <p className="mt-1 text-sm text-muted-foreground">{subtitle ?? `Conversaciones dentro de ${club?.name ?? "tu club"}.`}</p>
       </div>
 
       <div className="grid h-[calc(100vh-220px)] grid-cols-1 overflow-hidden rounded-2xl border border-border bg-card md:grid-cols-[280px_1fr]">
