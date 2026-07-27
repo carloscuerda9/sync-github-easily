@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Plus, User, Clock, MapPin, X, CalendarOff } from "lucide-react";
 import { toast } from "sonner";
 import {
-  STATUS_LABEL, STATUS_COLOR, TYPE_LABEL, DURATIONS, TIME_SLOTS,
+  STATUS_LABEL, STATUS_COLOR, TYPE_LABEL, TIME_SLOTS,
   type AppointmentStatus, type AppointmentType,
   formatDateTime,
 } from "@/lib/appointments";
@@ -44,7 +44,7 @@ function PlayerAppointments() {
   const [physioId, setPhysioId] = useState<string>("");
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [time, setTime] = useState<string>("");
-  const [duration, setDuration] = useState<number>(60);
+  const duration = 60;
   const [type, setType] = useState<AppointmentType>("in_person");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -88,7 +88,7 @@ function PlayerAppointments() {
   useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [user?.id]);
 
   const resetForm = () => {
-    setPhysioId(""); setDate(undefined); setTime(""); setDuration(60); setType("in_person"); setNotes("");
+    setPhysioId(""); setDate(undefined); setTime(""); setType("in_person"); setNotes("");
   };
 
   const submit = async () => {
@@ -185,15 +185,6 @@ function PlayerAppointments() {
                     <SelectTrigger><SelectValue placeholder="Selecciona hora" /></SelectTrigger>
                     <SelectContent>
                       {TIME_SLOTS.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid gap-2">
-                  <Label>Duración</Label>
-                  <Select value={String(duration)} onValueChange={(v) => setDuration(Number(v))}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {DURATIONS.map((d) => <SelectItem key={d} value={String(d)}>{d} min</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
