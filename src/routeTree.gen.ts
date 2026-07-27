@@ -35,7 +35,6 @@ import { Route as FisioFacturacionRouteImport } from './routes/fisio.facturacion
 import { Route as FisioDocumentosRouteImport } from './routes/fisio.documentos'
 import { Route as FisioAgendaRouteImport } from './routes/fisio.agenda'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
-import { Route as AdminPreguntasRouteImport } from './routes/admin.preguntas'
 import { Route as AdminMensajesRouteImport } from './routes/admin.mensajes'
 import { Route as AdminFacturasRouteImport } from './routes/admin.facturas'
 import { Route as AdminCitasRouteImport } from './routes/admin.citas'
@@ -170,11 +169,6 @@ const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
   path: '/usuarios',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminPreguntasRoute = AdminPreguntasRouteImport.update({
-  id: '/preguntas',
-  path: '/preguntas',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminMensajesRoute = AdminMensajesRouteImport.update({
   id: '/mensajes',
   path: '/mensajes',
@@ -201,7 +195,6 @@ export interface FileRoutesByFullPath {
   '/admin/citas': typeof AdminCitasRoute
   '/admin/facturas': typeof AdminFacturasRoute
   '/admin/mensajes': typeof AdminMensajesRoute
-  '/admin/preguntas': typeof AdminPreguntasRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/fisio/agenda': typeof FisioAgendaRoute
   '/fisio/documentos': typeof FisioDocumentosRoute
@@ -230,7 +223,6 @@ export interface FileRoutesByTo {
   '/admin/citas': typeof AdminCitasRoute
   '/admin/facturas': typeof AdminFacturasRoute
   '/admin/mensajes': typeof AdminMensajesRoute
-  '/admin/preguntas': typeof AdminPreguntasRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/fisio/agenda': typeof FisioAgendaRoute
   '/fisio/documentos': typeof FisioDocumentosRoute
@@ -263,7 +255,6 @@ export interface FileRoutesById {
   '/admin/citas': typeof AdminCitasRoute
   '/admin/facturas': typeof AdminFacturasRoute
   '/admin/mensajes': typeof AdminMensajesRoute
-  '/admin/preguntas': typeof AdminPreguntasRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/fisio/agenda': typeof FisioAgendaRoute
   '/fisio/documentos': typeof FisioDocumentosRoute
@@ -297,7 +288,6 @@ export interface FileRouteTypes {
     | '/admin/citas'
     | '/admin/facturas'
     | '/admin/mensajes'
-    | '/admin/preguntas'
     | '/admin/usuarios'
     | '/fisio/agenda'
     | '/fisio/documentos'
@@ -326,7 +316,6 @@ export interface FileRouteTypes {
     | '/admin/citas'
     | '/admin/facturas'
     | '/admin/mensajes'
-    | '/admin/preguntas'
     | '/admin/usuarios'
     | '/fisio/agenda'
     | '/fisio/documentos'
@@ -358,7 +347,6 @@ export interface FileRouteTypes {
     | '/admin/citas'
     | '/admin/facturas'
     | '/admin/mensajes'
-    | '/admin/preguntas'
     | '/admin/usuarios'
     | '/fisio/agenda'
     | '/fisio/documentos'
@@ -574,13 +562,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsuariosRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/preguntas': {
-      id: '/admin/preguntas'
-      path: '/preguntas'
-      fullPath: '/admin/preguntas'
-      preLoaderRoute: typeof AdminPreguntasRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/mensajes': {
       id: '/admin/mensajes'
       path: '/mensajes'
@@ -609,7 +590,6 @@ interface AdminRouteChildren {
   AdminCitasRoute: typeof AdminCitasRoute
   AdminFacturasRoute: typeof AdminFacturasRoute
   AdminMensajesRoute: typeof AdminMensajesRoute
-  AdminPreguntasRoute: typeof AdminPreguntasRoute
   AdminUsuariosRoute: typeof AdminUsuariosRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -618,7 +598,6 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCitasRoute: AdminCitasRoute,
   AdminFacturasRoute: AdminFacturasRoute,
   AdminMensajesRoute: AdminMensajesRoute,
-  AdminPreguntasRoute: AdminPreguntasRoute,
   AdminUsuariosRoute: AdminUsuariosRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
