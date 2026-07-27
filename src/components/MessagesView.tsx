@@ -25,13 +25,15 @@ interface Msg {
 }
 
 interface Props {
-  /** role we're chatting WITH (the other side) */
-  contactRole: "physio" | "player";
+  /** role(s) we're chatting WITH (the other side) */
+  contactRole: "physio" | "player" | Array<"physio" | "player">;
   emptyTitle: string;
   emptyDesc: string;
+  /** optional subtitle under the title */
+  subtitle?: string;
 }
 
-export function MessagesView({ contactRole, emptyTitle, emptyDesc }: Props) {
+export function MessagesView({ contactRole, emptyTitle, emptyDesc, subtitle }: Props) {
   const { user, club } = useAuth();
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [active, setActive] = useState<string | null>(null);
