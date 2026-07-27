@@ -189,15 +189,6 @@ function PlayerAppointments() {
                   </Select>
                 </div>
                 <div className="grid gap-2">
-                  <Label>Duración</Label>
-                  <Select value={String(duration)} onValueChange={(v) => setDuration(Number(v))}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {DURATIONS.map((d) => <SelectItem key={d} value={String(d)}>{d} min</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid gap-2">
                   <Label>Tipo</Label>
                   <Select value={type} onValueChange={(v) => setType(v as AppointmentType)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
