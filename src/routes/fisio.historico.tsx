@@ -98,6 +98,8 @@ function TreatmentsTab() {
   const [appts, setAppts] = useState<Appt[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"pending" | "all">("pending");
+  const [playerFilter, setPlayerFilter] = useState<string>("all");
+
 
   const load = async () => {
     if (!user) return;
