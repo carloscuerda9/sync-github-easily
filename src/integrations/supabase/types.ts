@@ -295,6 +295,69 @@ export type Database = {
           },
         ]
       }
+      injury_reports: {
+        Row: {
+          action_type: string
+          attended_by: string | null
+          body_part: string
+          can_continue: boolean
+          club_id: string | null
+          context: string
+          created_at: string
+          file_type: string | null
+          file_url: string | null
+          id: string
+          match_location: string | null
+          moment: string
+          observations: string | null
+          player_id: string
+          previous_same_injury: boolean
+          reviewed: boolean
+          updated_at: string
+          was_attended: boolean
+        }
+        Insert: {
+          action_type: string
+          attended_by?: string | null
+          body_part: string
+          can_continue?: boolean
+          club_id?: string | null
+          context: string
+          created_at?: string
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          match_location?: string | null
+          moment: string
+          observations?: string | null
+          player_id: string
+          previous_same_injury?: boolean
+          reviewed?: boolean
+          updated_at?: string
+          was_attended?: boolean
+        }
+        Update: {
+          action_type?: string
+          attended_by?: string | null
+          body_part?: string
+          can_continue?: boolean
+          club_id?: string | null
+          context?: string
+          created_at?: string
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          match_location?: string | null
+          moment?: string
+          observations?: string | null
+          player_id?: string
+          previous_same_injury?: boolean
+          reviewed?: boolean
+          updated_at?: string
+          was_attended?: boolean
+        }
+        Relationships: []
+      }
       invoices: {
         Row: {
           amount: number
