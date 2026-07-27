@@ -25,13 +25,15 @@ interface Msg {
 }
 
 interface Props {
-  /** role we're chatting WITH (the other side) */
-  contactRole: "physio" | "player";
+  /** role(s) we're chatting WITH (the other side) */
+  contactRole: "physio" | "player" | Array<"physio" | "player">;
   emptyTitle: string;
   emptyDesc: string;
+  /** optional subtitle under the title */
+  subtitle?: string;
 }
 
-export function MessagesView({ contactRole, emptyTitle, emptyDesc }: Props) {
+export function MessagesView({ contactRole, emptyTitle, emptyDesc, subtitle }: Props) {
   const { user, club } = useAuth();
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [active, setActive] = useState<string | null>(null);
@@ -46,10 +48,11 @@ export function MessagesView({ contactRole, emptyTitle, emptyDesc }: Props) {
   const loadContacts = async () => {
     if (!user) return;
     setLoadingContacts(true);
+    const roles = Array.isArray(contactRole) ? contactRole : [contactRole];
     const { data: profs, error } = await supabase
       .from("profiles")
       .select("id,full_name,email")
-      .eq("role", contactRole)
+      .in("role", roles)
       .eq("status", "approved");
     if (error) { toast.error("Error cargando contactos"); setLoadingContacts(false); return; }
 
@@ -172,7 +175,7 @@ export function MessagesView({ contactRole, emptyTitle, emptyDesc }: Props) {
     <div className="mx-auto max-w-5xl">
       <div className="mb-4">
         <h1 className="text-2xl font-extrabold tracking-tight">Mensajes</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Conversaciones dentro de {club?.name ?? "tu club"}.</p>
+        <p className="mt-1 text-sm text-muted-foreground">{subtitle ?? `Conversaciones dentro de ${club?.name ?? "tu club"}.`}</p>
       </div>
 
       <div className="grid h-[calc(100vh-220px)] grid-cols-1 overflow-hidden rounded-2xl border border-border bg-card md:grid-cols-[280px_1fr]">
