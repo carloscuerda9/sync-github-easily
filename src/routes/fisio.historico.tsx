@@ -98,6 +98,8 @@ function TreatmentsTab() {
   const [appts, setAppts] = useState<Appt[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"pending" | "all">("pending");
+  const [playerFilter, setPlayerFilter] = useState<string>("all");
+
 
   const load = async () => {
     if (!user) return;
@@ -132,16 +134,25 @@ function TreatmentsTab() {
 
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [user?.id]);
 
-  const visible = useMemo(
-    () => filter === "pending" ? appts.filter((a) => !a.session) : appts,
-    [appts, filter],
-  );
+  const playerOptions = useMemo(() => {
+    const map = new Map<string, string>();
+    appts.forEach((a) => {
+      if (!map.has(a.player_id)) map.set(a.player_id, a.player?.full_name || a.player?.email || "Jugador");
+    });
+    return Array.from(map, ([id, name]) => ({ id, name })).sort((x, y) => x.name.localeCompare(y.name));
+  }, [appts]);
+
+  const visible = useMemo(() => {
+    let list = filter === "pending" ? appts.filter((a) => !a.session) : appts;
+    if (filter === "all" && playerFilter !== "all") list = list.filter((a) => a.player_id === playerFilter);
+    return list;
+  }, [appts, filter, playerFilter]);
 
   const pendingCount = appts.filter((a) => !a.session).length;
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="text-sm text-muted-foreground">
           {pendingCount > 0
             ? <span className="inline-flex items-center gap-1"><AlertCircle className="h-4 w-4 text-amber-600" /> {pendingCount} tratamiento{pendingCount === 1 ? "" : "s"} por rellenar</span>
@@ -153,15 +164,30 @@ function TreatmentsTab() {
         </div>
       </div>
 
+      {filter === "all" && (
+        <Select value={playerFilter} onValueChange={setPlayerFilter}>
+          <SelectTrigger className="h-11 w-full sm:max-w-xs">
+            <SelectValue placeholder="Todos los jugadores" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos los jugadores</SelectItem>
+            {playerOptions.map((p) => (
+              <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+
       {loading ? <Skeleton /> : visible.length === 0 ? (
         <Empty
           icon={<ClipboardList className="h-8 w-8" />}
-          title={filter === "pending" ? "Sin tratamientos pendientes" : "Aún no hay citas completadas"}
+          title={filter === "pending" ? "Sin tratamientos pendientes" : playerFilter !== "all" ? "Este jugador no tiene tratamientos registrados" : "Aún no hay citas completadas"}
           desc="Cuando marques una cita como completada aparecerá aquí."
         />
       ) : (
         visible.map((a) => <TreatmentCard key={a.id} a={a} onSaved={load} />)
       )}
+
     </div>
   );
 }
