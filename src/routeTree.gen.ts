@@ -20,6 +20,7 @@ import { Route as FisioIndexRouteImport } from './routes/fisio.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as JugadorPerfilRouteImport } from './routes/jugador.perfil'
 import { Route as JugadorMensajesRouteImport } from './routes/jugador.mensajes'
+import { Route as JugadorLesionRouteImport } from './routes/jugador.lesion'
 import { Route as JugadorHistorialRouteImport } from './routes/jugador.historial'
 import { Route as JugadorFormulariosRouteImport } from './routes/jugador.formularios'
 import { Route as JugadorDocumentosRouteImport } from './routes/jugador.documentos'
@@ -90,6 +91,11 @@ const JugadorPerfilRoute = JugadorPerfilRouteImport.update({
 const JugadorMensajesRoute = JugadorMensajesRouteImport.update({
   id: '/mensajes',
   path: '/mensajes',
+  getParentRoute: () => JugadorRoute,
+} as any)
+const JugadorLesionRoute = JugadorLesionRouteImport.update({
+  id: '/lesion',
+  path: '/lesion',
   getParentRoute: () => JugadorRoute,
 } as any)
 const JugadorHistorialRoute = JugadorHistorialRouteImport.update({
@@ -196,6 +202,7 @@ export interface FileRoutesByFullPath {
   '/jugador/documentos': typeof JugadorDocumentosRoute
   '/jugador/formularios': typeof JugadorFormulariosRoute
   '/jugador/historial': typeof JugadorHistorialRoute
+  '/jugador/lesion': typeof JugadorLesionRoute
   '/jugador/mensajes': typeof JugadorMensajesRoute
   '/jugador/perfil': typeof JugadorPerfilRoute
   '/admin/': typeof AdminIndexRoute
@@ -222,6 +229,7 @@ export interface FileRoutesByTo {
   '/jugador/documentos': typeof JugadorDocumentosRoute
   '/jugador/formularios': typeof JugadorFormulariosRoute
   '/jugador/historial': typeof JugadorHistorialRoute
+  '/jugador/lesion': typeof JugadorLesionRoute
   '/jugador/mensajes': typeof JugadorMensajesRoute
   '/jugador/perfil': typeof JugadorPerfilRoute
   '/admin': typeof AdminIndexRoute
@@ -252,6 +260,7 @@ export interface FileRoutesById {
   '/jugador/documentos': typeof JugadorDocumentosRoute
   '/jugador/formularios': typeof JugadorFormulariosRoute
   '/jugador/historial': typeof JugadorHistorialRoute
+  '/jugador/lesion': typeof JugadorLesionRoute
   '/jugador/mensajes': typeof JugadorMensajesRoute
   '/jugador/perfil': typeof JugadorPerfilRoute
   '/admin/': typeof AdminIndexRoute
@@ -283,6 +292,7 @@ export interface FileRouteTypes {
     | '/jugador/documentos'
     | '/jugador/formularios'
     | '/jugador/historial'
+    | '/jugador/lesion'
     | '/jugador/mensajes'
     | '/jugador/perfil'
     | '/admin/'
@@ -309,6 +319,7 @@ export interface FileRouteTypes {
     | '/jugador/documentos'
     | '/jugador/formularios'
     | '/jugador/historial'
+    | '/jugador/lesion'
     | '/jugador/mensajes'
     | '/jugador/perfil'
     | '/admin'
@@ -338,6 +349,7 @@ export interface FileRouteTypes {
     | '/jugador/documentos'
     | '/jugador/formularios'
     | '/jugador/historial'
+    | '/jugador/lesion'
     | '/jugador/mensajes'
     | '/jugador/perfil'
     | '/admin/'
@@ -431,6 +443,13 @@ declare module '@tanstack/react-router' {
       path: '/mensajes'
       fullPath: '/jugador/mensajes'
       preLoaderRoute: typeof JugadorMensajesRouteImport
+      parentRoute: typeof JugadorRoute
+    }
+    '/jugador/lesion': {
+      id: '/jugador/lesion'
+      path: '/lesion'
+      fullPath: '/jugador/lesion'
+      preLoaderRoute: typeof JugadorLesionRouteImport
       parentRoute: typeof JugadorRoute
     }
     '/jugador/historial': {
@@ -597,6 +616,7 @@ interface JugadorRouteChildren {
   JugadorDocumentosRoute: typeof JugadorDocumentosRoute
   JugadorFormulariosRoute: typeof JugadorFormulariosRoute
   JugadorHistorialRoute: typeof JugadorHistorialRoute
+  JugadorLesionRoute: typeof JugadorLesionRoute
   JugadorMensajesRoute: typeof JugadorMensajesRoute
   JugadorPerfilRoute: typeof JugadorPerfilRoute
   JugadorIndexRoute: typeof JugadorIndexRoute
@@ -607,6 +627,7 @@ const JugadorRouteChildren: JugadorRouteChildren = {
   JugadorDocumentosRoute: JugadorDocumentosRoute,
   JugadorFormulariosRoute: JugadorFormulariosRoute,
   JugadorHistorialRoute: JugadorHistorialRoute,
+  JugadorLesionRoute: JugadorLesionRoute,
   JugadorMensajesRoute: JugadorMensajesRoute,
   JugadorPerfilRoute: JugadorPerfilRoute,
   JugadorIndexRoute: JugadorIndexRoute,
