@@ -43,7 +43,8 @@ function PlayerHome() {
         .from("player_tags")
         .select("color,updated_at,physio_id")
         .eq("player_id", user.id)
-        .order("updated_at", { ascending: false });
+        .order("updated_at", { ascending: false })
+        .limit(1);
       const rows = (data ?? []) as TagRow[];
       if (rows.length) {
         const ids = [...new Set(rows.map((r) => r.physio_id))];
