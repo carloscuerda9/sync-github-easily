@@ -9,7 +9,6 @@ const items: NavItem[] = [
   { to: "/jugador/lesion", label: "Parte de lesión", icon: Siren },
   { to: "/jugador/mensajes", label: "Mensajes", icon: MessageSquare },
   { to: "/jugador/documentos", label: "Documentos", icon: FileText },
-  { to: "/jugador/formularios", label: "Formularios", icon: ClipboardList },
   { to: "/jugador/perfil", label: "Perfil", icon: User },
 ];
 

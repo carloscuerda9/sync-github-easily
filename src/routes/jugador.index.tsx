@@ -12,7 +12,6 @@ const cards = [
   { to: "/jugador/citas", title: "Reservar cita", desc: "Agenda con tu fisio", icon: Calendar, color: "bg-primary/10 text-primary" },
   { to: "/jugador/mensajes", title: "Mensajes", desc: "Habla con tu fisio", icon: MessageSquare, color: "bg-accent/15 text-accent-foreground" },
   { to: "/jugador/documentos", title: "Documentos", desc: "Informes y planes", icon: FileText, color: "bg-primary/10 text-primary" },
-  { to: "/jugador/formularios", title: "Formularios", desc: "Cuestionarios pendientes", icon: ClipboardList, color: "bg-accent/15 text-accent-foreground" },
   { to: "/jugador/historial", title: "Mi historial", desc: "Lesiones y progreso", icon: Activity, color: "bg-primary/10 text-primary" },
 ];
 

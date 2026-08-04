@@ -215,7 +215,7 @@ function RegisterPage() {
                 </div>
                 <div className="font-semibold">Soy fisioterapeuta</div>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Gestionar agenda, jugadores, formularios y facturación.
+                  Gestionar agenda, jugadores, histórico y facturación.
                 </p>
               </button>
 
