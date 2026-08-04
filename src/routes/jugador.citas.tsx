@@ -49,7 +49,15 @@ function PlayerAppointments() {
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const today = new Date(); today.setHours(0,0,0,0);
+  // Los jugadores solo pueden solicitar citas para la semana siguiente (lun-dom).
+  const { nextWeekStart, nextWeekEnd } = useMemo(() => {
+    const base = new Date(); base.setHours(0, 0, 0, 0);
+    const dow = (base.getDay() + 6) % 7; // 0 = lunes
+    const start = new Date(base); start.setDate(base.getDate() - dow + 7);
+    const end = new Date(start); end.setDate(start.getDate() + 6);
+    return { nextWeekStart: start, nextWeekEnd: end };
+  }, []);
+  const fmtDay = (d: Date) => d.toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" });
 
   const load = async () => {
     if (!user) return;
