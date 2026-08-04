@@ -84,8 +84,7 @@ function PlayersList() {
           .order("full_name", { ascending: true, nullsFirst: false }),
         supabase
           .from("player_tags")
-          .select("player_id,color")
-          .eq("physio_id", user.id),
+          .select("player_id,color"),
       ]);
       if (pRes.error) toast.error("Error cargando jugadores");
       setPlayers((pRes.data ?? []) as Player[]);
@@ -106,8 +105,8 @@ function PlayersList() {
     const { error } = await supabase
       .from("player_tags")
       .upsert(
-        { physio_id: user.id, player_id: playerId, color },
-        { onConflict: "physio_id,player_id" },
+        { physio_id: user.id, player_id: playerId, color, updated_at: new Date().toISOString() },
+        { onConflict: "player_id" },
       );
     if (error) {
       setTags((t) => {
@@ -132,7 +131,6 @@ function PlayersList() {
     const { error } = await supabase
       .from("player_tags")
       .delete()
-      .eq("physio_id", user.id)
       .eq("player_id", playerId);
     if (error) {
       if (prev) setTags((t) => ({ ...t, [playerId]: prev }));
