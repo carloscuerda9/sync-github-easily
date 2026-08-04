@@ -107,6 +107,12 @@ function PlayerAppointments() {
     const scheduledAt = new Date(date);
     scheduledAt.setHours(hh, mm, 0, 0);
     if (scheduledAt < new Date()) return toast.error("La cita debe ser en el futuro");
+    const dayOnly = new Date(date); dayOnly.setHours(0, 0, 0, 0);
+    if (dayOnly < nextWeekStart || dayOnly > nextWeekEnd) {
+      return toast.error("Solo puedes reservar citas para la semana siguiente", {
+        description: `Elige un día entre el ${fmtDay(nextWeekStart)} y el ${fmtDay(nextWeekEnd)}. Para citas antes, contacta con tu fisioterapeuta.`,
+      });
+    }
 
     setSubmitting(true);
     const { error } = await supabase.from("appointments").insert({
