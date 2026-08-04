@@ -250,8 +250,8 @@ function RegisterPage() {
               <div className="mt-4 flex items-start gap-2 rounded-lg border border-border bg-muted/40 p-4 text-sm text-muted-foreground">
                 <Clock className="mt-0.5 h-4 w-4 shrink-0" />
                 <span>
-                  El registro de {comingSoon === "coach" ? "entrenador" : "administrador"} aún no está
-                  disponible. De momento elige jugador o fisioterapeuta.
+                  El registro de administrador aún no está disponible. De momento elige jugador,
+                  fisioterapeuta o entrenador.
                 </span>
               </div>
             )}
@@ -268,13 +268,15 @@ function RegisterPage() {
             <div className="mb-6 flex items-center gap-3">
               <div className={cn(
                 "flex h-10 w-10 items-center justify-center rounded-lg",
-                role === "player" ? "bg-primary/10 text-primary" : "bg-accent/15 text-accent-foreground"
+                role === "physio" ? "bg-accent/15 text-accent-foreground" : "bg-primary/10 text-primary"
               )}>
-                {role === "player" ? <User className="h-5 w-5" /> : <Stethoscope className="h-5 w-5" />}
+                {role === "physio" ? <Stethoscope className="h-5 w-5" />
+                  : role === "coach" ? <ClipboardList className="h-5 w-5" />
+                  : <User className="h-5 w-5" />}
               </div>
               <div>
                 <h1 className="text-xl font-bold">
-                  Registro {role === "player" ? "deportista" : "fisioterapeuta"}
+                  Registro {ROLE_LABEL[role]}
                 </h1>
                 <p className="text-sm text-muted-foreground">Rellena tus datos para crear tu cuenta.</p>
               </div>
