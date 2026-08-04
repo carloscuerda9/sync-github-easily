@@ -176,12 +176,19 @@ function PlayerAppointments() {
               </div>
               <div className="grid gap-2">
                 <Label>Fecha</Label>
+                <p className="text-xs text-muted-foreground">
+                  Solo puedes solicitar citas para la semana siguiente ({fmtDay(nextWeekStart)} –{" "}
+                  {fmtDay(nextWeekEnd)}). Si necesitas una cita antes, habla con tu fisioterapeuta.
+                </p>
                 <div className="rounded-lg border border-border">
                   <CalendarUI
                     mode="single"
                     selected={date}
                     onSelect={setDate}
-                    disabled={{ before: today }}
+                    defaultMonth={nextWeekStart}
+                    startMonth={nextWeekStart}
+                    endMonth={nextWeekEnd}
+                    disabled={[{ before: nextWeekStart }, { after: nextWeekEnd }]}
                     className={cn("p-3 pointer-events-auto mx-auto")}
                   />
                 </div>
