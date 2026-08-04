@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
-import { User, Stethoscope, ArrowLeft, CheckCircle2, Whistle, ShieldCheck, Clock } from "lucide-react";
+import { User, Stethoscope, ArrowLeft, CheckCircle2, ClipboardList, ShieldCheck, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/registro")({
