@@ -193,7 +193,7 @@ function RegisterPage() {
                 <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground">
                   <User className="h-6 w-6" />
                 </div>
-                <div className="font-semibold">Soy deportista</div>
+                <div className="font-semibold">Soy jugador</div>
                 <p className="mt-1 text-sm text-muted-foreground">
                   Reservar citas, ver mi historial y hablar con mi fisio.
                 </p>
@@ -212,7 +212,41 @@ function RegisterPage() {
                   Gestionar agenda, jugadores, formularios y facturación.
                 </p>
               </button>
+
+              <button
+                type="button"
+                onClick={() => setComingSoon("coach")}
+                className="group rounded-xl border-2 border-dashed border-border bg-background p-6 text-left transition-all hover:border-primary"
+              >
+                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                  <ClipboardList className="h-6 w-6" />
+                </div>
+                <div className="font-semibold">Soy entrenador</div>
+                <p className="mt-1 text-sm text-muted-foreground">Próximamente disponible.</p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setComingSoon("admin")}
+                className="group rounded-xl border-2 border-dashed border-border bg-background p-6 text-left transition-all hover:border-primary"
+              >
+                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                  <ShieldCheck className="h-6 w-6" />
+                </div>
+                <div className="font-semibold">Soy administrador</div>
+                <p className="mt-1 text-sm text-muted-foreground">Próximamente disponible.</p>
+              </button>
             </div>
+
+            {comingSoon && (
+              <div className="mt-4 flex items-start gap-2 rounded-lg border border-border bg-muted/40 p-4 text-sm text-muted-foreground">
+                <Clock className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>
+                  El registro de {comingSoon === "coach" ? "entrenador" : "administrador"} aún no está
+                  disponible. De momento elige jugador o fisioterapeuta.
+                </span>
+              </div>
+            )}
 
             <p className="mt-6 text-center text-sm text-muted-foreground">
               ¿Ya tienes cuenta?{" "}
