@@ -49,7 +49,15 @@ function PlayerAppointments() {
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const today = new Date(); today.setHours(0,0,0,0);
+  // Los jugadores solo pueden solicitar citas para la semana siguiente (lun-dom).
+  const { nextWeekStart, nextWeekEnd } = useMemo(() => {
+    const base = new Date(); base.setHours(0, 0, 0, 0);
+    const dow = (base.getDay() + 6) % 7; // 0 = lunes
+    const start = new Date(base); start.setDate(base.getDate() - dow + 7);
+    const end = new Date(start); end.setDate(start.getDate() + 6);
+    return { nextWeekStart: start, nextWeekEnd: end };
+  }, []);
+  const fmtDay = (d: Date) => d.toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" });
 
   const load = async () => {
     if (!user) return;
@@ -99,6 +107,12 @@ function PlayerAppointments() {
     const scheduledAt = new Date(date);
     scheduledAt.setHours(hh, mm, 0, 0);
     if (scheduledAt < new Date()) return toast.error("La cita debe ser en el futuro");
+    const dayOnly = new Date(date); dayOnly.setHours(0, 0, 0, 0);
+    if (dayOnly < nextWeekStart || dayOnly > nextWeekEnd) {
+      return toast.error("Solo puedes reservar citas para la semana siguiente", {
+        description: `Elige un día entre el ${fmtDay(nextWeekStart)} y el ${fmtDay(nextWeekEnd)}. Para citas antes, contacta con tu fisioterapeuta.`,
+      });
+    }
 
     setSubmitting(true);
     const { error } = await supabase.from("appointments").insert({
@@ -168,12 +182,19 @@ function PlayerAppointments() {
               </div>
               <div className="grid gap-2">
                 <Label>Fecha</Label>
+                <p className="text-xs text-muted-foreground">
+                  Solo puedes solicitar citas para la semana siguiente ({fmtDay(nextWeekStart)} –{" "}
+                  {fmtDay(nextWeekEnd)}). Si necesitas una cita antes, habla con tu fisioterapeuta.
+                </p>
                 <div className="rounded-lg border border-border">
                   <CalendarUI
                     mode="single"
                     selected={date}
                     onSelect={setDate}
-                    disabled={{ before: today }}
+                    defaultMonth={nextWeekStart}
+                    startMonth={nextWeekStart}
+                    endMonth={nextWeekEnd}
+                    disabled={[{ before: nextWeekStart }, { after: nextWeekEnd }]}
                     className={cn("p-3 pointer-events-auto mx-auto")}
                   />
                 </div>
