@@ -470,6 +470,66 @@ export type Database = {
           },
         ]
       }
+      physio_invoices: {
+        Row: {
+          admin_id: string
+          amount: number
+          created_at: string
+          description: string
+          file_name: string
+          file_path: string
+          file_size: number
+          id: string
+          invoice_date: string
+          invoice_type: Database["public"]["Enums"]["physio_invoice_type"]
+          physio_id: string
+          updated_at: string
+        }
+        Insert: {
+          admin_id: string
+          amount: number
+          created_at?: string
+          description: string
+          file_name: string
+          file_path: string
+          file_size?: number
+          id?: string
+          invoice_date: string
+          invoice_type: Database["public"]["Enums"]["physio_invoice_type"]
+          physio_id: string
+          updated_at?: string
+        }
+        Update: {
+          admin_id?: string
+          amount?: number
+          created_at?: string
+          description?: string
+          file_name?: string
+          file_path?: string
+          file_size?: number
+          id?: string
+          invoice_date?: string
+          invoice_type?: Database["public"]["Enums"]["physio_invoice_type"]
+          physio_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "physio_invoices_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "physio_invoices_physio_id_fkey"
+            columns: ["physio_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       player_leaves: {
         Row: {
           active: boolean
@@ -772,6 +832,11 @@ export type Database = {
       appointment_type: "in_person" | "home_visit" | "sports_event"
       invoice_status: "draft" | "sent" | "paid"
       leave_type: "deportiva" | "medica"
+      physio_invoice_type:
+        | "material"
+        | "sesion_privada_fisio"
+        | "sesion_privada_medico"
+        | "otro"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -911,6 +976,12 @@ export const Constants = {
       appointment_type: ["in_person", "home_visit", "sports_event"],
       invoice_status: ["draft", "sent", "paid"],
       leave_type: ["deportiva", "medica"],
+      physio_invoice_type: [
+        "material",
+        "sesion_privada_fisio",
+        "sesion_privada_medico",
+        "otro",
+      ],
     },
   },
 } as const
