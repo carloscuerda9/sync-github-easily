@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, MessageSquare, FileText, ClipboardList, Activity } from "lucide-react";
+import { Calendar, MessageSquare, FileText, Activity, HeartPulse } from "lucide-react";
 
 export const Route = createFileRoute("/jugador/")({
   component: PlayerHome,
