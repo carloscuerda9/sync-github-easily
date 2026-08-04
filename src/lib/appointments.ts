@@ -18,9 +18,9 @@ export const STATUS_COLOR: Record<AppointmentStatus, string> = {
 };
 
 export const TYPE_LABEL: Record<AppointmentType, string> = {
-  in_person: "En consulta",
-  home_visit: "A domicilio",
-  sports_event: "Evento deportivo",
+  in_person: "Descarga",
+  home_visit: "Prevención",
+  sports_event: "Lesión",
 };
 
 export const DURATIONS = [30, 45, 60, 75, 90] as const;
