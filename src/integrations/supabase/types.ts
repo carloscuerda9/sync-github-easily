@@ -762,7 +762,7 @@ export type Database = {
     }
     Enums: {
       account_status: "pending" | "approved" | "rejected"
-      app_role: "player" | "physio" | "superadmin"
+      app_role: "player" | "physio" | "superadmin" | "coach"
       appointment_status:
         | "requested"
         | "confirmed"
@@ -900,7 +900,7 @@ export const Constants = {
   public: {
     Enums: {
       account_status: ["pending", "approved", "rejected"],
-      app_role: ["player", "physio", "superadmin"],
+      app_role: ["player", "physio", "superadmin", "coach"],
       appointment_status: [
         "requested",
         "confirmed",
