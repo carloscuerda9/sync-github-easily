@@ -10,7 +10,6 @@ const items: NavItem[] = [
   { to: "/fisio/lesiones", label: "Lesiones", icon: Siren },
   { to: "/fisio/historico", label: "Histórico", icon: HeartPulse },
   { to: "/fisio/mensajes", label: "Mensajes", icon: MessageSquare },
-  { to: "/fisio/formularios", label: "Formularios", icon: ClipboardList },
   { to: "/fisio/documentos", label: "Documentos", icon: FileText },
   { to: "/fisio/facturacion", label: "Facturas", icon: Receipt },
   { to: "/fisio/perfil", label: "Perfil", icon: User },

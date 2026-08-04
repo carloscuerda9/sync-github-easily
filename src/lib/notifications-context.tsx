@@ -15,7 +15,6 @@ export interface NotificationItem {
 export interface Counters {
   messages: number;
   appointments: number; // pending requests (role-aware)
-  forms: number;        // unfinished assignments (player only)
   documents: number;    // received in last 7d (proxy: created_at > last seen)
   invoices: number;     // sent unpaid (physio only)
   treatments: number;   // completed appointments without session (physio only)
@@ -30,7 +29,7 @@ interface Ctx {
 
 const NotificationsContext = createContext<Ctx | undefined>(undefined);
 
-const EMPTY: Counters = { messages: 0, appointments: 0, forms: 0, documents: 0, invoices: 0, treatments: 0 };
+const EMPTY: Counters = { messages: 0, appointments: 0, documents: 0, invoices: 0, treatments: 0 };
 
 const SEEN_KEY = "wfy:notif:lastSeen";
 
@@ -114,25 +113,6 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    // Forms (player)
-    if (prefs.forms && isPlayer) {
-      const { data } = await supabase
-        .from("form_assignments")
-        .select("id, assigned_at, completed, form_id, forms(title)")
-        .eq("player_id", profile.id)
-        .eq("completed", false)
-        .order("assigned_at", { ascending: false })
-        .limit(10);
-      next.forms = data?.length ?? 0;
-      data?.forEach((f: any) => items.push({
-        id: `form-${f.id}`,
-        kind: "form",
-        title: "Formulario pendiente",
-        body: f.forms?.title ?? "Tienes un cuestionario por completar",
-        href: `${baseHref}/formularios`,
-        created_at: f.assigned_at,
-      }));
-    }
 
     // Documents received since lastSeen
     if (prefs.documents) {
@@ -218,7 +198,6 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       .on("postgres_changes", { event: "*", schema: "public", table: "messages", filter: `receiver_id=eq.${profile.id}` }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "appointments", filter: isPlayer ? `player_id=eq.${profile.id}` : `physio_id=eq.${profile.id}` }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "documents", filter: `recipient_id=eq.${profile.id}` }, refresh)
-      .on("postgres_changes", { event: "*", schema: "public", table: "form_assignments", filter: isPlayer ? `player_id=eq.${profile.id}` : undefined }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "invoices", filter: isPhysio ? `physio_id=eq.${profile.id}` : `player_id=eq.${profile.id}` }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "sessions" }, refresh)
       .subscribe();
@@ -227,7 +206,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile?.id, profile?.role, JSON.stringify((profile?.profile_data as any)?.notifications ?? {})]);
 
-  const total = counters.messages + counters.appointments + counters.forms + counters.documents + counters.invoices + counters.treatments;
+  const total = counters.messages + counters.appointments + counters.documents + counters.invoices + counters.treatments;
 
   const markAllSeen = () => {
     const now = new Date().toISOString();

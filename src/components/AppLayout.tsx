@@ -30,7 +30,6 @@ export function AppLayout({ role, items, children }: AppLayoutProps) {
   const badgeFor = (to: string): number => {
     if (to.endsWith("/mensajes")) return counters.messages;
     if (to === "/jugador/citas" || to === "/fisio/agenda") return counters.appointments;
-    if (to.endsWith("/formularios") && to.startsWith("/jugador")) return counters.forms;
     if (to.endsWith("/documentos")) return counters.documents;
     if (to === "/fisio/facturacion") return counters.invoices;
     return 0;

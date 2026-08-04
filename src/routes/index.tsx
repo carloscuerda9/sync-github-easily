@@ -59,9 +59,9 @@ function Landing() {
               { icon: Calendar, title: "Reserva citas", desc: "Agenda con tu fisio en segundos." },
               { icon: MessageSquare, title: "Mensajería", desc: "Habla directamente con tu fisio." },
               { icon: Activity, title: "Tu historial", desc: "Lesiones, sesiones y progreso en un solo sitio." },
-              { icon: FileText, title: "Documentos", desc: "Informes, planes de ejercicios y formularios." },
+              { icon: FileText, title: "Documentos", desc: "Informes y planes de ejercicios." },
               { icon: ShieldCheck, title: "Privado y seguro", desc: "Tus datos médicos protegidos." },
-              { icon: Activity, title: "Para fisios", desc: "Agenda, jugadores, facturas y formularios." },
+              { icon: Activity, title: "Para fisios", desc: "Agenda, jugadores, histórico y facturas." },
             ].map((f) => (
               <div key={f.title} className="rounded-xl border border-border bg-card p-6 transition-shadow hover:shadow-md">
                 <f.icon className="mb-3 h-6 w-6 text-primary" />

@@ -11,7 +11,6 @@ const cards = [
   { to: "/fisio/jugadores", title: "Mis jugadores", desc: "Pacientes y fichas", icon: Users },
   { to: "/fisio/mensajes", title: "Mensajes", desc: "Chat con jugadores", icon: MessageSquare },
   { to: "/fisio/documentos", title: "Documentos", desc: "Compartir informes", icon: FileText },
-  { to: "/fisio/formularios", title: "Formularios", desc: "Crear y asignar", icon: FileText },
   { to: "/fisio/facturacion", title: "Facturación", desc: "Facturas y resumen", icon: Receipt },
 ];
 
