@@ -4,9 +4,9 @@ import { MessagesView } from "@/components/MessagesView";
 export const Route = createFileRoute("/fisio/mensajes")({
   component: () => (
     <MessagesView
-      contactRole="player"
-      emptyTitle="Selecciona un jugador"
-      emptyDesc="Comunícate con cualquier jugador de tu club desde la lista de la izquierda."
+      contactRole={["player", "coach"]}
+      emptyTitle="Selecciona un contacto"
+      emptyDesc="Comunícate con los jugadores y entrenadores de tu club desde la lista de la izquierda."
     />
   ),
 });

@@ -13,10 +13,12 @@ import { Route as RegistroRouteImport } from './routes/registro'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as JugadorRouteImport } from './routes/jugador'
 import { Route as FisioRouteImport } from './routes/fisio'
+import { Route as EntrenadorRouteImport } from './routes/entrenador'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as JugadorIndexRouteImport } from './routes/jugador.index'
 import { Route as FisioIndexRouteImport } from './routes/fisio.index'
+import { Route as EntrenadorIndexRouteImport } from './routes/entrenador.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as JugadorPerfilRouteImport } from './routes/jugador.perfil'
 import { Route as JugadorMensajesRouteImport } from './routes/jugador.mensajes'
@@ -34,6 +36,7 @@ import { Route as FisioFormulariosRouteImport } from './routes/fisio.formularios
 import { Route as FisioFacturacionRouteImport } from './routes/fisio.facturacion'
 import { Route as FisioDocumentosRouteImport } from './routes/fisio.documentos'
 import { Route as FisioAgendaRouteImport } from './routes/fisio.agenda'
+import { Route as EntrenadorMensajesRouteImport } from './routes/entrenador.mensajes'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminMensajesRouteImport } from './routes/admin.mensajes'
 import { Route as AdminFacturasRouteImport } from './routes/admin.facturas'
@@ -59,6 +62,11 @@ const FisioRoute = FisioRouteImport.update({
   path: '/fisio',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EntrenadorRoute = EntrenadorRouteImport.update({
+  id: '/entrenador',
+  path: '/entrenador',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -78,6 +86,11 @@ const FisioIndexRoute = FisioIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => FisioRoute,
+} as any)
+const EntrenadorIndexRoute = EntrenadorIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => EntrenadorRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -164,6 +177,11 @@ const FisioAgendaRoute = FisioAgendaRouteImport.update({
   path: '/agenda',
   getParentRoute: () => FisioRoute,
 } as any)
+const EntrenadorMensajesRoute = EntrenadorMensajesRouteImport.update({
+  id: '/mensajes',
+  path: '/mensajes',
+  getParentRoute: () => EntrenadorRoute,
+} as any)
 const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
   id: '/usuarios',
   path: '/usuarios',
@@ -188,6 +206,7 @@ const AdminCitasRoute = AdminCitasRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/entrenador': typeof EntrenadorRouteWithChildren
   '/fisio': typeof FisioRouteWithChildren
   '/jugador': typeof JugadorRouteWithChildren
   '/login': typeof LoginRoute
@@ -196,6 +215,7 @@ export interface FileRoutesByFullPath {
   '/admin/facturas': typeof AdminFacturasRoute
   '/admin/mensajes': typeof AdminMensajesRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
+  '/entrenador/mensajes': typeof EntrenadorMensajesRoute
   '/fisio/agenda': typeof FisioAgendaRoute
   '/fisio/documentos': typeof FisioDocumentosRoute
   '/fisio/facturacion': typeof FisioFacturacionRoute
@@ -213,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/jugador/mensajes': typeof JugadorMensajesRoute
   '/jugador/perfil': typeof JugadorPerfilRoute
   '/admin/': typeof AdminIndexRoute
+  '/entrenador/': typeof EntrenadorIndexRoute
   '/fisio/': typeof FisioIndexRoute
   '/jugador/': typeof JugadorIndexRoute
 }
@@ -224,6 +245,7 @@ export interface FileRoutesByTo {
   '/admin/facturas': typeof AdminFacturasRoute
   '/admin/mensajes': typeof AdminMensajesRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
+  '/entrenador/mensajes': typeof EntrenadorMensajesRoute
   '/fisio/agenda': typeof FisioAgendaRoute
   '/fisio/documentos': typeof FisioDocumentosRoute
   '/fisio/facturacion': typeof FisioFacturacionRoute
@@ -241,6 +263,7 @@ export interface FileRoutesByTo {
   '/jugador/mensajes': typeof JugadorMensajesRoute
   '/jugador/perfil': typeof JugadorPerfilRoute
   '/admin': typeof AdminIndexRoute
+  '/entrenador': typeof EntrenadorIndexRoute
   '/fisio': typeof FisioIndexRoute
   '/jugador': typeof JugadorIndexRoute
 }
@@ -248,6 +271,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/entrenador': typeof EntrenadorRouteWithChildren
   '/fisio': typeof FisioRouteWithChildren
   '/jugador': typeof JugadorRouteWithChildren
   '/login': typeof LoginRoute
@@ -256,6 +280,7 @@ export interface FileRoutesById {
   '/admin/facturas': typeof AdminFacturasRoute
   '/admin/mensajes': typeof AdminMensajesRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
+  '/entrenador/mensajes': typeof EntrenadorMensajesRoute
   '/fisio/agenda': typeof FisioAgendaRoute
   '/fisio/documentos': typeof FisioDocumentosRoute
   '/fisio/facturacion': typeof FisioFacturacionRoute
@@ -273,6 +298,7 @@ export interface FileRoutesById {
   '/jugador/mensajes': typeof JugadorMensajesRoute
   '/jugador/perfil': typeof JugadorPerfilRoute
   '/admin/': typeof AdminIndexRoute
+  '/entrenador/': typeof EntrenadorIndexRoute
   '/fisio/': typeof FisioIndexRoute
   '/jugador/': typeof JugadorIndexRoute
 }
@@ -281,6 +307,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/entrenador'
     | '/fisio'
     | '/jugador'
     | '/login'
@@ -289,6 +316,7 @@ export interface FileRouteTypes {
     | '/admin/facturas'
     | '/admin/mensajes'
     | '/admin/usuarios'
+    | '/entrenador/mensajes'
     | '/fisio/agenda'
     | '/fisio/documentos'
     | '/fisio/facturacion'
@@ -306,6 +334,7 @@ export interface FileRouteTypes {
     | '/jugador/mensajes'
     | '/jugador/perfil'
     | '/admin/'
+    | '/entrenador/'
     | '/fisio/'
     | '/jugador/'
   fileRoutesByTo: FileRoutesByTo
@@ -317,6 +346,7 @@ export interface FileRouteTypes {
     | '/admin/facturas'
     | '/admin/mensajes'
     | '/admin/usuarios'
+    | '/entrenador/mensajes'
     | '/fisio/agenda'
     | '/fisio/documentos'
     | '/fisio/facturacion'
@@ -334,12 +364,14 @@ export interface FileRouteTypes {
     | '/jugador/mensajes'
     | '/jugador/perfil'
     | '/admin'
+    | '/entrenador'
     | '/fisio'
     | '/jugador'
   id:
     | '__root__'
     | '/'
     | '/admin'
+    | '/entrenador'
     | '/fisio'
     | '/jugador'
     | '/login'
@@ -348,6 +380,7 @@ export interface FileRouteTypes {
     | '/admin/facturas'
     | '/admin/mensajes'
     | '/admin/usuarios'
+    | '/entrenador/mensajes'
     | '/fisio/agenda'
     | '/fisio/documentos'
     | '/fisio/facturacion'
@@ -365,6 +398,7 @@ export interface FileRouteTypes {
     | '/jugador/mensajes'
     | '/jugador/perfil'
     | '/admin/'
+    | '/entrenador/'
     | '/fisio/'
     | '/jugador/'
   fileRoutesById: FileRoutesById
@@ -372,6 +406,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
+  EntrenadorRoute: typeof EntrenadorRouteWithChildren
   FisioRoute: typeof FisioRouteWithChildren
   JugadorRoute: typeof JugadorRouteWithChildren
   LoginRoute: typeof LoginRoute
@@ -408,6 +443,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FisioRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/entrenador': {
+      id: '/entrenador'
+      path: '/entrenador'
+      fullPath: '/entrenador'
+      preLoaderRoute: typeof EntrenadorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -435,6 +477,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/fisio/'
       preLoaderRoute: typeof FisioIndexRouteImport
       parentRoute: typeof FisioRoute
+    }
+    '/entrenador/': {
+      id: '/entrenador/'
+      path: '/'
+      fullPath: '/entrenador/'
+      preLoaderRoute: typeof EntrenadorIndexRouteImport
+      parentRoute: typeof EntrenadorRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -555,6 +604,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FisioAgendaRouteImport
       parentRoute: typeof FisioRoute
     }
+    '/entrenador/mensajes': {
+      id: '/entrenador/mensajes'
+      path: '/mensajes'
+      fullPath: '/entrenador/mensajes'
+      preLoaderRoute: typeof EntrenadorMensajesRouteImport
+      parentRoute: typeof EntrenadorRoute
+    }
     '/admin/usuarios': {
       id: '/admin/usuarios'
       path: '/usuarios'
@@ -603,6 +659,20 @@ const AdminRouteChildren: AdminRouteChildren = {
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface EntrenadorRouteChildren {
+  EntrenadorMensajesRoute: typeof EntrenadorMensajesRoute
+  EntrenadorIndexRoute: typeof EntrenadorIndexRoute
+}
+
+const EntrenadorRouteChildren: EntrenadorRouteChildren = {
+  EntrenadorMensajesRoute: EntrenadorMensajesRoute,
+  EntrenadorIndexRoute: EntrenadorIndexRoute,
+}
+
+const EntrenadorRouteWithChildren = EntrenadorRoute._addFileChildren(
+  EntrenadorRouteChildren,
+)
 
 interface FisioRouteChildren {
   FisioAgendaRoute: typeof FisioAgendaRoute
@@ -660,6 +730,7 @@ const JugadorRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
+  EntrenadorRoute: EntrenadorRouteWithChildren,
   FisioRoute: FisioRouteWithChildren,
   JugadorRoute: JugadorRouteWithChildren,
   LoginRoute: LoginRoute,

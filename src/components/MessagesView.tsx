@@ -26,7 +26,7 @@ interface Msg {
 
 interface Props {
   /** role(s) we're chatting WITH (the other side) */
-  contactRole: "physio" | "player" | Array<"physio" | "player">;
+  contactRole: "physio" | "player" | "coach" | Array<"physio" | "player" | "coach">;
   emptyTitle: string;
   emptyDesc: string;
   /** optional subtitle under the title */
