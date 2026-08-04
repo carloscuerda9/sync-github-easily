@@ -11,7 +11,6 @@ import { toast } from "sonner";
 export interface NotificationPrefs {
   messages: boolean;
   appointments: boolean;
-  forms: boolean;
   documents: boolean;
   invoices: boolean;
   treatments: boolean;
@@ -20,7 +19,6 @@ export interface NotificationPrefs {
 export const DEFAULT_NOTIFICATION_PREFS: NotificationPrefs = {
   messages: true,
   appointments: true,
-  forms: true,
   documents: true,
   invoices: true,
   treatments: true,
@@ -34,7 +32,6 @@ export function readPrefs(profileData: Record<string, unknown> | null | undefine
 const ITEMS: Array<{ key: keyof NotificationPrefs; label: string; desc: string; icon: typeof Bell; rolesOnly?: "player" | "physio" }> = [
   { key: "messages", label: "Nuevos mensajes", desc: "Te avisamos cuando recibas un mensaje.", icon: MessageSquare },
   { key: "appointments", label: "Citas", desc: "Confirmaciones y nuevas solicitudes de cita.", icon: Calendar },
-  { key: "forms", label: "Formularios", desc: "Cuando te asignen un cuestionario nuevo.", icon: ClipboardList, rolesOnly: "player" },
   { key: "treatments", label: "Tratamientos pendientes", desc: "Aviso para rellenar el tratamiento tras una cita completada.", icon: HeartPulse, rolesOnly: "physio" },
   { key: "documents", label: "Documentos", desc: "Cuando recibas un documento nuevo.", icon: FileText },
   { key: "invoices", label: "Facturación", desc: "Facturas emitidas o pendientes de cobro.", icon: Receipt },
