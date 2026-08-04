@@ -37,6 +37,7 @@ import { Route as FisioFacturacionRouteImport } from './routes/fisio.facturacion
 import { Route as FisioDocumentosRouteImport } from './routes/fisio.documentos'
 import { Route as FisioAgendaRouteImport } from './routes/fisio.agenda'
 import { Route as EntrenadorMensajesRouteImport } from './routes/entrenador.mensajes'
+import { Route as EntrenadorHistoricoRouteImport } from './routes/entrenador.historico'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminMensajesRouteImport } from './routes/admin.mensajes'
 import { Route as AdminFacturasRouteImport } from './routes/admin.facturas'
@@ -182,6 +183,11 @@ const EntrenadorMensajesRoute = EntrenadorMensajesRouteImport.update({
   path: '/mensajes',
   getParentRoute: () => EntrenadorRoute,
 } as any)
+const EntrenadorHistoricoRoute = EntrenadorHistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
+  getParentRoute: () => EntrenadorRoute,
+} as any)
 const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
   id: '/usuarios',
   path: '/usuarios',
@@ -215,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/admin/facturas': typeof AdminFacturasRoute
   '/admin/mensajes': typeof AdminMensajesRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
+  '/entrenador/historico': typeof EntrenadorHistoricoRoute
   '/entrenador/mensajes': typeof EntrenadorMensajesRoute
   '/fisio/agenda': typeof FisioAgendaRoute
   '/fisio/documentos': typeof FisioDocumentosRoute
@@ -245,6 +252,7 @@ export interface FileRoutesByTo {
   '/admin/facturas': typeof AdminFacturasRoute
   '/admin/mensajes': typeof AdminMensajesRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
+  '/entrenador/historico': typeof EntrenadorHistoricoRoute
   '/entrenador/mensajes': typeof EntrenadorMensajesRoute
   '/fisio/agenda': typeof FisioAgendaRoute
   '/fisio/documentos': typeof FisioDocumentosRoute
@@ -280,6 +288,7 @@ export interface FileRoutesById {
   '/admin/facturas': typeof AdminFacturasRoute
   '/admin/mensajes': typeof AdminMensajesRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
+  '/entrenador/historico': typeof EntrenadorHistoricoRoute
   '/entrenador/mensajes': typeof EntrenadorMensajesRoute
   '/fisio/agenda': typeof FisioAgendaRoute
   '/fisio/documentos': typeof FisioDocumentosRoute
@@ -316,6 +325,7 @@ export interface FileRouteTypes {
     | '/admin/facturas'
     | '/admin/mensajes'
     | '/admin/usuarios'
+    | '/entrenador/historico'
     | '/entrenador/mensajes'
     | '/fisio/agenda'
     | '/fisio/documentos'
@@ -346,6 +356,7 @@ export interface FileRouteTypes {
     | '/admin/facturas'
     | '/admin/mensajes'
     | '/admin/usuarios'
+    | '/entrenador/historico'
     | '/entrenador/mensajes'
     | '/fisio/agenda'
     | '/fisio/documentos'
@@ -380,6 +391,7 @@ export interface FileRouteTypes {
     | '/admin/facturas'
     | '/admin/mensajes'
     | '/admin/usuarios'
+    | '/entrenador/historico'
     | '/entrenador/mensajes'
     | '/fisio/agenda'
     | '/fisio/documentos'
@@ -611,6 +623,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EntrenadorMensajesRouteImport
       parentRoute: typeof EntrenadorRoute
     }
+    '/entrenador/historico': {
+      id: '/entrenador/historico'
+      path: '/historico'
+      fullPath: '/entrenador/historico'
+      preLoaderRoute: typeof EntrenadorHistoricoRouteImport
+      parentRoute: typeof EntrenadorRoute
+    }
     '/admin/usuarios': {
       id: '/admin/usuarios'
       path: '/usuarios'
@@ -661,11 +680,13 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface EntrenadorRouteChildren {
+  EntrenadorHistoricoRoute: typeof EntrenadorHistoricoRoute
   EntrenadorMensajesRoute: typeof EntrenadorMensajesRoute
   EntrenadorIndexRoute: typeof EntrenadorIndexRoute
 }
 
 const EntrenadorRouteChildren: EntrenadorRouteChildren = {
+  EntrenadorHistoricoRoute: EntrenadorHistoricoRoute,
   EntrenadorMensajesRoute: EntrenadorMensajesRoute,
   EntrenadorIndexRoute: EntrenadorIndexRoute,
 }
