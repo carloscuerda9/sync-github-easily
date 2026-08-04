@@ -14,7 +14,13 @@ export const Route = createFileRoute("/registro")({
   component: RegisterPage,
 });
 
-type Role = "player" | "physio";
+type Role = "player" | "physio" | "coach";
+
+const ROLE_LABEL: Record<Role, string> = {
+  player: "jugador",
+  physio: "fisioterapeuta",
+  coach: "entrenador",
+};
 
 interface Question {
   id: string;
@@ -215,14 +221,16 @@ function RegisterPage() {
 
               <button
                 type="button"
-                onClick={() => setComingSoon("coach")}
-                className="group rounded-xl border-2 border-dashed border-border bg-background p-6 text-left transition-all hover:border-primary"
+                onClick={() => handleRoleSelect("coach")}
+                className="group rounded-xl border-2 border-border bg-background p-6 text-left transition-all hover:border-primary hover:shadow-md"
               >
-                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground">
                   <ClipboardList className="h-6 w-6" />
                 </div>
                 <div className="font-semibold">Soy entrenador</div>
-                <p className="mt-1 text-sm text-muted-foreground">Próximamente disponible.</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Hablar con jugadores y fisios, y ver el histórico del equipo.
+                </p>
               </button>
 
               <button
