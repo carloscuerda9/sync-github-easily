@@ -114,25 +114,6 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    // Forms (player)
-    if (prefs.forms && isPlayer) {
-      const { data } = await supabase
-        .from("form_assignments")
-        .select("id, assigned_at, completed, form_id, forms(title)")
-        .eq("player_id", profile.id)
-        .eq("completed", false)
-        .order("assigned_at", { ascending: false })
-        .limit(10);
-      next.forms = data?.length ?? 0;
-      data?.forEach((f: any) => items.push({
-        id: `form-${f.id}`,
-        kind: "form",
-        title: "Formulario pendiente",
-        body: f.forms?.title ?? "Tienes un cuestionario por completar",
-        href: `${baseHref}/formularios`,
-        created_at: f.assigned_at,
-      }));
-    }
 
     // Documents received since lastSeen
     if (prefs.documents) {
