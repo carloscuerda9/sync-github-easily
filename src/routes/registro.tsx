@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
-import { User, Stethoscope, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { User, Stethoscope, ArrowLeft, CheckCircle2, Whistle, ShieldCheck, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/registro")({
@@ -30,6 +30,7 @@ function RegisterPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [role, setRole] = useState<Role | null>(null);
+  const [comingSoon, setComingSoon] = useState<"coach" | "admin" | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(false);
 
