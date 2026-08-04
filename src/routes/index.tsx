@@ -17,6 +17,7 @@ function Landing() {
     if (loading || !profile) return;
     if (profile.role === "superadmin") navigate({ to: "/admin" });
     else if (profile.role === "physio") navigate({ to: "/fisio" });
+    else if (profile.role === "coach") navigate({ to: "/entrenador" });
     else navigate({ to: "/jugador" });
   }, [profile, loading, navigate]);
 

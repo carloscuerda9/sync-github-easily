@@ -14,7 +14,13 @@ export const Route = createFileRoute("/registro")({
   component: RegisterPage,
 });
 
-type Role = "player" | "physio";
+type Role = "player" | "physio" | "coach";
+
+const ROLE_LABEL: Record<Role, string> = {
+  player: "jugador",
+  physio: "fisioterapeuta",
+  coach: "entrenador",
+};
 
 interface Question {
   id: string;
@@ -215,14 +221,16 @@ function RegisterPage() {
 
               <button
                 type="button"
-                onClick={() => setComingSoon("coach")}
-                className="group rounded-xl border-2 border-dashed border-border bg-background p-6 text-left transition-all hover:border-primary"
+                onClick={() => handleRoleSelect("coach")}
+                className="group rounded-xl border-2 border-border bg-background p-6 text-left transition-all hover:border-primary hover:shadow-md"
               >
-                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground">
                   <ClipboardList className="h-6 w-6" />
                 </div>
                 <div className="font-semibold">Soy entrenador</div>
-                <p className="mt-1 text-sm text-muted-foreground">Próximamente disponible.</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Hablar con jugadores y fisios, y ver el histórico del equipo.
+                </p>
               </button>
 
               <button
@@ -242,8 +250,8 @@ function RegisterPage() {
               <div className="mt-4 flex items-start gap-2 rounded-lg border border-border bg-muted/40 p-4 text-sm text-muted-foreground">
                 <Clock className="mt-0.5 h-4 w-4 shrink-0" />
                 <span>
-                  El registro de {comingSoon === "coach" ? "entrenador" : "administrador"} aún no está
-                  disponible. De momento elige jugador o fisioterapeuta.
+                  El registro de administrador aún no está disponible. De momento elige jugador,
+                  fisioterapeuta o entrenador.
                 </span>
               </div>
             )}
@@ -260,13 +268,15 @@ function RegisterPage() {
             <div className="mb-6 flex items-center gap-3">
               <div className={cn(
                 "flex h-10 w-10 items-center justify-center rounded-lg",
-                role === "player" ? "bg-primary/10 text-primary" : "bg-accent/15 text-accent-foreground"
+                role === "physio" ? "bg-accent/15 text-accent-foreground" : "bg-primary/10 text-primary"
               )}>
-                {role === "player" ? <User className="h-5 w-5" /> : <Stethoscope className="h-5 w-5" />}
+                {role === "physio" ? <Stethoscope className="h-5 w-5" />
+                  : role === "coach" ? <ClipboardList className="h-5 w-5" />
+                  : <User className="h-5 w-5" />}
               </div>
               <div>
                 <h1 className="text-xl font-bold">
-                  Registro {role === "player" ? "deportista" : "fisioterapeuta"}
+                  Registro {ROLE_LABEL[role]}
                 </h1>
                 <p className="text-sm text-muted-foreground">Rellena tus datos para crear tu cuenta.</p>
               </div>

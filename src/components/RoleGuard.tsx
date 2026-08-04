@@ -63,6 +63,7 @@ export function RoleGuard({ role, children }: RoleGuardProps) {
   if (profile.role !== role) {
     if (profile.role === "superadmin") return <Navigate to="/admin" />;
     if (profile.role === "physio") return <Navigate to="/fisio" />;
+    if (profile.role === "coach") return <Navigate to="/entrenador" />;
     return <Navigate to="/jugador" />;
   }
 
