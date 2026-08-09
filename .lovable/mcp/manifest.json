@@ -19,7 +19,7 @@
       {
         "name": "list_my_appointments",
         "title": "Listar mis citas",
-        "description": "Lista las citas próximas del usuario autenticado en WE FIX YOU.",
+        "description": "Lista las citas próximas del usuario autenticado en WE FIX YOU. Devuelve JSON estructurado {ok,count,club_id,data,message}.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -33,6 +33,11 @@
               "minimum": 1,
               "maximum": 50,
               "description": "Máximo de citas a devolver (por defecto 10)"
+            },
+            "club_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Solo para owner/superadmin sin club propio: club de contexto. Se ignora para el resto de roles."
             }
           },
           "additionalProperties": false,
