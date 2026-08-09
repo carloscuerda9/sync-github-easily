@@ -13,12 +13,21 @@ const projectRef = import.meta.env['VITE_SUPABASE_PROJECT_ID'] ?? "project-ref-u
 export default defineMcp({
   name: "we-fix-you",
   title: "WE FIX YOU",
-  version: "0.1.0",
+  version: "0.2.0",
   instructions:
-    "Servidor MCP para WE FIX YOU. Herramientas para consultar citas, listar jugadores de un club, consultar el estado/color de un jugador y enviar mensajes dentro del mismo club. El usuario debe estar autenticado con OAuth.",
+    "Servidor MCP para WE FIX YOU. Herramientas para consultar citas, listar jugadores de un club, consultar el estado/color de un jugador, enviar mensajes, y registrar/consultar minutos jugados y lesiones de los jugadores del club. Útil para generar informes de carga de partido y de lesiones. El usuario debe estar autenticado con OAuth.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated",
   }),
-  tools: [listMyAppointments, listClubPlayers, getPlayerStatus, sendMessage],
+  tools: [
+    listMyAppointments,
+    listClubPlayers,
+    getPlayerStatus,
+    sendMessage,
+    recordMatchMinutes,
+    listMatchMinutes,
+    recordInjury,
+    listInjuries,
+  ],
 });

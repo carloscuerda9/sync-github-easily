@@ -12,7 +12,7 @@
   "mcp": {
     "server": {
       "name": "we-fix-you",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "WE FIX YOU"
     },
     "tools": [
@@ -118,6 +118,213 @@
             "receiver_id",
             "content"
           ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "record_match_minutes",
+        "title": "Registrar minutos jugados",
+        "description": "Registra (o actualiza) los minutos jugados por un jugador en un partido. Solo fisios, entrenadores y administradores del mismo club.",
+        "annotations": {
+          "readOnlyHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "player_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "ID del jugador"
+            },
+            "match_date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "description": "Fecha del partido (YYYY-MM-DD)"
+            },
+            "minutes_played": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 200,
+              "description": "Minutos jugados"
+            },
+            "opponent": {
+              "type": "string",
+              "maxLength": 120,
+              "description": "Rival"
+            },
+            "competition": {
+              "type": "string",
+              "maxLength": 120,
+              "description": "Competición (liga, copa, amistoso…)"
+            },
+            "started": {
+              "type": "boolean",
+              "description": "¿Fue titular?"
+            },
+            "notes": {
+              "type": "string",
+              "maxLength": 1000,
+              "description": "Notas u observaciones"
+            }
+          },
+          "required": [
+            "player_id",
+            "match_date",
+            "minutes_played"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_match_minutes",
+        "title": "Consultar minutos jugados",
+        "description": "Consulta los minutos jugados registrados, con filtros opcionales por jugador y rango de fechas. Devuelve también el total acumulado.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "player_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Filtrar por jugador"
+            },
+            "from_date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "description": "Desde (YYYY-MM-DD)"
+            },
+            "to_date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "description": "Hasta (YYYY-MM-DD)"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "description": "Máximo de registros (por defecto 50)"
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "record_injury",
+        "title": "Registrar lesión",
+        "description": "Registra una lesión de un jugador en el histórico clínico (zona del cuerpo, tipo, gravedad, tratamiento y días de recuperación). Solo fisios y administradores del mismo club.",
+        "annotations": {
+          "readOnlyHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "player_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "ID del jugador"
+            },
+            "injury_date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "description": "Fecha de la lesión (YYYY-MM-DD)"
+            },
+            "body_part": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "description": "Zona del cuerpo afectada"
+            },
+            "injury_type": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "description": "Tipo de lesión (muscular, ligamentosa, ósea…)"
+            },
+            "severity": {
+              "type": "string",
+              "enum": [
+                "leve",
+                "moderada",
+                "grave"
+              ],
+              "description": "Gravedad"
+            },
+            "treatment": {
+              "type": "string",
+              "maxLength": 1000,
+              "description": "Tratamiento aplicado"
+            },
+            "recovery_days": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 730,
+              "description": "Días estimados de recuperación"
+            },
+            "notes": {
+              "type": "string",
+              "maxLength": 1000,
+              "description": "Observaciones"
+            }
+          },
+          "required": [
+            "player_id",
+            "injury_date",
+            "body_part",
+            "injury_type"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_injuries",
+        "title": "Consultar lesiones",
+        "description": "Consulta las lesiones registradas en el histórico clínico, con filtros opcionales por jugador y rango de fechas.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "player_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Filtrar por jugador"
+            },
+            "from_date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "description": "Desde (YYYY-MM-DD)"
+            },
+            "to_date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "description": "Hasta (YYYY-MM-DD)"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "description": "Máximo de registros (por defecto 50)"
+            }
+          },
           "additionalProperties": false,
           "$schema": "http://json-schema.org/draft-07/schema#"
         },
