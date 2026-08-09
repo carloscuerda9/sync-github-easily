@@ -40,6 +40,7 @@ import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminMensajesRouteImport } from './routes/admin.mensajes'
 import { Route as AdminFacturasRouteImport } from './routes/admin.facturas'
 import { Route as AdminCitasRouteImport } from './routes/admin.citas'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 
 const RegistroRoute = RegistroRouteImport.update({
   id: '/registro',
@@ -196,6 +197,11 @@ const AdminCitasRoute = AdminCitasRouteImport.update({
   path: '/citas',
   getParentRoute: () => AdminRoute,
 } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -229,6 +235,7 @@ export interface FileRoutesByFullPath {
   '/entrenador/': typeof EntrenadorIndexRoute
   '/fisio/': typeof FisioIndexRoute
   '/jugador/': typeof JugadorIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -258,6 +265,7 @@ export interface FileRoutesByTo {
   '/entrenador': typeof EntrenadorIndexRoute
   '/fisio': typeof FisioIndexRoute
   '/jugador': typeof JugadorIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -292,6 +300,7 @@ export interface FileRoutesById {
   '/entrenador/': typeof EntrenadorIndexRoute
   '/fisio/': typeof FisioIndexRoute
   '/jugador/': typeof JugadorIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -327,6 +336,7 @@ export interface FileRouteTypes {
     | '/entrenador/'
     | '/fisio/'
     | '/jugador/'
+    | '/.lovable/oauth/consent'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -356,6 +366,7 @@ export interface FileRouteTypes {
     | '/entrenador'
     | '/fisio'
     | '/jugador'
+    | '/.lovable/oauth/consent'
   id:
     | '__root__'
     | '/'
@@ -389,6 +400,7 @@ export interface FileRouteTypes {
     | '/entrenador/'
     | '/fisio/'
     | '/jugador/'
+    | '/.lovable/oauth/consent'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -399,6 +411,7 @@ export interface RootRouteChildren {
   JugadorRoute: typeof JugadorRouteWithChildren
   LoginRoute: typeof LoginRoute
   RegistroRoute: typeof RegistroRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -620,6 +633,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCitasRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -714,6 +734,7 @@ const rootRouteChildren: RootRouteChildren = {
   JugadorRoute: JugadorRouteWithChildren,
   LoginRoute: LoginRoute,
   RegistroRoute: RegistroRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
