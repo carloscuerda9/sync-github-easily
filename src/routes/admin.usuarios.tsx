@@ -125,7 +125,7 @@ function UsersAdmin() {
                         <XCircle className="mr-1 h-3.5 w-3.5" /> Rechazar
                       </Button>
                     )}
-                    {r.role !== "superadmin" && (
+                    {(isOwner ? !isOwnerEmail(r.email) : r.role !== "superadmin") && (
                       <Button size="sm" variant="destructive" onClick={() => setToDelete(r)}>
                         <Trash2 className="mr-1 h-3.5 w-3.5" /> Eliminar
                       </Button>
