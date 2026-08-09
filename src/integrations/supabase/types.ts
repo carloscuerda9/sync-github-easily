@@ -492,6 +492,72 @@ export type Database = {
           },
         ]
       }
+      matches: {
+        Row: {
+          acta_ref: string | null
+          club_id: string
+          competicion: string | null
+          created_at: string
+          created_by: string | null
+          duracion_min: number
+          fecha: string
+          id: string
+          jornada: string | null
+          local_visitante: string | null
+          resultado_contra: number | null
+          resultado_favor: number | null
+          rival: string
+          updated_at: string
+        }
+        Insert: {
+          acta_ref?: string | null
+          club_id: string
+          competicion?: string | null
+          created_at?: string
+          created_by?: string | null
+          duracion_min?: number
+          fecha: string
+          id?: string
+          jornada?: string | null
+          local_visitante?: string | null
+          resultado_contra?: number | null
+          resultado_favor?: number | null
+          rival: string
+          updated_at?: string
+        }
+        Update: {
+          acta_ref?: string | null
+          club_id?: string
+          competicion?: string | null
+          created_at?: string
+          created_by?: string | null
+          duracion_min?: number
+          fecha?: string
+          id?: string
+          jornada?: string | null
+          local_visitante?: string | null
+          resultado_contra?: number | null
+          resultado_favor?: number | null
+          rival?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           attachments: Json
