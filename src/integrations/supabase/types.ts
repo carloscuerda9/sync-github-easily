@@ -434,7 +434,7 @@ export type Database = {
           match_date: string
           minutes_played: number
           notes: string | null
-          opponent: string | null
+          opponent: string
           player_id: string
           recorded_by: string | null
           started: boolean
@@ -448,7 +448,7 @@ export type Database = {
           match_date: string
           minutes_played?: number
           notes?: string | null
-          opponent?: string | null
+          opponent?: string
           player_id: string
           recorded_by?: string | null
           started?: boolean
@@ -462,7 +462,7 @@ export type Database = {
           match_date?: string
           minutes_played?: number
           notes?: string | null
-          opponent?: string | null
+          opponent?: string
           player_id?: string
           recorded_by?: string | null
           started?: boolean
