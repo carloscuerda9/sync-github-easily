@@ -14,6 +14,7 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const search = useSearch({ from: "/login" });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -28,7 +29,12 @@ function LoginPage() {
       return;
     }
     toast.success("¡Bienvenido!");
-    navigate({ to: "/" });
+    const target = search.next;
+    if (target && target.startsWith("/")) {
+      navigate({ href: target });
+    } else {
+      navigate({ to: "/" });
+    }
   };
 
   return (
