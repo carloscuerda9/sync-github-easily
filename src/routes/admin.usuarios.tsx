@@ -39,6 +39,7 @@ function UsersAdmin() {
   const [toDelete, setToDelete] = useState<Row | null>(null);
   const [deleting, setDeleting] = useState(false);
   const removeUser = useServerFn(deleteUser);
+  const isOwner = useIsOwner();
 
   const load = async () => {
     setLoading(true);
