@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -9,10 +9,12 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
+  validateSearch: (s: Record<string, unknown>) => ({ next: typeof s.next === "string" ? s.next : undefined }),
 });
 
 function LoginPage() {
   const navigate = useNavigate();
+  const search = useSearch({ from: "/login" });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,7 +29,12 @@ function LoginPage() {
       return;
     }
     toast.success("¡Bienvenido!");
-    navigate({ to: "/" });
+    const target = search.next;
+    if (target && target.startsWith("/")) {
+      navigate({ href: target });
+    } else {
+      navigate({ to: "/" });
+    }
   };
 
   return (
