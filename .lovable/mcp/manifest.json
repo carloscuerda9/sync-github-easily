@@ -1,0 +1,128 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.1",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://ifschpokjtzwbxiskyfx.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "we-fix-you",
+      "version": "0.1.0",
+      "title": "WE FIX YOU"
+    },
+    "tools": [
+      {
+        "name": "list_my_appointments",
+        "title": "Listar mis citas",
+        "description": "Lista las citas próximas del usuario autenticado en WE FIX YOU.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "Máximo de citas a devolver (por defecto 10)"
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_club_players",
+        "title": "Listar jugadores del club",
+        "description": "Lista los jugadores aprobados del club del usuario autenticado. Solo disponible para fisios, entrenadores y administradores.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "description": "Máximo de jugadores a devolver (por defecto 50)"
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_player_status",
+        "title": "Estado de un jugador",
+        "description": "Devuelve el color de estado asignado por los fisios a un jugador (verde, amarillo, naranja o rojo).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "player_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "ID del jugador"
+            }
+          },
+          "required": [
+            "player_id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "send_message",
+        "title": "Enviar mensaje",
+        "description": "Envía un mensaje a otro usuario del mismo club. Solo permite mensajes entre usuarios del mismo club.",
+        "annotations": {
+          "readOnlyHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "receiver_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "ID del destinatario"
+            },
+            "content": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000,
+              "description": "Contenido del mensaje"
+            }
+          },
+          "required": [
+            "receiver_id",
+            "content"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
