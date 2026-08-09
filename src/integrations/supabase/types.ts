@@ -876,12 +876,17 @@ export type Database = {
       is_approved: { Args: { _user_id: string }; Returns: boolean }
       is_owner: { Args: { _user_id: string }; Returns: boolean }
       owner_email: { Args: never; Returns: string }
+      owner_id: { Args: never; Returns: string }
       physio_treats_player: {
         Args: { _physio_id: string; _player_id: string }
         Returns: boolean
       }
       same_club: {
         Args: { _user_a: string; _user_b: string }
+        Returns: boolean
+      }
+      staff_shares_club_with: {
+        Args: { _player_id: string; _staff_id: string }
         Returns: boolean
       }
       user_wants_notification: {
