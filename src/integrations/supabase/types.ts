@@ -78,11 +78,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "appointments_physio_id_fkey"
+            columns: ["physio_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+          {
             foreignKeyName: "appointments_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
           },
         ]
       }
@@ -150,11 +164,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "documents_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+          {
             foreignKeyName: "documents_uploader_id_fkey"
             columns: ["uploader_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_uploader_id_fkey"
+            columns: ["uploader_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
           },
         ]
       }
@@ -198,6 +226,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "form_assignments_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
         ]
       }
       forms: {
@@ -235,6 +270,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forms_physio_id_fkey"
+            columns: ["physio_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
           },
         ]
       }
@@ -319,11 +361,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "injuries_physio_id_fkey"
+            columns: ["physio_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+          {
             foreignKeyName: "injuries_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "injuries_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
           },
         ]
       }
@@ -449,11 +505,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "invoices_physio_id_fkey"
+            columns: ["physio_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+          {
             foreignKeyName: "invoices_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
           },
         ]
       }
@@ -544,11 +614,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "match_minutes_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+          {
             foreignKeyName: "match_minutes_recorded_by_fkey"
             columns: ["recorded_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_minutes_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
           },
         ]
       }
@@ -616,6 +700,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "matches_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
         ]
       }
       messages: {
@@ -655,11 +746,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "messages_receiver_id_fkey"
+            columns: ["receiver_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+          {
             foreignKeyName: "messages_sender_id_fkey"
             columns: ["sender_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
           },
         ]
       }
@@ -715,11 +820,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "physio_invoices_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+          {
             foreignKeyName: "physio_invoices_physio_id_fkey"
             columns: ["physio_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "physio_invoices_physio_id_fkey"
+            columns: ["physio_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
           },
         ]
       }
@@ -773,11 +892,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "player_aliases_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+          {
             foreignKeyName: "player_aliases_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_aliases_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
           },
         ]
       }
@@ -870,11 +1003,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "player_tag_history_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+          {
             foreignKeyName: "player_tag_history_set_by_fkey"
             columns: ["set_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_tag_history_set_by_fkey"
+            columns: ["set_by"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
           },
         ]
       }
@@ -1082,6 +1229,185 @@ export type Database = {
       }
     }
     Views: {
+      v_dash_injuries: {
+        Row: {
+          actual_return_date: string | null
+          baja_activa: boolean | null
+          body_part: string | null
+          club_id: string | null
+          desvio_vs_estimado: number | null
+          dias_baja: number | null
+          expected_return_date: string | null
+          full_name: string | null
+          id: string | null
+          injury_date: string | null
+          injury_type: string | null
+          is_recurrence: boolean | null
+          mechanism: string | null
+          player_id: string | null
+          severity: string | null
+          veces_misma_zona: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "injuries_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "injuries_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "injuries_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+        ]
+      }
+      v_dash_load_before_downgrade: {
+        Row: {
+          club_id: string | null
+          color: string | null
+          fecha_cambio: string | null
+          full_name: string | null
+          min_14d_previos: number | null
+          partidos_14d_previos: number | null
+          player_id: string | null
+          previous_color: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_tag_history_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_tag_history_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_tag_history_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+        ]
+      }
+      v_dash_squad_status: {
+        Row: {
+          club_id: string | null
+          color_actual: string | null
+          color_desde: string | null
+          dias_en_color_actual: number | null
+          full_name: string | null
+          lesion_activa: boolean | null
+          min_28d: number | null
+          min_7d: number | null
+          player_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_dash_tag_stability: {
+        Row: {
+          cambios_totales: number | null
+          club_id: string | null
+          dias_naranja: number | null
+          dias_rojo: number | null
+          dias_verde: number | null
+          episodios_riesgo: number | null
+          full_name: string | null
+          media_dias_recuperacion: number | null
+          pct_tiempo_riesgo: number | null
+          player_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_tag_history_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_tag_history_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_tag_history_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+        ]
+      }
+      v_dash_workload: {
+        Row: {
+          carga_cronica_semanal: number | null
+          club_id: string | null
+          color_actual: string | null
+          conmociones: number | null
+          estado_carga: string | null
+          full_name: string | null
+          juega_en_riesgo: boolean | null
+          min_28d: number | null
+          min_7d: number | null
+          min_amarilla_total: number | null
+          min_total: number | null
+          partidos_28d: number | null
+          partidos_total: number | null
+          player_id: string | null
+          ratio_agudo_cronico: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_minutes_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_minutes_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_minutes_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+        ]
+      }
       v_player_tag_periods: {
         Row: {
           club_id: string | null
@@ -1112,11 +1438,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "player_tag_history_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+          {
             foreignKeyName: "player_tag_history_set_by_fkey"
             columns: ["set_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_tag_history_set_by_fkey"
+            columns: ["set_by"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
           },
         ]
       }
