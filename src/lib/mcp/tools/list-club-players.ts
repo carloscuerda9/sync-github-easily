@@ -33,13 +33,13 @@ export default defineTool({
     const club = await resolveClub(supabase, me, club_id);
     if (!club.ok) return club.result;
 
+    const columns = include_contact
+      ? "id, club_id, email, full_name, phone, role, status, created_at, updated_at"
+      : "id, club_id, full_name, role, status, created_at, updated_at";
+
     const { data, error } = await supabase
       .from("profiles")
-      .select(
-        include_contact
-          ? "id, club_id, email, full_name, phone, role, status, created_at, updated_at"
-          : "id, club_id, full_name, role, status, created_at, updated_at",
-      )
+      .select(columns)
       .eq("club_id", club.club_id)
       .eq("role", "player")
       .eq("status", "approved")
@@ -48,11 +48,12 @@ export default defineTool({
 
     if (error) return fail("query_failed", `Error: ${error.message}`);
 
-    const rows = (data ?? []).map((p) => ({
+    const rows = ((data ?? []) as unknown as Record<string, unknown>[]).map((p) => ({
       ...p,
-      created_at: new Date(p.created_at).toISOString(),
-      updated_at: new Date(p.updated_at).toISOString(),
+      created_at: new Date(p.created_at as string).toISOString(),
+      updated_at: new Date(p.updated_at as string).toISOString(),
     }));
+
 
     return ok({
       count: rows.length,
