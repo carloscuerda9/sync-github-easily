@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+const OWNER_EMAIL = "carloscuerdarenedo@gmail.com";
+
 export const deleteUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { userId: string }) => {
@@ -25,6 +27,13 @@ export const deleteUser = createServerFn({ method: "POST" })
     }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // The owner account can never be deleted by anyone else
+    const { data: target } = await supabaseAdmin.auth.admin.getUserById(data.userId);
+    if ((target?.user?.email ?? "").toLowerCase() === OWNER_EMAIL) {
+      throw new Error("No autorizado");
+    }
+
     const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
     if (error) throw new Error(error.message);
 

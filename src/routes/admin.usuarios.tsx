@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { CheckCircle2, XCircle, Trash2 } from "lucide-react";
+import { isOwnerEmail, useIsOwner } from "@/lib/owner";
 
 export const Route = createFileRoute("/admin/usuarios")({
   component: UsersAdmin,
@@ -38,6 +39,7 @@ function UsersAdmin() {
   const [toDelete, setToDelete] = useState<Row | null>(null);
   const [deleting, setDeleting] = useState(false);
   const removeUser = useServerFn(deleteUser);
+  const isOwner = useIsOwner();
 
   const load = async () => {
     setLoading(true);
@@ -125,7 +127,7 @@ function UsersAdmin() {
                         <XCircle className="mr-1 h-3.5 w-3.5" /> Rechazar
                       </Button>
                     )}
-                    {r.role !== "superadmin" && (
+                    {(isOwner ? !isOwnerEmail(r.email) : r.role !== "superadmin") && (
                       <Button size="sm" variant="destructive" onClick={() => setToDelete(r)}>
                         <Trash2 className="mr-1 h-3.5 w-3.5" /> Eliminar
                       </Button>
