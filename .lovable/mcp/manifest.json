@@ -12,7 +12,7 @@
   "mcp": {
     "server": {
       "name": "we-fix-you",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "title": "WE FIX YOU"
     },
     "tools": [
@@ -62,6 +62,10 @@
               "minimum": 1,
               "maximum": 100,
               "description": "Máximo de jugadores a devolver (por defecto 50)"
+            },
+            "include_contact": {
+              "type": "boolean",
+              "description": "Incluir email y teléfono. Por defecto false por minimización de datos."
             },
             "club_id": {
               "type": "string",
@@ -545,6 +549,216 @@
               "description": "Solo para owner/superadmin sin club propio: club a consultar. Se ignora para el resto de roles."
             }
           },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "upsert_match",
+        "title": "Crear o recuperar partido",
+        "description": "Crea un partido o recupera el existente si ya hay uno con el mismo acta_ref en el club. Devuelve match_id y si fue creado o recuperado. Idempotente.",
+        "annotations": {
+          "readOnlyHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "fecha": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "description": "Fecha del partido (YYYY-MM-DD)"
+            },
+            "rival": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "description": "Equipo rival"
+            },
+            "acta_ref": {
+              "type": "string",
+              "maxLength": 120,
+              "description": "Referencia única del acta oficial. Clave de idempotencia."
+            },
+            "competicion": {
+              "type": "string",
+              "maxLength": 120,
+              "description": "Competición"
+            },
+            "jornada": {
+              "type": "string",
+              "maxLength": 40,
+              "description": "Jornada"
+            },
+            "local_visitante": {
+              "type": "string",
+              "enum": [
+                "local",
+                "visitante"
+              ],
+              "description": "Condición del equipo"
+            },
+            "resultado_favor": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Goles a favor"
+            },
+            "resultado_contra": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Goles en contra"
+            },
+            "duracion_min": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "description": "Duración del partido en minutos (por defecto 80)"
+            },
+            "update_if_exists": {
+              "type": "boolean",
+              "description": "Si ya existe un partido con ese acta_ref, actualizarlo en vez de devolverlo tal cual (por defecto false)"
+            },
+            "club_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Solo para owner/superadmin sin club propio: club de contexto. Se ignora para el resto de roles."
+            }
+          },
+          "required": [
+            "fecha",
+            "rival"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "bulk_record_match_minutes",
+        "title": "Registrar minutos en bloque",
+        "description": "Registra los minutos de varios jugadores de un partido en una sola llamada. Idempotente por (match_id, player_id).",
+        "annotations": {
+          "readOnlyHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "match_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "ID del partido"
+            },
+            "players": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "player_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "ID del jugador"
+                  },
+                  "minutes_played": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 200,
+                    "description": "Minutos jugados"
+                  },
+                  "started": {
+                    "type": "boolean",
+                    "description": "¿Fue titular? (por defecto false)"
+                  },
+                  "dorsal": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 99,
+                    "description": "Dorsal"
+                  },
+                  "entro_min": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 200,
+                    "description": "Minuto de entrada"
+                  },
+                  "salio_min": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 200,
+                    "description": "Minuto de salida"
+                  },
+                  "minutos_amarilla": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 200,
+                    "description": "Minuto de la tarjeta amarilla (por defecto 0)"
+                  },
+                  "motivo_salida": {
+                    "type": "string",
+                    "enum": [
+                      "tactico",
+                      "lesion",
+                      "conmocion_hia",
+                      "tarjeta_roja",
+                      "tarjeta_amarilla",
+                      "fin_partido",
+                      "otro"
+                    ],
+                    "description": "Motivo de la salida del campo"
+                  },
+                  "tramos": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "in": {
+                          "type": "integer"
+                        },
+                        "out": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "in",
+                        "out"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Tramos jugados [{in,out}]"
+                  },
+                  "notes": {
+                    "type": "string",
+                    "maxLength": 1000,
+                    "description": "Notas u observaciones"
+                  }
+                },
+                "required": [
+                  "player_id",
+                  "minutes_played"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1,
+              "maxItems": 40,
+              "description": "Jugadores y sus minutos"
+            },
+            "dry_run": {
+              "type": "boolean",
+              "description": "Valida sin escribir. Devuelve lo que haría."
+            },
+            "club_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Solo para owner/superadmin sin club propio: club de contexto. Se ignora para el resto de roles."
+            }
+          },
+          "required": [
+            "match_id",
+            "players"
+          ],
           "additionalProperties": false,
           "$schema": "http://json-schema.org/draft-07/schema#"
         },

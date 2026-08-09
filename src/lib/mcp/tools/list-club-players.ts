@@ -10,6 +10,10 @@ export default defineTool({
     "Lista los jugadores aprobados del club efectivo. Disponible para fisios, entrenadores y owner/superadmin. Devuelve JSON estructurado {ok,count,club_id,data,message}.",
   inputSchema: {
     limit: z.number().int().min(1).max(100).optional().describe("Máximo de jugadores a devolver (por defecto 50)"),
+    include_contact: z
+      .boolean()
+      .optional()
+      .describe("Incluir email y teléfono. Por defecto false por minimización de datos."),
     club_id: z
       .string()
       .uuid()
@@ -17,7 +21,7 @@ export default defineTool({
       .describe("Solo para owner/superadmin sin club propio: club a consultar. Se ignora para el resto de roles."),
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async ({ limit = 50, club_id }, ctx) => {
+  handler: async ({ limit = 50, club_id, include_contact = false }, ctx) => {
     if (!ctx.isAuthenticated()) return NOT_AUTHENTICATED();
     const supabase = supabaseForUser(ctx);
     const me = await loadMe(supabase, ctx);
@@ -31,7 +35,11 @@ export default defineTool({
 
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, club_id, email, full_name, phone, role, status, created_at, updated_at")
+      .select(
+        include_contact
+          ? "id, club_id, email, full_name, phone, role, status, created_at, updated_at"
+          : "id, club_id, full_name, role, status, created_at, updated_at",
+      )
       .eq("club_id", club.club_id)
       .eq("role", "player")
       .eq("status", "approved")
