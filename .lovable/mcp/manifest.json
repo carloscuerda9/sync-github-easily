@@ -694,7 +694,7 @@
                     "type": "integer",
                     "minimum": 0,
                     "maximum": 200,
-                    "description": "Minuto de la tarjeta amarilla (por defecto 0)"
+                    "description": "Minutos de sanción cumplidos por tarjeta amarilla: min(10, duración - minuto de la tarjeta). No es el minuto en que se mostró. Por defecto 0."
                   },
                   "motivo_salida": {
                     "type": "string",

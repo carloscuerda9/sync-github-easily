@@ -10,7 +10,7 @@ const playerEntry = z.object({
   dorsal: z.number().int().min(1).max(99).optional().describe("Dorsal"),
   entro_min: z.number().int().min(0).max(200).optional().describe("Minuto de entrada"),
   salio_min: z.number().int().min(0).max(200).optional().describe("Minuto de salida"),
-  minutos_amarilla: z.number().int().min(0).max(200).optional().describe("Minuto de la tarjeta amarilla (por defecto 0)"),
+  minutos_amarilla: z.number().int().min(0).max(200).optional().describe("Minutos de sanción cumplidos por tarjeta amarilla: min(10, duración - minuto de la tarjeta). No es el minuto en que se mostró. Por defecto 0."),
   motivo_salida: z
     .enum(["tactico", "lesion", "conmocion_hia", "tarjeta_roja", "tarjeta_amarilla", "fin_partido", "otro"])
     .optional()
