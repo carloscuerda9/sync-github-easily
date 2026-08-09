@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { CheckCircle2, XCircle, Trash2 } from "lucide-react";
+import { isOwnerEmail, useIsOwner } from "@/lib/owner";
 
 export const Route = createFileRoute("/admin/usuarios")({
   component: UsersAdmin,
