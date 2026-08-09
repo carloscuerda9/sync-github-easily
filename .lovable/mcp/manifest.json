@@ -48,7 +48,7 @@
       {
         "name": "list_club_players",
         "title": "Listar jugadores del club",
-        "description": "Lista los jugadores aprobados del club del usuario autenticado. Solo disponible para fisios, entrenadores y administradores.",
+        "description": "Lista los jugadores aprobados del club efectivo. Disponible para fisios, entrenadores y owner/superadmin. Devuelve JSON estructurado {ok,count,club_id,data,message}.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -62,6 +62,11 @@
               "minimum": 1,
               "maximum": 100,
               "description": "Máximo de jugadores a devolver (por defecto 50)"
+            },
+            "club_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Solo para owner/superadmin sin club propio: club a consultar. Se ignora para el resto de roles."
             }
           },
           "additionalProperties": false,
