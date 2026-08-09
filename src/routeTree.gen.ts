@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RegistroRouteImport } from './routes/registro'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as JugadorRouteImport } from './routes/jugador'
 import { Route as FisioRouteImport } from './routes/fisio'
@@ -40,11 +41,19 @@ import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminMensajesRouteImport } from './routes/admin.mensajes'
 import { Route as AdminFacturasRouteImport } from './routes/admin.facturas'
 import { Route as AdminCitasRouteImport } from './routes/admin.citas'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 
 const RegistroRoute = RegistroRouteImport.update({
   id: '/registro',
   path: '/registro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -197,6 +206,24 @@ const AdminCitasRoute = AdminCitasRouteImport.update({
   path: '/citas',
   getParentRoute: () => AdminRoute,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   id: '/.lovable/oauth/consent',
   path: '/.lovable/oauth/consent',
@@ -210,7 +237,10 @@ export interface FileRoutesByFullPath {
   '/fisio': typeof FisioRouteWithChildren
   '/jugador': typeof JugadorRouteWithChildren
   '/login': typeof LoginRoute
+  '/mcp': typeof McpRoute
   '/registro': typeof RegistroRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/citas': typeof AdminCitasRoute
   '/admin/facturas': typeof AdminFacturasRoute
   '/admin/mensajes': typeof AdminMensajesRoute
@@ -236,11 +266,15 @@ export interface FileRoutesByFullPath {
   '/fisio/': typeof FisioIndexRoute
   '/jugador/': typeof JugadorIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/mcp': typeof McpRoute
   '/registro': typeof RegistroRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/citas': typeof AdminCitasRoute
   '/admin/facturas': typeof AdminFacturasRoute
   '/admin/mensajes': typeof AdminMensajesRoute
@@ -266,6 +300,7 @@ export interface FileRoutesByTo {
   '/fisio': typeof FisioIndexRoute
   '/jugador': typeof JugadorIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -275,7 +310,10 @@ export interface FileRoutesById {
   '/fisio': typeof FisioRouteWithChildren
   '/jugador': typeof JugadorRouteWithChildren
   '/login': typeof LoginRoute
+  '/mcp': typeof McpRoute
   '/registro': typeof RegistroRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/citas': typeof AdminCitasRoute
   '/admin/facturas': typeof AdminFacturasRoute
   '/admin/mensajes': typeof AdminMensajesRoute
@@ -301,6 +339,7 @@ export interface FileRoutesById {
   '/fisio/': typeof FisioIndexRoute
   '/jugador/': typeof JugadorIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -311,7 +350,10 @@ export interface FileRouteTypes {
     | '/fisio'
     | '/jugador'
     | '/login'
+    | '/mcp'
     | '/registro'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/citas'
     | '/admin/facturas'
     | '/admin/mensajes'
@@ -337,11 +379,15 @@ export interface FileRouteTypes {
     | '/fisio/'
     | '/jugador/'
     | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
+    | '/mcp'
     | '/registro'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/citas'
     | '/admin/facturas'
     | '/admin/mensajes'
@@ -367,6 +413,7 @@ export interface FileRouteTypes {
     | '/fisio'
     | '/jugador'
     | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
   id:
     | '__root__'
     | '/'
@@ -375,7 +422,10 @@ export interface FileRouteTypes {
     | '/fisio'
     | '/jugador'
     | '/login'
+    | '/mcp'
     | '/registro'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/citas'
     | '/admin/facturas'
     | '/admin/mensajes'
@@ -401,6 +451,7 @@ export interface FileRouteTypes {
     | '/fisio/'
     | '/jugador/'
     | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -410,8 +461,12 @@ export interface RootRouteChildren {
   FisioRoute: typeof FisioRouteWithChildren
   JugadorRoute: typeof JugadorRouteWithChildren
   LoginRoute: typeof LoginRoute
+  McpRoute: typeof McpRoute
   RegistroRoute: typeof RegistroRoute
+  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
+  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -421,6 +476,13 @@ declare module '@tanstack/react-router' {
       path: '/registro'
       fullPath: '/registro'
       preLoaderRoute: typeof RegistroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -633,6 +695,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCitasRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/.lovable/oauth/consent': {
       id: '/.lovable/oauth/consent'
       path: '/.lovable/oauth/consent'
@@ -733,8 +816,13 @@ const rootRouteChildren: RootRouteChildren = {
   FisioRoute: FisioRouteWithChildren,
   JugadorRoute: JugadorRouteWithChildren,
   LoginRoute: LoginRoute,
+  McpRoute: McpRoute,
   RegistroRoute: RegistroRoute,
+  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
+  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
