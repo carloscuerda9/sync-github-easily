@@ -39,6 +39,7 @@ import { Route as EntrenadorMensajesRouteImport } from './routes/entrenador.mens
 import { Route as EntrenadorHistoricoRouteImport } from './routes/entrenador.historico'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminMensajesRouteImport } from './routes/admin.mensajes'
+import { Route as AdminHistoricoRouteImport } from './routes/admin.historico'
 import { Route as AdminFacturasRouteImport } from './routes/admin.facturas'
 import { Route as AdminCitasRouteImport } from './routes/admin.citas'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -196,6 +197,11 @@ const AdminMensajesRoute = AdminMensajesRouteImport.update({
   path: '/mensajes',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminHistoricoRoute = AdminHistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminFacturasRoute = AdminFacturasRouteImport.update({
   id: '/facturas',
   path: '/facturas',
@@ -243,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/citas': typeof AdminCitasRoute
   '/admin/facturas': typeof AdminFacturasRoute
+  '/admin/historico': typeof AdminHistoricoRoute
   '/admin/mensajes': typeof AdminMensajesRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrenador/historico': typeof EntrenadorHistoricoRoute
@@ -277,6 +284,7 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/citas': typeof AdminCitasRoute
   '/admin/facturas': typeof AdminFacturasRoute
+  '/admin/historico': typeof AdminHistoricoRoute
   '/admin/mensajes': typeof AdminMensajesRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrenador/historico': typeof EntrenadorHistoricoRoute
@@ -316,6 +324,7 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/citas': typeof AdminCitasRoute
   '/admin/facturas': typeof AdminFacturasRoute
+  '/admin/historico': typeof AdminHistoricoRoute
   '/admin/mensajes': typeof AdminMensajesRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/entrenador/historico': typeof EntrenadorHistoricoRoute
@@ -356,6 +365,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin/citas'
     | '/admin/facturas'
+    | '/admin/historico'
     | '/admin/mensajes'
     | '/admin/usuarios'
     | '/entrenador/historico'
@@ -390,6 +400,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin/citas'
     | '/admin/facturas'
+    | '/admin/historico'
     | '/admin/mensajes'
     | '/admin/usuarios'
     | '/entrenador/historico'
@@ -428,6 +439,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin/citas'
     | '/admin/facturas'
+    | '/admin/historico'
     | '/admin/mensajes'
     | '/admin/usuarios'
     | '/entrenador/historico'
@@ -681,6 +693,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminMensajesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/historico': {
+      id: '/admin/historico'
+      path: '/historico'
+      fullPath: '/admin/historico'
+      preLoaderRoute: typeof AdminHistoricoRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/facturas': {
       id: '/admin/facturas'
       path: '/facturas'
@@ -729,6 +748,7 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminCitasRoute: typeof AdminCitasRoute
   AdminFacturasRoute: typeof AdminFacturasRoute
+  AdminHistoricoRoute: typeof AdminHistoricoRoute
   AdminMensajesRoute: typeof AdminMensajesRoute
   AdminUsuariosRoute: typeof AdminUsuariosRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -737,6 +757,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminCitasRoute: AdminCitasRoute,
   AdminFacturasRoute: AdminFacturasRoute,
+  AdminHistoricoRoute: AdminHistoricoRoute,
   AdminMensajesRoute: AdminMensajesRoute,
   AdminUsuariosRoute: AdminUsuariosRoute,
   AdminIndexRoute: AdminIndexRoute,
