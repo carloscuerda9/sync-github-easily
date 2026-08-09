@@ -898,7 +898,44 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      v_player_tag_periods: {
+        Row: {
+          club_id: string | null
+          color: string | null
+          dias_en_color: number | null
+          id: string | null
+          periodo_abierto: boolean | null
+          player_id: string | null
+          previous_color: string | null
+          reason: string | null
+          set_by: string | null
+          valid_from: string | null
+          valid_to: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_tag_history_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_tag_history_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_tag_history_set_by_fkey"
+            columns: ["set_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       can_access_document_path: { Args: { _path: string }; Returns: boolean }
