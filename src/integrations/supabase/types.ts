@@ -430,42 +430,63 @@ export type Database = {
           club_id: string | null
           competition: string | null
           created_at: string
+          dorsal: number | null
+          entro_min: number | null
           id: string
           match_date: string
+          match_id: string | null
           minutes_played: number
+          minutos_amarilla: number
+          motivo_salida: string | null
           notes: string | null
           opponent: string
           player_id: string
           recorded_by: string | null
+          salio_min: number | null
           started: boolean
+          tramos: Json | null
           updated_at: string
         }
         Insert: {
           club_id?: string | null
           competition?: string | null
           created_at?: string
+          dorsal?: number | null
+          entro_min?: number | null
           id?: string
           match_date: string
+          match_id?: string | null
           minutes_played?: number
+          minutos_amarilla?: number
+          motivo_salida?: string | null
           notes?: string | null
           opponent?: string
           player_id: string
           recorded_by?: string | null
+          salio_min?: number | null
           started?: boolean
+          tramos?: Json | null
           updated_at?: string
         }
         Update: {
           club_id?: string | null
           competition?: string | null
           created_at?: string
+          dorsal?: number | null
+          entro_min?: number | null
           id?: string
           match_date?: string
+          match_id?: string | null
           minutes_played?: number
+          minutos_amarilla?: number
+          motivo_salida?: string | null
           notes?: string | null
           opponent?: string
           player_id?: string
           recorded_by?: string | null
+          salio_min?: number | null
           started?: boolean
+          tramos?: Json | null
           updated_at?: string
         }
         Relationships: [
@@ -474,6 +495,13 @@ export type Database = {
             columns: ["club_id"]
             isOneToOne: false
             referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_minutes_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
             referencedColumns: ["id"]
           },
           {
