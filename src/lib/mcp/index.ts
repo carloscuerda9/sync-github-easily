@@ -7,6 +7,10 @@ import recordMatchMinutes from "./tools/record-match-minutes";
 import listMatchMinutes from "./tools/list-match-minutes";
 import recordInjury from "./tools/record-injury";
 import listInjuries from "./tools/list-injuries";
+import listPlayerTagHistory from "./tools/list-player-tag-history";
+import getTagStats from "./tools/get-tag-stats";
+import listClubAppointments from "./tools/list-club-appointments";
+import getWorkloadMetrics from "./tools/get-workload-metrics";
 
 const projectRef = import.meta.env['VITE_SUPABASE_PROJECT_ID'] ?? "project-ref-unset";
 
