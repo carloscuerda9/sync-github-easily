@@ -77,7 +77,7 @@
       {
         "name": "get_player_status",
         "title": "Estado de un jugador",
-        "description": "Devuelve el color de estado asignado por los fisios a un jugador (verde, amarillo, naranja o rojo).",
+        "description": "Devuelve el color de estado asignado por los fisios a un jugador del club efectivo. JSON estructurado {ok,count,club_id,data,message}.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -90,6 +90,11 @@
               "type": "string",
               "format": "uuid",
               "description": "ID del jugador"
+            },
+            "club_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Solo para owner/superadmin sin club propio: club a consultar. Se ignora para el resto de roles."
             }
           },
           "required": [
