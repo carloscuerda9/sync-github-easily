@@ -47,7 +47,7 @@ export default defineTool({
     let query = supabase
       .from("match_minutes")
       .select(
-        "id, player_id, club_id, recorded_by, match_date, opponent, competition, minutes_played, started, notes, created_at, updated_at",
+        "id, player_id, club_id, recorded_by, match_id, match_date, opponent, competition, minutes_played, started, dorsal, entro_min, salio_min, minutos_amarilla, motivo_salida, tramos, notes, created_at, updated_at",
       )
       .eq("club_id", club.club_id)
       .order("match_date", { ascending: false })
