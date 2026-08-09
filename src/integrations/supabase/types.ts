@@ -807,6 +807,8 @@ export type Database = {
         Returns: boolean
       }
       is_approved: { Args: { _user_id: string }; Returns: boolean }
+      is_owner: { Args: { _user_id: string }; Returns: boolean }
+      owner_email: { Args: never; Returns: string }
       physio_treats_player: {
         Args: { _physio_id: string; _player_id: string }
         Returns: boolean
