@@ -3,6 +3,10 @@ import listMyAppointments from "./tools/list-my-appointments";
 import listClubPlayers from "./tools/list-club-players";
 import getPlayerStatus from "./tools/get-player-status";
 import sendMessage from "./tools/send-message";
+import recordMatchMinutes from "./tools/record-match-minutes";
+import listMatchMinutes from "./tools/list-match-minutes";
+import recordInjury from "./tools/record-injury";
+import listInjuries from "./tools/list-injuries";
 
 const projectRef = import.meta.env['VITE_SUPABASE_PROJECT_ID'] ?? "project-ref-unset";
 
