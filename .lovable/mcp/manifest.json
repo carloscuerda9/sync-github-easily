@@ -108,7 +108,7 @@
       {
         "name": "send_message",
         "title": "Enviar mensaje",
-        "description": "Envía un mensaje a otro usuario del mismo club. Solo permite mensajes entre usuarios del mismo club.",
+        "description": "Envía un mensaje a otro usuario del mismo club efectivo. JSON estructurado {ok,count,club_id,data,message}.",
         "annotations": {
           "readOnlyHint": false,
           "idempotentHint": false,
@@ -127,6 +127,11 @@
               "minLength": 1,
               "maxLength": 1000,
               "description": "Contenido del mensaje"
+            },
+            "club_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Solo para owner/superadmin sin club propio: club de contexto. Se ignora para el resto de roles."
             }
           },
           "required": [
@@ -141,7 +146,7 @@
       {
         "name": "record_match_minutes",
         "title": "Registrar minutos jugados",
-        "description": "Registra (o actualiza) los minutos jugados por un jugador en un partido. Solo fisios, entrenadores y administradores del mismo club.",
+        "description": "Registra o actualiza los minutos jugados por un jugador en un partido. Clave de idempotencia: (player_id, match_date, opponent), respaldada por el índice UNIQUE match_minutes_unique_entry. Devuelve action='created'|'updated'. Solo fisios, entrenadores y owner/superadmin del mismo club.",
         "annotations": {
           "readOnlyHint": false,
           "idempotentHint": true,
@@ -169,7 +174,7 @@
             "opponent": {
               "type": "string",
               "maxLength": 120,
-              "description": "Rival"
+              "description": "Rival (forma parte de la clave de idempotencia)"
             },
             "competition": {
               "type": "string",
@@ -184,6 +189,11 @@
               "type": "string",
               "maxLength": 1000,
               "description": "Notas u observaciones"
+            },
+            "club_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Solo para owner/superadmin sin club propio: club de contexto. Se ignora para el resto de roles."
             }
           },
           "required": [
@@ -199,7 +209,7 @@
       {
         "name": "list_match_minutes",
         "title": "Consultar minutos jugados",
-        "description": "Consulta los minutos jugados registrados, con filtros opcionales por jugador y rango de fechas. Devuelve también el total acumulado.",
+        "description": "Consulta los minutos jugados registrados en el club efectivo, con filtros opcionales por jugador y rango de fechas. JSON estructurado {ok,count,club_id,data,message,total_minutes}.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -228,6 +238,11 @@
               "minimum": 1,
               "maximum": 200,
               "description": "Máximo de registros (por defecto 50)"
+            },
+            "club_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Solo para owner/superadmin sin club propio: club a consultar. Se ignora para el resto de roles."
             }
           },
           "additionalProperties": false,
@@ -238,7 +253,7 @@
       {
         "name": "record_injury",
         "title": "Registrar lesión",
-        "description": "Registra una lesión de un jugador en el histórico clínico (zona del cuerpo, tipo, gravedad, tratamiento y días de recuperación). Solo fisios y administradores del mismo club.",
+        "description": "Registra una lesión de un jugador en el histórico clínico (zona del cuerpo, tipo, gravedad, tratamiento y días de recuperación). Solo fisios y owner/superadmin del mismo club. JSON estructurado.",
         "annotations": {
           "readOnlyHint": false,
           "idempotentHint": false,
@@ -293,6 +308,11 @@
               "type": "string",
               "maxLength": 1000,
               "description": "Observaciones"
+            },
+            "club_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Solo para owner/superadmin sin club propio: club de contexto. Se ignora para el resto de roles."
             }
           },
           "required": [
@@ -309,7 +329,7 @@
       {
         "name": "list_injuries",
         "title": "Consultar lesiones",
-        "description": "Consulta las lesiones registradas en el histórico clínico, con filtros opcionales por jugador y rango de fechas.",
+        "description": "Consulta las lesiones del histórico clínico del club efectivo, con filtros opcionales por jugador y rango de fechas. JSON estructurado {ok,count,club_id,data,message}.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -338,6 +358,11 @@
               "minimum": 1,
               "maximum": 200,
               "description": "Máximo de registros (por defecto 50)"
+            },
+            "club_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Solo para owner/superadmin sin club propio: club a consultar. Se ignora para el resto de roles."
             }
           },
           "additionalProperties": false,
