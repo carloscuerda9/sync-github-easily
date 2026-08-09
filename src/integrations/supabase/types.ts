@@ -639,6 +639,61 @@ export type Database = {
         }
         Relationships: []
       }
+      player_tag_history: {
+        Row: {
+          club_id: string | null
+          color: string
+          id: string
+          player_id: string
+          previous_color: string | null
+          reason: string | null
+          set_at: string
+          set_by: string | null
+        }
+        Insert: {
+          club_id?: string | null
+          color: string
+          id?: string
+          player_id: string
+          previous_color?: string | null
+          reason?: string | null
+          set_at?: string
+          set_by?: string | null
+        }
+        Update: {
+          club_id?: string | null
+          color?: string
+          id?: string
+          player_id?: string
+          previous_color?: string | null
+          reason?: string | null
+          set_at?: string
+          set_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_tag_history_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_tag_history_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_tag_history_set_by_fkey"
+            columns: ["set_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       player_tags: {
         Row: {
           color: string
