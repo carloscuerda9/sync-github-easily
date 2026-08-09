@@ -1,54 +1,56 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 import { supabaseForUser } from "../supabase";
+import { NOT_AUTHENTICATED, fail, loadMe, ok, resolveClubOptional } from "../club";
 
 export default defineTool({
   name: "list_my_appointments",
   title: "Listar mis citas",
-  description: "Lista las citas próximas del usuario autenticado en WE FIX YOU.",
+  description:
+    "Lista las citas próximas del usuario autenticado en WE FIX YOU. Devuelve JSON estructurado {ok,count,club_id,data,message}.",
   inputSchema: {
     limit: z.number().int().min(1).max(50).optional().describe("Máximo de citas a devolver (por defecto 10)"),
+    club_id: z
+      .string()
+      .uuid()
+      .optional()
+      .describe("Solo para owner/superadmin sin club propio: club de contexto. Se ignora para el resto de roles."),
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async ({ limit = 10 }, ctx) => {
-    if (!ctx.isAuthenticated()) {
-      return { content: [{ type: "text", text: "No autenticado" }], isError: true };
-    }
+  handler: async ({ limit = 10, club_id }, ctx) => {
+    if (!ctx.isAuthenticated()) return NOT_AUTHENTICATED();
     const supabase = supabaseForUser(ctx);
-    const userId = ctx.getUserId();
+    const me = await loadMe(supabase, ctx);
+    if (!me) return fail("profile_unavailable", "No se pudo cargar tu perfil.");
+
+    const effectiveClub = await resolveClubOptional(supabase, me, club_id);
+    const userId = me.id;
 
     const { data, error } = await supabase
       .from("appointments")
-      .select("id, scheduled_at, status, type, duration_minutes, player_id, physio_id")
+      .select(
+        "id, player_id, physio_id, scheduled_at, duration_minutes, type, status, notes, created_at, updated_at",
+      )
       .or(`player_id.eq.${userId},physio_id.eq.${userId}`)
-      .order("scheduled_at", { ascending: true })
       .gte("scheduled_at", new Date().toISOString())
+      .order("scheduled_at", { ascending: true })
       .limit(limit);
 
-    if (error) {
-      return { content: [{ type: "text", text: `Error al consultar citas: ${error.message}` }], isError: true };
-    }
-    if (!data || data.length === 0) {
-      return { content: [{ type: "text", text: "No tienes citas próximas." }] };
-    }
+    if (error) return fail("query_failed", `Error al consultar citas: ${error.message}`);
 
-    const lines = data.map((a) => {
-      const date = new Date(a.scheduled_at).toLocaleString("es-ES");
-      const typeLabel: Record<string, string> = {
-        in_person: "Descarga",
-        home_visit: "Prevención",
-        sports_event: "Lesión",
-      };
-      const statusLabel: Record<string, string> = {
-        requested: "Pendiente",
-        confirmed: "Confirmada",
-        cancelled: "Cancelada",
-        completed: "Completada",
-        rejected: "Rechazada",
-      };
-      return `- ${date} | ${typeLabel[a.type] ?? a.type} | ${statusLabel[a.status] ?? a.status} | ${a.duration_minutes} min`;
+    const rows = (data ?? []).map((a) => ({
+      ...a,
+      club_id: effectiveClub,
+      scheduled_at: new Date(a.scheduled_at).toISOString(),
+      created_at: new Date(a.created_at).toISOString(),
+      updated_at: new Date(a.updated_at).toISOString(),
+    }));
+
+    return ok({
+      count: rows.length,
+      club_id: effectiveClub,
+      data: rows,
+      message: rows.length === 0 ? "No tienes citas próximas." : `Tienes ${rows.length} cita(s) próxima(s).`,
     });
-
-    return { content: [{ type: "text", text: `Citas próximas:\n${lines.join("\n")}` }] };
   },
 });

@@ -1,50 +1,66 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 import { supabaseForUser } from "../supabase";
+import { NOT_AUTHENTICATED, PLAYER_NOT_FOUND, fail, loadMe, ok, resolveClub } from "../club";
 
 export default defineTool({
   name: "send_message",
   title: "Enviar mensaje",
-  description: "Envía un mensaje a otro usuario del mismo club. Solo permite mensajes entre usuarios del mismo club.",
+  description:
+    "Envía un mensaje a otro usuario del mismo club efectivo. JSON estructurado {ok,count,club_id,data,message}.",
   inputSchema: {
     receiver_id: z.string().uuid().describe("ID del destinatario"),
     content: z.string().min(1).max(1000).describe("Contenido del mensaje"),
+    club_id: z
+      .string()
+      .uuid()
+      .optional()
+      .describe("Solo para owner/superadmin sin club propio: club de contexto. Se ignora para el resto de roles."),
   },
   annotations: { readOnlyHint: false, idempotentHint: false, openWorldHint: false },
-  handler: async ({ receiver_id, content }, ctx) => {
-    if (!ctx.isAuthenticated()) {
-      return { content: [{ type: "text", text: "No autenticado" }], isError: true };
-    }
+  handler: async ({ receiver_id, content, club_id }, ctx) => {
+    if (!ctx.isAuthenticated()) return NOT_AUTHENTICATED();
     const supabase = supabaseForUser(ctx);
-    const senderId = ctx.getUserId();
+    const me = await loadMe(supabase, ctx);
+    if (!me) return fail("profile_unavailable", "No se pudo cargar tu perfil.");
 
-    const { data: profiles, error: profileError } = await supabase
+    const club = await resolveClub(supabase, me, club_id);
+    if (!club.ok) return club.result;
+
+    const { data: receiver } = await supabase
       .from("profiles")
       .select("id, club_id")
-      .in("id", [senderId, receiver_id]);
+      .eq("id", receiver_id)
+      .eq("club_id", club.club_id)
+      .maybeSingle();
 
-    if (profileError || !profiles || profiles.length < 2) {
-      return { content: [{ type: "text", text: "Destinatario no encontrado" }], isError: true };
-    }
+    // Inexistente y "de otro club" comparten respuesta.
+    if (!receiver) return PLAYER_NOT_FOUND();
 
-    const sender = profiles.find((p) => p.id === senderId);
-    const receiver = profiles.find((p) => p.id === receiver_id);
+    const { data, error } = await supabase
+      .from("messages")
+      .insert({
+        sender_id: me.id,
+        receiver_id,
+        content,
+        read: false,
+        attachments: [],
+      })
+      .select("id, sender_id, receiver_id, content, attachments, read, created_at")
+      .maybeSingle();
 
-    if (!sender?.club_id || sender.club_id !== receiver?.club_id) {
-      return { content: [{ type: "text", text: "No puedes enviar mensajes a usuarios de otro club" }], isError: true };
-    }
+    if (error) return fail("write_failed", `Error al enviar: ${error.message}`);
 
-    const { error } = await supabase.from("messages").insert({
-      sender_id: senderId,
-      receiver_id: receiver_id,
-      content,
-      read: false,
-      attachments: [],
+    const row = data
+      ? { ...data, club_id: club.club_id, created_at: new Date(data.created_at).toISOString() }
+      : null;
+
+    return ok({
+      count: row ? 1 : 0,
+      club_id: club.club_id,
+      data: row ? [row] : [],
+      message: "Mensaje enviado correctamente.",
+      extra: { action: "created" },
     });
-
-    if (error) {
-      return { content: [{ type: "text", text: `Error al enviar: ${error.message}` }], isError: true };
-    }
-    return { content: [{ type: "text", text: "Mensaje enviado correctamente." }] };
   },
 });
