@@ -1,0 +1,1 @@
+alter view public.v_player_tag_periods set (security_invoker = true);
