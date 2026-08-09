@@ -7,13 +7,17 @@ import recordMatchMinutes from "./tools/record-match-minutes";
 import listMatchMinutes from "./tools/list-match-minutes";
 import recordInjury from "./tools/record-injury";
 import listInjuries from "./tools/list-injuries";
+import listPlayerTagHistory from "./tools/list-player-tag-history";
+import getTagStats from "./tools/get-tag-stats";
+import listClubAppointments from "./tools/list-club-appointments";
+import getWorkloadMetrics from "./tools/get-workload-metrics";
 
 const projectRef = import.meta.env['VITE_SUPABASE_PROJECT_ID'] ?? "project-ref-unset";
 
 export default defineMcp({
   name: "we-fix-you",
   title: "WE FIX YOU",
-  version: "0.3.0",
+  version: "0.4.0",
   instructions:
     "Servidor MCP para WE FIX YOU. Todas las herramientas devuelven JSON estructurado: éxito {ok:true,count,club_id,data,message} y error {ok:false,error_code,message}. Fechas en ISO-8601 (YYYY-MM-DD para fechas, UTC para timestamps). El club se resuelve por sesión; owner/superadmin sin club propio puede indicar club_id opcional (para el resto de roles se ignora). El usuario debe estar autenticado con OAuth.",
   auth: auth.oauth.issuer({
@@ -29,5 +33,9 @@ export default defineMcp({
     listMatchMinutes,
     recordInjury,
     listInjuries,
+    listPlayerTagHistory,
+    getTagStats,
+    listClubAppointments,
+    getWorkloadMetrics,
   ],
 });

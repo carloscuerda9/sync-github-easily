@@ -12,7 +12,7 @@
   "mcp": {
     "server": {
       "name": "we-fix-you",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "title": "WE FIX YOU"
     },
     "tools": [
@@ -358,6 +358,186 @@
               "minimum": 1,
               "maximum": 200,
               "description": "Máximo de registros (por defecto 50)"
+            },
+            "club_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Solo para owner/superadmin sin club propio: club a consultar. Se ignora para el resto de roles."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_player_tag_history",
+        "title": "Histórico de estados de color",
+        "description": "Devuelve el histórico de cambios de color de estado de los jugadores del club, con el color anterior, quién lo cambió y cuándo. Filtros por jugador y rango de fechas.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "player_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Filtrar por jugador"
+            },
+            "from_date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "description": "Desde (YYYY-MM-DD)"
+            },
+            "to_date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "description": "Hasta (YYYY-MM-DD)"
+            },
+            "color": {
+              "type": "string",
+              "enum": [
+                "green",
+                "yellow",
+                "orange",
+                "red"
+              ],
+              "description": "Filtrar por color"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "description": "Máximo de registros (por defecto 50)"
+            },
+            "club_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Solo para owner/superadmin sin club propio: club a consultar. Se ignora para el resto de roles."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_tag_stats",
+        "title": "Estadísticas de estados de color",
+        "description": "Estadísticas agregadas de estados de color: cuántas veces y cuántos días acumulados ha estado cada jugador en cada color. Sin player_id, devuelve todo el club.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "player_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Filtrar por jugador"
+            },
+            "from_date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "description": "Desde (YYYY-MM-DD)"
+            },
+            "to_date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "description": "Hasta (YYYY-MM-DD)"
+            },
+            "club_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Solo para owner/superadmin sin club propio: club a consultar. Se ignora para el resto de roles."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_club_appointments",
+        "title": "Agenda del club",
+        "description": "Agenda de fisioterapia de todo el club, no solo la del usuario. Permite ver asistencia y adherencia al tratamiento.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "player_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Filtrar por jugador"
+            },
+            "from_date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "description": "Desde (YYYY-MM-DD)"
+            },
+            "to_date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "description": "Hasta (YYYY-MM-DD)"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "requested",
+                "confirmed",
+                "cancelled",
+                "completed",
+                "rejected"
+              ],
+              "description": "Filtrar por estado de la cita"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "description": "Máximo de registros (por defecto 50)"
+            },
+            "club_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Solo para owner/superadmin sin club propio: club a consultar. Se ignora para el resto de roles."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_workload_metrics",
+        "title": "Métricas de carga",
+        "description": "Métricas de carga por jugador: minutos en 7 y 28 días, ratio agudo:crónico y alertas. Ratio >1.5 indica pico de carga; <0.8, subcarga.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "player_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Filtrar por jugador"
+            },
+            "reference_date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "description": "Fecha de referencia (YYYY-MM-DD). Por defecto, hoy."
             },
             "club_id": {
               "type": "string",
