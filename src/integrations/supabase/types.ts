@@ -240,11 +240,17 @@ export type Database = {
       }
       injuries: {
         Row: {
+          actual_return_date: string | null
           body_part: string
+          club_id: string | null
           created_at: string
+          expected_return_date: string | null
           id: string
           injury_date: string
           injury_type: string
+          is_recurrence: boolean
+          match_id: string | null
+          mechanism: string | null
           notes: string | null
           physio_id: string | null
           player_id: string
@@ -253,11 +259,17 @@ export type Database = {
           treatment: string | null
         }
         Insert: {
+          actual_return_date?: string | null
           body_part: string
+          club_id?: string | null
           created_at?: string
+          expected_return_date?: string | null
           id?: string
           injury_date: string
           injury_type: string
+          is_recurrence?: boolean
+          match_id?: string | null
+          mechanism?: string | null
           notes?: string | null
           physio_id?: string | null
           player_id: string
@@ -266,11 +278,17 @@ export type Database = {
           treatment?: string | null
         }
         Update: {
+          actual_return_date?: string | null
           body_part?: string
+          club_id?: string | null
           created_at?: string
+          expected_return_date?: string | null
           id?: string
           injury_date?: string
           injury_type?: string
+          is_recurrence?: boolean
+          match_id?: string | null
+          mechanism?: string | null
           notes?: string | null
           physio_id?: string | null
           player_id?: string
@@ -279,6 +297,20 @@ export type Database = {
           treatment?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "injuries_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "injuries_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "injuries_physio_id_fkey"
             columns: ["physio_id"]
