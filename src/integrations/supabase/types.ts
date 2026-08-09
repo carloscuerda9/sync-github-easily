@@ -723,6 +723,64 @@ export type Database = {
           },
         ]
       }
+      player_aliases: {
+        Row: {
+          alias_normalized: string | null
+          alias_raw: string
+          club_id: string
+          confidence: number | null
+          created_at: string
+          created_by: string | null
+          id: string
+          player_id: string
+          source: string
+        }
+        Insert: {
+          alias_normalized?: string | null
+          alias_raw: string
+          club_id: string
+          confidence?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          player_id: string
+          source?: string
+        }
+        Update: {
+          alias_normalized?: string | null
+          alias_raw?: string
+          club_id?: string
+          confidence?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          player_id?: string
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_aliases_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_aliases_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_aliases_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       player_leaves: {
         Row: {
           active: boolean
@@ -1093,6 +1151,7 @@ export type Database = {
       }
       is_approved: { Args: { _user_id: string }; Returns: boolean }
       is_owner: { Args: { _user_id: string }; Returns: boolean }
+      normalize_name: { Args: { _txt: string }; Returns: string }
       owner_email: { Args: never; Returns: string }
       owner_id: { Args: never; Returns: string }
       physio_treats_player: {
