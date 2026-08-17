@@ -496,8 +496,9 @@ function RegisterPage() {
                         maxLength={6}
                         className="font-mono uppercase tracking-widest"
                         value={clubCode}
-                        onChange={(e) => setClubCode(e.target.value.toUpperCase())}
+                        onChange={(e) => setClubCode(sanitizeCode(e.target.value))}
                       />
+                      {clubCodeFeedback}
                     </div>
                   )}
                 </>
@@ -511,11 +512,13 @@ function RegisterPage() {
                     maxLength={6}
                     className="font-mono uppercase tracking-widest"
                     value={clubCode}
-                    onChange={(e) => setClubCode(e.target.value.toUpperCase())}
+                    onChange={(e) => setClubCode(sanitizeCode(e.target.value))}
                   />
-                  <p className="text-xs text-muted-foreground">
-                    Pídele a tu fisio el código de invitación de su club.
-                  </p>
+                  {clubCodeFeedback ?? (
+                    <p className="text-xs text-muted-foreground">
+                      Pídele a tu fisio el código de invitación de su club (6 caracteres, sin espacios).
+                    </p>
+                  )}
                 </div>
               )}
             </div>
