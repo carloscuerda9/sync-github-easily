@@ -111,6 +111,21 @@ function RegisterPage() {
 
   const handleRoleSelect = (r: Role) => { setRole(r); setStep(2); };
 
+  const clubCodeFeedback =
+    clubCheck.state === "checking" ? (
+      <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <Loader2 className="h-3.5 w-3.5 animate-spin" /> Comprobando el código…
+      </p>
+    ) : clubCheck.state === "format" || clubCheck.state === "invalid" ? (
+      <p className="flex items-start gap-1.5 text-xs text-destructive">
+        <XCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" /> {clubCheck.message}
+      </p>
+    ) : clubCheck.state === "valid" ? (
+      <p className="flex items-center gap-1.5 text-xs font-medium text-success">
+        <CheckCircle2 className="h-3.5 w-3.5" /> Club encontrado: {clubCheck.name}
+      </p>
+    ) : null;
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!role) return;
