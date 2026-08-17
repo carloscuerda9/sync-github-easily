@@ -153,9 +153,19 @@ function RegisterPage() {
     setLoading(false);
     if (error) {
       const msg = error.message;
-      if (msg.includes("already")) toast.error("Este email ya está registrado");
+      const lower = msg.toLowerCase();
+      if (lower.includes("already")) toast.error("Este email ya está registrado. Prueba a iniciar sesión.");
+      else if (lower.includes("password")) toast.error("La contraseña debe tener al menos 6 caracteres.");
+      else if (lower.includes("invalid") && lower.includes("email")) toast.error("El email no es válido. Revisa que esté bien escrito.");
       else if (msg.includes("Código")) toast.error(msg);
-      else if (msg.includes("club")) toast.error("Error con el código de club. Comprueba que es correcto.");
+      else if (lower.includes("database error saving new user")) {
+        toast.error(
+          role === "physio" && clubMode === "create"
+            ? "No hemos podido crear tu club. Revisa el nombre del club e inténtalo de nuevo."
+            : `No hemos podido completar el registro con el código ${sanitizeCode(clubCode)}. Comprueba que sea correcto y que no tenga espacios.`
+        );
+      }
+      else if (lower.includes("club")) toast.error("Error con el código de club. Comprueba que es correcto.");
       else toast.error(msg);
       return;
     }
