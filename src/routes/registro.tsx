@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
-import { User, Stethoscope, ArrowLeft, CheckCircle2, ClipboardList, ShieldCheck, Clock } from "lucide-react";
+import { User, Stethoscope, ArrowLeft, CheckCircle2, ClipboardList, ShieldCheck, Clock, Loader2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/registro")({
@@ -52,6 +52,48 @@ function RegisterPage() {
   const [clubName, setClubName] = useState("");
   const [clubCode, setClubCode] = useState("");
   const [createdClubCode, setCreatedClubCode] = useState<string | null>(null);
+  const [clubCheck, setClubCheck] = useState<
+    | { state: "idle" }
+    | { state: "checking" }
+    | { state: "format"; message: string }
+    | { state: "invalid"; message: string }
+    | { state: "valid"; name: string }
+  >({ state: "idle" });
+
+  const needsClubCode = role === "player" || role === "coach" || (role === "physio" && clubMode === "join");
+
+  // Live validation of the club code
+  useEffect(() => {
+    if (!needsClubCode) { setClubCheck({ state: "idle" }); return; }
+    const code = clubCode;
+    if (code.length === 0) { setClubCheck({ state: "idle" }); return; }
+    if (code.length < 6) {
+      setClubCheck({ state: "format", message: `El código debe tener 6 caracteres (llevas ${code.length}), sin espacios ni guiones.` });
+      return;
+    }
+    if (!/^[A-Z0-9]{6}$/.test(code)) {
+      setClubCheck({ state: "format", message: "El código solo puede tener letras (A-Z) y números (0-9)." });
+      return;
+    }
+    setClubCheck({ state: "checking" });
+    let cancelled = false;
+    const t = setTimeout(async () => {
+      const { data, error } = await supabase.rpc("find_club_by_code", { _code: code });
+      if (cancelled) return;
+      const club = Array.isArray(data) ? data[0] : data;
+      if (error) {
+        setClubCheck({ state: "invalid", message: "No hemos podido comprobar el código. Inténtalo de nuevo." });
+      } else if (!club) {
+        setClubCheck({ state: "invalid", message: `No existe ningún club con el código ${code}. Pídeselo a tu fisioterapeuta.` });
+      } else {
+        setClubCheck({ state: "valid", name: (club as { name: string }).name });
+      }
+    }, 400);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [clubCode, needsClubCode]);
+
+  // Removes spaces, dashes and any other separator the user may paste
+  const sanitizeCode = (raw: string) => raw.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
 
   useEffect(() => {
     if (!role) return;
@@ -69,6 +111,21 @@ function RegisterPage() {
 
   const handleRoleSelect = (r: Role) => { setRole(r); setStep(2); };
 
+  const clubCodeFeedback =
+    clubCheck.state === "checking" ? (
+      <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <Loader2 className="h-3.5 w-3.5 animate-spin" /> Comprobando el código…
+      </p>
+    ) : clubCheck.state === "format" || clubCheck.state === "invalid" ? (
+      <p className="flex items-start gap-1.5 text-xs text-destructive">
+        <XCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" /> {clubCheck.message}
+      </p>
+    ) : clubCheck.state === "valid" ? (
+      <p className="flex items-center gap-1.5 text-xs font-medium text-success">
+        <CheckCircle2 className="h-3.5 w-3.5" /> Club encontrado: {clubCheck.name}
+      </p>
+    ) : null;
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!role) return;
@@ -81,18 +138,23 @@ function RegisterPage() {
       profile_data: profileData,
     };
 
-    if (role === "physio") {
-      if (clubMode === "create") {
-        if (!clubName.trim()) { toast.error("Introduce el nombre del club"); return; }
-        meta.club_name = clubName.trim();
-      } else {
-        if (!clubCode.trim()) { toast.error("Introduce el código del club"); return; }
-        meta.club_code = clubCode.trim().toUpperCase();
-      }
+    if (role === "physio" && clubMode === "create") {
+      if (!clubName.trim()) { toast.error("Introduce el nombre del club"); return; }
+      meta.club_name = clubName.trim();
     } else {
-      if (!clubCode.trim()) { toast.error("Introduce el código del club que te dio tu fisio"); return; }
-      meta.club_code = clubCode.trim().toUpperCase();
+      const code = sanitizeCode(clubCode);
+      if (!code) { toast.error("Introduce el código del club que te dio tu fisioterapeuta"); return; }
+      if (code.length !== 6) { toast.error(`El código debe tener 6 caracteres, sin espacios ni guiones (has escrito ${code.length}).`); return; }
+      if (clubCheck.state === "checking") { toast.info("Comprobando el código del club…"); return; }
+      if (clubCheck.state === "invalid" || clubCheck.state === "format") { toast.error(clubCheck.message); return; }
+      if (clubCheck.state !== "valid") {
+        const { data } = await supabase.rpc("find_club_by_code", { _code: code });
+        const club = Array.isArray(data) ? data[0] : data;
+        if (!club) { toast.error(`No existe ningún club con el código ${code}. Pídeselo a tu fisioterapeuta.`); return; }
+      }
+      meta.club_code = code;
     }
+
 
     setLoading(true);
     const { error } = await supabase.auth.signUp({
@@ -106,9 +168,19 @@ function RegisterPage() {
     setLoading(false);
     if (error) {
       const msg = error.message;
-      if (msg.includes("already")) toast.error("Este email ya está registrado");
+      const lower = msg.toLowerCase();
+      if (lower.includes("already")) toast.error("Este email ya está registrado. Prueba a iniciar sesión.");
+      else if (lower.includes("password")) toast.error("La contraseña debe tener al menos 6 caracteres.");
+      else if (lower.includes("invalid") && lower.includes("email")) toast.error("El email no es válido. Revisa que esté bien escrito.");
       else if (msg.includes("Código")) toast.error(msg);
-      else if (msg.includes("club")) toast.error("Error con el código de club. Comprueba que es correcto.");
+      else if (lower.includes("database error saving new user")) {
+        toast.error(
+          role === "physio" && clubMode === "create"
+            ? "No hemos podido crear tu club. Revisa el nombre del club e inténtalo de nuevo."
+            : `No hemos podido completar el registro con el código ${sanitizeCode(clubCode)}. Comprueba que sea correcto y que no tenga espacios.`
+        );
+      }
+      else if (lower.includes("club")) toast.error("Error con el código de club. Comprueba que es correcto.");
       else toast.error(msg);
       return;
     }
@@ -439,8 +511,9 @@ function RegisterPage() {
                         maxLength={6}
                         className="font-mono uppercase tracking-widest"
                         value={clubCode}
-                        onChange={(e) => setClubCode(e.target.value.toUpperCase())}
+                        onChange={(e) => setClubCode(sanitizeCode(e.target.value))}
                       />
+                      {clubCodeFeedback}
                     </div>
                   )}
                 </>
@@ -454,11 +527,13 @@ function RegisterPage() {
                     maxLength={6}
                     className="font-mono uppercase tracking-widest"
                     value={clubCode}
-                    onChange={(e) => setClubCode(e.target.value.toUpperCase())}
+                    onChange={(e) => setClubCode(sanitizeCode(e.target.value))}
                   />
-                  <p className="text-xs text-muted-foreground">
-                    Pídele a tu fisio el código de invitación de su club.
-                  </p>
+                  {clubCodeFeedback ?? (
+                    <p className="text-xs text-muted-foreground">
+                      Pídele a tu fisio el código de invitación de su club (6 caracteres, sin espacios).
+                    </p>
+                  )}
                 </div>
               )}
             </div>
