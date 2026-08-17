@@ -151,9 +151,12 @@ function RegisterPage() {
       if (clubCheck.state === "checking") { toast.info("Comprobando el código del club…"); return; }
       if (clubCheck.state === "invalid" || clubCheck.state === "format") { toast.error(clubCheck.message); return; }
       if (clubCheck.state !== "valid") {
-        const { data } = await supabase.rpc("find_club_by_code", { _code: code });
-        const club = Array.isArray(data) ? data[0] : data;
-        if (!club) { toast.error(`No existe ningún club con el código ${code}. Pídeselo a tu fisioterapeuta.`); return; }
+        try {
+          const res = await lookupClubByCode({ data: { code } });
+          if (!res.name) { toast.error(`No existe ningún club con el código ${code}. Pídeselo a tu fisioterapeuta.`); return; }
+        } catch {
+          toast.error("No hemos podido comprobar el código del club. Inténtalo de nuevo."); return;
+        }
       }
       meta.club_code = code;
     }
