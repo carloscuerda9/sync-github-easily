@@ -9,6 +9,7 @@ import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { User, Stethoscope, ArrowLeft, CheckCircle2, ClipboardList, ShieldCheck, Clock, Loader2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { lookupClubByCode } from "@/lib/clubs.functions";
 
 export const Route = createFileRoute("/registro")({
   component: RegisterPage,
