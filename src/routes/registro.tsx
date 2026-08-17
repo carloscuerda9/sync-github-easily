@@ -9,6 +9,7 @@ import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { User, Stethoscope, ArrowLeft, CheckCircle2, ClipboardList, ShieldCheck, Clock, Loader2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { lookupClubByCode } from "@/lib/clubs.functions";
 
 export const Route = createFileRoute("/registro")({
   component: RegisterPage,
@@ -78,15 +79,17 @@ function RegisterPage() {
     setClubCheck({ state: "checking" });
     let cancelled = false;
     const t = setTimeout(async () => {
-      const { data, error } = await supabase.rpc("find_club_by_code", { _code: code });
-      if (cancelled) return;
-      const club = Array.isArray(data) ? data[0] : data;
-      if (error) {
+      try {
+        const res = await lookupClubByCode({ data: { code } });
+        if (cancelled) return;
+        if (!res.name) {
+          setClubCheck({ state: "invalid", message: `No existe ningún club con el código ${code}. Pídeselo a tu fisioterapeuta.` });
+        } else {
+          setClubCheck({ state: "valid", name: res.name });
+        }
+      } catch {
+        if (cancelled) return;
         setClubCheck({ state: "invalid", message: "No hemos podido comprobar el código. Inténtalo de nuevo." });
-      } else if (!club) {
-        setClubCheck({ state: "invalid", message: `No existe ningún club con el código ${code}. Pídeselo a tu fisioterapeuta.` });
-      } else {
-        setClubCheck({ state: "valid", name: (club as { name: string }).name });
       }
     }, 400);
     return () => { cancelled = true; clearTimeout(t); };
@@ -148,9 +151,12 @@ function RegisterPage() {
       if (clubCheck.state === "checking") { toast.info("Comprobando el código del club…"); return; }
       if (clubCheck.state === "invalid" || clubCheck.state === "format") { toast.error(clubCheck.message); return; }
       if (clubCheck.state !== "valid") {
-        const { data } = await supabase.rpc("find_club_by_code", { _code: code });
-        const club = Array.isArray(data) ? data[0] : data;
-        if (!club) { toast.error(`No existe ningún club con el código ${code}. Pídeselo a tu fisioterapeuta.`); return; }
+        try {
+          const res = await lookupClubByCode({ data: { code } });
+          if (!res.name) { toast.error(`No existe ningún club con el código ${code}. Pídeselo a tu fisioterapeuta.`); return; }
+        } catch {
+          toast.error("No hemos podido comprobar el código del club. Inténtalo de nuevo."); return;
+        }
       }
       meta.club_code = code;
     }
