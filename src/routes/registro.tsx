@@ -123,18 +123,23 @@ function RegisterPage() {
       profile_data: profileData,
     };
 
-    if (role === "physio") {
-      if (clubMode === "create") {
-        if (!clubName.trim()) { toast.error("Introduce el nombre del club"); return; }
-        meta.club_name = clubName.trim();
-      } else {
-        if (!clubCode.trim()) { toast.error("Introduce el código del club"); return; }
-        meta.club_code = clubCode.trim().toUpperCase();
-      }
+    if (role === "physio" && clubMode === "create") {
+      if (!clubName.trim()) { toast.error("Introduce el nombre del club"); return; }
+      meta.club_name = clubName.trim();
     } else {
-      if (!clubCode.trim()) { toast.error("Introduce el código del club que te dio tu fisio"); return; }
-      meta.club_code = clubCode.trim().toUpperCase();
+      const code = sanitizeCode(clubCode);
+      if (!code) { toast.error("Introduce el código del club que te dio tu fisioterapeuta"); return; }
+      if (code.length !== 6) { toast.error(`El código debe tener 6 caracteres, sin espacios ni guiones (has escrito ${code.length}).`); return; }
+      if (clubCheck.state === "checking") { toast.info("Comprobando el código del club…"); return; }
+      if (clubCheck.state === "invalid" || clubCheck.state === "format") { toast.error(clubCheck.message); return; }
+      if (clubCheck.state !== "valid") {
+        const { data } = await supabase.rpc("find_club_by_code", { _code: code });
+        const club = Array.isArray(data) ? data[0] : data;
+        if (!club) { toast.error(`No existe ningún club con el código ${code}. Pídeselo a tu fisioterapeuta.`); return; }
+      }
+      meta.club_code = code;
     }
+
 
     setLoading(true);
     const { error } = await supabase.auth.signUp({
