@@ -78,15 +78,17 @@ function RegisterPage() {
     setClubCheck({ state: "checking" });
     let cancelled = false;
     const t = setTimeout(async () => {
-      const { data, error } = await supabase.rpc("find_club_by_code", { _code: code });
-      if (cancelled) return;
-      const club = Array.isArray(data) ? data[0] : data;
-      if (error) {
+      try {
+        const res = await lookupClubByCode({ data: { code } });
+        if (cancelled) return;
+        if (!res.name) {
+          setClubCheck({ state: "invalid", message: `No existe ningún club con el código ${code}. Pídeselo a tu fisioterapeuta.` });
+        } else {
+          setClubCheck({ state: "valid", name: res.name });
+        }
+      } catch {
+        if (cancelled) return;
         setClubCheck({ state: "invalid", message: "No hemos podido comprobar el código. Inténtalo de nuevo." });
-      } else if (!club) {
-        setClubCheck({ state: "invalid", message: `No existe ningún club con el código ${code}. Pídeselo a tu fisioterapeuta.` });
-      } else {
-        setClubCheck({ state: "valid", name: (club as { name: string }).name });
       }
     }, 400);
     return () => { cancelled = true; clearTimeout(t); };
