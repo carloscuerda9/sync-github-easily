@@ -52,6 +52,48 @@ function RegisterPage() {
   const [clubName, setClubName] = useState("");
   const [clubCode, setClubCode] = useState("");
   const [createdClubCode, setCreatedClubCode] = useState<string | null>(null);
+  const [clubCheck, setClubCheck] = useState<
+    | { state: "idle" }
+    | { state: "checking" }
+    | { state: "format"; message: string }
+    | { state: "invalid"; message: string }
+    | { state: "valid"; name: string }
+  >({ state: "idle" });
+
+  const needsClubCode = role === "player" || role === "coach" || (role === "physio" && clubMode === "join");
+
+  // Live validation of the club code
+  useEffect(() => {
+    if (!needsClubCode) { setClubCheck({ state: "idle" }); return; }
+    const code = clubCode;
+    if (code.length === 0) { setClubCheck({ state: "idle" }); return; }
+    if (code.length < 6) {
+      setClubCheck({ state: "format", message: `El código debe tener 6 caracteres (llevas ${code.length}), sin espacios ni guiones.` });
+      return;
+    }
+    if (!/^[A-Z0-9]{6}$/.test(code)) {
+      setClubCheck({ state: "format", message: "El código solo puede tener letras (A-Z) y números (0-9)." });
+      return;
+    }
+    setClubCheck({ state: "checking" });
+    let cancelled = false;
+    const t = setTimeout(async () => {
+      const { data, error } = await supabase.rpc("find_club_by_code", { _code: code });
+      if (cancelled) return;
+      const club = Array.isArray(data) ? data[0] : data;
+      if (error) {
+        setClubCheck({ state: "invalid", message: "No hemos podido comprobar el código. Inténtalo de nuevo." });
+      } else if (!club) {
+        setClubCheck({ state: "invalid", message: `No existe ningún club con el código ${code}. Pídeselo a tu fisioterapeuta.` });
+      } else {
+        setClubCheck({ state: "valid", name: (club as { name: string }).name });
+      }
+    }, 400);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [clubCode, needsClubCode]);
+
+  // Removes spaces, dashes and any other separator the user may paste
+  const sanitizeCode = (raw: string) => raw.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
 
   useEffect(() => {
     if (!role) return;
