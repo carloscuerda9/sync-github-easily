@@ -185,7 +185,7 @@ function PhysioAgenda() {
                   <CalendarUI
                     mode="single"
                     selected={date}
-                    onSelect={setDate}
+                    onSelect={(d) => setDate(d ?? date)}
                     disabled={{ before: today }}
                     className={cn("p-3 pointer-events-auto mx-auto")}
                   />
