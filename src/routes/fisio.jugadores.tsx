@@ -33,7 +33,7 @@ type TagColor = "green" | "yellow" | "orange" | "red";
 const TAG_COLORS: { value: TagColor; label: string; dot: string; ring: string }[] = [
   { value: "green", label: "Verde", dot: "bg-green-500", ring: "ring-green-500" },
   { value: "yellow", label: "Amarillo", dot: "bg-yellow-400", ring: "ring-yellow-400" },
-  { value: "orange", label: "Naranja", dot: "bg-orange-500", ring: "ring-orange-500" },
+  
   { value: "red", label: "Rojo", dot: "bg-red-500", ring: "ring-red-500" },
 ];
 
