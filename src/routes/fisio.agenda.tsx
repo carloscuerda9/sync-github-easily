@@ -43,7 +43,7 @@ function PhysioAgenda() {
   // form
   const [open, setOpen] = useState(false);
   const [playerId, setPlayerId] = useState<string>("");
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [date, setDate] = useState<Date | undefined>(() => { const d = new Date(); d.setHours(0,0,0,0); return d; });
   const [time, setTime] = useState<string>("");
   const [duration, setDuration] = useState<number>(60);
   const [type, setType] = useState<AppointmentType>("in_person");
