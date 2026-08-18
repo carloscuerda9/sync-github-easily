@@ -43,7 +43,7 @@ function PhysioAgenda() {
   // form
   const [open, setOpen] = useState(false);
   const [playerId, setPlayerId] = useState<string>("");
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [date, setDate] = useState<Date | undefined>(() => { const d = new Date(); d.setHours(0,0,0,0); return d; });
   const [time, setTime] = useState<string>("");
   const [duration, setDuration] = useState<number>(60);
   const [type, setType] = useState<AppointmentType>("in_person");
@@ -87,13 +87,15 @@ function PhysioAgenda() {
   useEffect(() => { loadPlayers(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [club?.id]);
 
   const resetForm = () => {
-    setPlayerId(""); setDate(undefined); setTime(""); setDuration(60); setType("in_person"); setNotes("");
+    const d = new Date(); d.setHours(0,0,0,0);
+    setPlayerId(""); setDate(d); setTime(""); setDuration(60); setType("in_person"); setNotes("");
   };
 
   const createAppt = async () => {
     if (!user) return;
     if (!playerId) return toast.error("Elige un jugador");
-    if (!date || !time) return toast.error("Elige fecha y hora");
+    if (!date) return toast.error("Elige una fecha en el calendario");
+    if (!time) return toast.error("Elige una hora");
     const [hh, mm] = time.split(":").map(Number);
     const scheduledAt = new Date(date);
     scheduledAt.setHours(hh, mm, 0, 0);
@@ -185,7 +187,7 @@ function PhysioAgenda() {
                   <CalendarUI
                     mode="single"
                     selected={date}
-                    onSelect={setDate}
+                    onSelect={(d) => setDate(d ?? date)}
                     disabled={{ before: today }}
                     className={cn("p-3 pointer-events-auto mx-auto")}
                   />
