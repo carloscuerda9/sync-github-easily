@@ -7,7 +7,9 @@ const items: NavItem[] = [
   { to: "/fisio", label: "Inicio", icon: Home },
   { to: "/fisio/agenda", label: "Agenda", icon: Calendar },
   { to: "/fisio/jugadores", label: "Jugadores", icon: Users },
+  { to: "/fisio/grupos", label: "Grupos", icon: UsersRound },
   { to: "/fisio/vendajes", label: "Vendajes", icon: Bandage },
+
   { to: "/fisio/lesiones", label: "Lesiones", icon: Siren },
   { to: "/fisio/historico", label: "Histórico", icon: HeartPulse },
   { to: "/fisio/mensajes", label: "Mensajes", icon: MessageSquare },
