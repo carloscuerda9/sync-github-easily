@@ -178,14 +178,15 @@ export function MessagesView({ contactRole, emptyTitle, emptyDesc, subtitle }: P
         <p className="mt-1 text-sm text-muted-foreground">{subtitle ?? `Conversaciones dentro de ${club?.name ?? "tu club"}.`}</p>
       </div>
 
-      <div className="grid h-[calc(100vh-220px)] grid-cols-1 overflow-hidden rounded-2xl border border-border bg-card md:grid-cols-[280px_1fr]">
+      <div className="grid h-[calc(100dvh-220px)] min-h-[420px] max-h-[720px] grid-cols-1 overflow-hidden rounded-2xl border border-border bg-card md:grid-cols-[280px_1fr]">
         {/* Contact list */}
         <aside className={cn(
-          "flex flex-col border-r border-border",
+          "flex min-h-0 flex-col border-r border-border",
           active && "hidden md:flex",
         )}>
-          <div className="border-b border-border px-4 py-3 text-sm font-semibold">Contactos</div>
-          <div className="flex-1 overflow-y-auto">
+          <div className="shrink-0 border-b border-border px-4 py-3 text-sm font-semibold">Contactos</div>
+          <div className="min-h-0 flex-1 overflow-y-auto">
+
             {loadingContacts ? (
               <div className="space-y-2 p-3">{[1,2,3].map((i) => <div key={i} className="h-12 animate-pulse rounded-lg bg-muted/60" />)}</div>
             ) : contacts.length === 0 ? (
