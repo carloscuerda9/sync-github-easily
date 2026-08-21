@@ -21,6 +21,7 @@ import { Route as JugadorIndexRouteImport } from './routes/jugador.index'
 import { Route as FisioIndexRouteImport } from './routes/fisio.index'
 import { Route as EntrenadorIndexRouteImport } from './routes/entrenador.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as JugadorVendajeRouteImport } from './routes/jugador.vendaje'
 import { Route as JugadorPerfilRouteImport } from './routes/jugador.perfil'
 import { Route as JugadorMensajesRouteImport } from './routes/jugador.mensajes'
 import { Route as JugadorLesionRouteImport } from './routes/jugador.lesion'
@@ -106,6 +107,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const JugadorVendajeRoute = JugadorVendajeRouteImport.update({
+  id: '/vendaje',
+  path: '/vendaje',
+  getParentRoute: () => JugadorRoute,
 } as any)
 const JugadorPerfilRoute = JugadorPerfilRouteImport.update({
   id: '/perfil',
@@ -268,6 +274,7 @@ export interface FileRoutesByFullPath {
   '/jugador/lesion': typeof JugadorLesionRoute
   '/jugador/mensajes': typeof JugadorMensajesRoute
   '/jugador/perfil': typeof JugadorPerfilRoute
+  '/jugador/vendaje': typeof JugadorVendajeRoute
   '/admin/': typeof AdminIndexRoute
   '/entrenador/': typeof EntrenadorIndexRoute
   '/fisio/': typeof FisioIndexRoute
@@ -303,6 +310,7 @@ export interface FileRoutesByTo {
   '/jugador/lesion': typeof JugadorLesionRoute
   '/jugador/mensajes': typeof JugadorMensajesRoute
   '/jugador/perfil': typeof JugadorPerfilRoute
+  '/jugador/vendaje': typeof JugadorVendajeRoute
   '/admin': typeof AdminIndexRoute
   '/entrenador': typeof EntrenadorIndexRoute
   '/fisio': typeof FisioIndexRoute
@@ -343,6 +351,7 @@ export interface FileRoutesById {
   '/jugador/lesion': typeof JugadorLesionRoute
   '/jugador/mensajes': typeof JugadorMensajesRoute
   '/jugador/perfil': typeof JugadorPerfilRoute
+  '/jugador/vendaje': typeof JugadorVendajeRoute
   '/admin/': typeof AdminIndexRoute
   '/entrenador/': typeof EntrenadorIndexRoute
   '/fisio/': typeof FisioIndexRoute
@@ -384,6 +393,7 @@ export interface FileRouteTypes {
     | '/jugador/lesion'
     | '/jugador/mensajes'
     | '/jugador/perfil'
+    | '/jugador/vendaje'
     | '/admin/'
     | '/entrenador/'
     | '/fisio/'
@@ -419,6 +429,7 @@ export interface FileRouteTypes {
     | '/jugador/lesion'
     | '/jugador/mensajes'
     | '/jugador/perfil'
+    | '/jugador/vendaje'
     | '/admin'
     | '/entrenador'
     | '/fisio'
@@ -458,6 +469,7 @@ export interface FileRouteTypes {
     | '/jugador/lesion'
     | '/jugador/mensajes'
     | '/jugador/perfil'
+    | '/jugador/vendaje'
     | '/admin/'
     | '/entrenador/'
     | '/fisio/'
@@ -566,6 +578,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/jugador/vendaje': {
+      id: '/jugador/vendaje'
+      path: '/vendaje'
+      fullPath: '/jugador/vendaje'
+      preLoaderRoute: typeof JugadorVendajeRouteImport
+      parentRoute: typeof JugadorRoute
     }
     '/jugador/perfil': {
       id: '/jugador/perfil'
@@ -814,6 +833,7 @@ interface JugadorRouteChildren {
   JugadorLesionRoute: typeof JugadorLesionRoute
   JugadorMensajesRoute: typeof JugadorMensajesRoute
   JugadorPerfilRoute: typeof JugadorPerfilRoute
+  JugadorVendajeRoute: typeof JugadorVendajeRoute
   JugadorIndexRoute: typeof JugadorIndexRoute
 }
 
@@ -824,6 +844,7 @@ const JugadorRouteChildren: JugadorRouteChildren = {
   JugadorLesionRoute: JugadorLesionRoute,
   JugadorMensajesRoute: JugadorMensajesRoute,
   JugadorPerfilRoute: JugadorPerfilRoute,
+  JugadorVendajeRoute: JugadorVendajeRoute,
   JugadorIndexRoute: JugadorIndexRoute,
 }
 
