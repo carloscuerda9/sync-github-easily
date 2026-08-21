@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, MessageSquare, FileText, Activity, HeartPulse } from "lucide-react";
+import { Calendar, MessageSquare, FileText, Activity, HeartPulse, Bandage } from "lucide-react";
 
 export const Route = createFileRoute("/jugador/")({
   component: PlayerHome,
@@ -10,6 +10,7 @@ export const Route = createFileRoute("/jugador/")({
 
 const cards = [
   { to: "/jugador/citas", title: "Reservar cita", desc: "Agenda con tu fisio", icon: Calendar, color: "bg-primary/10 text-primary" },
+  { to: "/jugador/vendaje", title: "Solicitar vendaje", desc: "Para el partido de esta semana", icon: Bandage, color: "bg-accent/15 text-accent-foreground" },
   { to: "/jugador/mensajes", title: "Mensajes", desc: "Habla con tu fisio", icon: MessageSquare, color: "bg-accent/15 text-accent-foreground" },
   { to: "/jugador/documentos", title: "Documentos", desc: "Informes y planes", icon: FileText, color: "bg-primary/10 text-primary" },
   { to: "/jugador/lesion", title: "Parte de lesión", desc: "Informa de una lesión", icon: HeartPulse, color: "bg-red-500/10 text-red-500" },
