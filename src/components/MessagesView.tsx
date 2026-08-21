@@ -172,13 +172,13 @@ export function MessagesView({ contactRole, emptyTitle, emptyDesc, subtitle }: P
   const activeContact = useMemo(() => contacts.find((c) => c.id === active) ?? null, [contacts, active]);
 
   return (
-    <div className="mx-auto max-w-5xl">
-      <div className="mb-4">
+    <div className="mx-auto flex max-w-5xl flex-col md:h-full md:min-h-0">
+      <div className="mb-4 shrink-0">
         <h1 className="text-2xl font-extrabold tracking-tight">Mensajes</h1>
         <p className="mt-1 text-sm text-muted-foreground">{subtitle ?? `Conversaciones dentro de ${club?.name ?? "tu club"}.`}</p>
       </div>
 
-      <div className="grid h-[calc(100dvh-220px)] min-h-[420px] max-h-[720px] grid-cols-1 overflow-hidden rounded-2xl border border-border bg-card md:grid-cols-[280px_1fr]">
+      <div className="grid h-[calc(100dvh-220px)] min-h-[420px] max-h-[720px] grid-cols-1 overflow-hidden rounded-2xl border border-border bg-card md:h-auto md:min-h-[320px] md:max-h-none md:flex-1 md:grid-cols-[280px_1fr]">
         {/* Contact list */}
         <aside className={cn(
           "flex min-h-0 flex-col border-r border-border",
