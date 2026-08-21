@@ -28,6 +28,7 @@ import { Route as JugadorLesionRouteImport } from './routes/jugador.lesion'
 import { Route as JugadorHistorialRouteImport } from './routes/jugador.historial'
 import { Route as JugadorDocumentosRouteImport } from './routes/jugador.documentos'
 import { Route as JugadorCitasRouteImport } from './routes/jugador.citas'
+import { Route as FisioVendajesRouteImport } from './routes/fisio.vendajes'
 import { Route as FisioPerfilRouteImport } from './routes/fisio.perfil'
 import { Route as FisioMensajesRouteImport } from './routes/fisio.mensajes'
 import { Route as FisioLesionesRouteImport } from './routes/fisio.lesiones'
@@ -142,6 +143,11 @@ const JugadorCitasRoute = JugadorCitasRouteImport.update({
   id: '/citas',
   path: '/citas',
   getParentRoute: () => JugadorRoute,
+} as any)
+const FisioVendajesRoute = FisioVendajesRouteImport.update({
+  id: '/vendajes',
+  path: '/vendajes',
+  getParentRoute: () => FisioRoute,
 } as any)
 const FisioPerfilRoute = FisioPerfilRouteImport.update({
   id: '/perfil',
@@ -268,6 +274,7 @@ export interface FileRoutesByFullPath {
   '/fisio/lesiones': typeof FisioLesionesRoute
   '/fisio/mensajes': typeof FisioMensajesRoute
   '/fisio/perfil': typeof FisioPerfilRoute
+  '/fisio/vendajes': typeof FisioVendajesRoute
   '/jugador/citas': typeof JugadorCitasRoute
   '/jugador/documentos': typeof JugadorDocumentosRoute
   '/jugador/historial': typeof JugadorHistorialRoute
@@ -304,6 +311,7 @@ export interface FileRoutesByTo {
   '/fisio/lesiones': typeof FisioLesionesRoute
   '/fisio/mensajes': typeof FisioMensajesRoute
   '/fisio/perfil': typeof FisioPerfilRoute
+  '/fisio/vendajes': typeof FisioVendajesRoute
   '/jugador/citas': typeof JugadorCitasRoute
   '/jugador/documentos': typeof JugadorDocumentosRoute
   '/jugador/historial': typeof JugadorHistorialRoute
@@ -345,6 +353,7 @@ export interface FileRoutesById {
   '/fisio/lesiones': typeof FisioLesionesRoute
   '/fisio/mensajes': typeof FisioMensajesRoute
   '/fisio/perfil': typeof FisioPerfilRoute
+  '/fisio/vendajes': typeof FisioVendajesRoute
   '/jugador/citas': typeof JugadorCitasRoute
   '/jugador/documentos': typeof JugadorDocumentosRoute
   '/jugador/historial': typeof JugadorHistorialRoute
@@ -387,6 +396,7 @@ export interface FileRouteTypes {
     | '/fisio/lesiones'
     | '/fisio/mensajes'
     | '/fisio/perfil'
+    | '/fisio/vendajes'
     | '/jugador/citas'
     | '/jugador/documentos'
     | '/jugador/historial'
@@ -423,6 +433,7 @@ export interface FileRouteTypes {
     | '/fisio/lesiones'
     | '/fisio/mensajes'
     | '/fisio/perfil'
+    | '/fisio/vendajes'
     | '/jugador/citas'
     | '/jugador/documentos'
     | '/jugador/historial'
@@ -463,6 +474,7 @@ export interface FileRouteTypes {
     | '/fisio/lesiones'
     | '/fisio/mensajes'
     | '/fisio/perfil'
+    | '/fisio/vendajes'
     | '/jugador/citas'
     | '/jugador/documentos'
     | '/jugador/historial'
@@ -627,6 +639,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/jugador/citas'
       preLoaderRoute: typeof JugadorCitasRouteImport
       parentRoute: typeof JugadorRoute
+    }
+    '/fisio/vendajes': {
+      id: '/fisio/vendajes'
+      path: '/vendajes'
+      fullPath: '/fisio/vendajes'
+      preLoaderRoute: typeof FisioVendajesRouteImport
+      parentRoute: typeof FisioRoute
     }
     '/fisio/perfil': {
       id: '/fisio/perfil'
@@ -809,6 +828,7 @@ interface FisioRouteChildren {
   FisioLesionesRoute: typeof FisioLesionesRoute
   FisioMensajesRoute: typeof FisioMensajesRoute
   FisioPerfilRoute: typeof FisioPerfilRoute
+  FisioVendajesRoute: typeof FisioVendajesRoute
   FisioIndexRoute: typeof FisioIndexRoute
 }
 
@@ -821,6 +841,7 @@ const FisioRouteChildren: FisioRouteChildren = {
   FisioLesionesRoute: FisioLesionesRoute,
   FisioMensajesRoute: FisioMensajesRoute,
   FisioPerfilRoute: FisioPerfilRoute,
+  FisioVendajesRoute: FisioVendajesRoute,
   FisioIndexRoute: FisioIndexRoute,
 }
 
