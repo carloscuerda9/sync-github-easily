@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { RoleGuard } from "@/components/RoleGuard";
 import { AppLayout, type NavItem } from "@/components/AppLayout";
-import { Calendar, Users, MessageSquare, Receipt, Home, User, FileText, ClipboardList, HeartPulse, Siren, Bandage } from "lucide-react";
+import { Calendar, Users, UsersRound, MessageSquare, Receipt, Home, User, FileText, ClipboardList, HeartPulse, Siren, Bandage } from "lucide-react";
 
 const items: NavItem[] = [
   { to: "/fisio", label: "Inicio", icon: Home },
