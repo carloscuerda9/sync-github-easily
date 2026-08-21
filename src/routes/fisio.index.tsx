@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
-import { Calendar, Users, MessageSquare, FileText, Receipt, HeartPulse } from "lucide-react";
+import { Calendar, Users, MessageSquare, FileText, Receipt, HeartPulse, Bandage } from "lucide-react";
 
 export const Route = createFileRoute("/fisio/")({
   component: PhysioHome,
@@ -9,6 +9,7 @@ export const Route = createFileRoute("/fisio/")({
 const cards = [
   { to: "/fisio/agenda", title: "Agenda", desc: "Citas y calendario", icon: Calendar },
   { to: "/fisio/jugadores", title: "Mis jugadores", desc: "Pacientes y fichas", icon: Users },
+  { to: "/fisio/vendajes", title: "Vendajes", desc: "Solicitudes de la semana", icon: Bandage },
   { to: "/fisio/lesiones", title: "Lesiones", desc: "Partes de lesión recibidos", icon: HeartPulse },
   { to: "/fisio/mensajes", title: "Mensajes", desc: "Chat con jugadores", icon: MessageSquare },
   { to: "/fisio/documentos", title: "Documentos", desc: "Compartir informes", icon: FileText },
