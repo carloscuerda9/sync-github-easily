@@ -219,7 +219,7 @@ export function MessagesView({ contactRole, emptyTitle, emptyDesc, subtitle }: P
         </aside>
 
         {/* Chat */}
-        <section className={cn("flex flex-col", !active && "hidden md:flex")}>
+        <section className={cn("flex min-h-0 flex-col", !active && "hidden md:flex")}>
           {!activeContact ? (
             <div className="flex flex-1 flex-col items-center justify-center p-10 text-center">
               <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-muted text-muted-foreground">
