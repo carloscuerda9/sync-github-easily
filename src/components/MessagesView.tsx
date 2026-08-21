@@ -243,7 +243,7 @@ export function MessagesView({ contactRole, emptyTitle, emptyDesc, subtitle }: P
                 </div>
               </header>
 
-              <div ref={scrollRef} className="flex-1 space-y-2 overflow-y-auto bg-muted/20 px-4 py-4">
+              <div ref={scrollRef} className="min-h-0 flex-1 space-y-2 overflow-y-auto bg-muted/20 px-4 py-4">
                 {loadingMsgs ? (
                   <div className="space-y-2">{[1,2,3].map((i) => <div key={i} className="h-10 animate-pulse rounded-lg bg-muted/60" />)}</div>
                 ) : messages.length === 0 ? (
