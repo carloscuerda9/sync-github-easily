@@ -178,14 +178,15 @@ export function MessagesView({ contactRole, emptyTitle, emptyDesc, subtitle }: P
         <p className="mt-1 text-sm text-muted-foreground">{subtitle ?? `Conversaciones dentro de ${club?.name ?? "tu club"}.`}</p>
       </div>
 
-      <div className="grid h-[calc(100vh-220px)] grid-cols-1 overflow-hidden rounded-2xl border border-border bg-card md:grid-cols-[280px_1fr]">
+      <div className="grid h-[calc(100dvh-220px)] min-h-[420px] max-h-[720px] grid-cols-1 overflow-hidden rounded-2xl border border-border bg-card md:grid-cols-[280px_1fr]">
         {/* Contact list */}
         <aside className={cn(
-          "flex flex-col border-r border-border",
+          "flex min-h-0 flex-col border-r border-border",
           active && "hidden md:flex",
         )}>
-          <div className="border-b border-border px-4 py-3 text-sm font-semibold">Contactos</div>
-          <div className="flex-1 overflow-y-auto">
+          <div className="shrink-0 border-b border-border px-4 py-3 text-sm font-semibold">Contactos</div>
+          <div className="min-h-0 flex-1 overflow-y-auto">
+
             {loadingContacts ? (
               <div className="space-y-2 p-3">{[1,2,3].map((i) => <div key={i} className="h-12 animate-pulse rounded-lg bg-muted/60" />)}</div>
             ) : contacts.length === 0 ? (
@@ -218,7 +219,7 @@ export function MessagesView({ contactRole, emptyTitle, emptyDesc, subtitle }: P
         </aside>
 
         {/* Chat */}
-        <section className={cn("flex flex-col", !active && "hidden md:flex")}>
+        <section className={cn("flex min-h-0 flex-col", !active && "hidden md:flex")}>
           {!activeContact ? (
             <div className="flex flex-1 flex-col items-center justify-center p-10 text-center">
               <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-muted text-muted-foreground">
@@ -229,7 +230,7 @@ export function MessagesView({ contactRole, emptyTitle, emptyDesc, subtitle }: P
             </div>
           ) : (
             <>
-              <header className="flex items-center gap-3 border-b border-border px-4 py-3">
+              <header className="flex shrink-0 items-center gap-3 border-b border-border px-4 py-3">
                 <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setActive(null)} aria-label="Volver">
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
@@ -242,7 +243,7 @@ export function MessagesView({ contactRole, emptyTitle, emptyDesc, subtitle }: P
                 </div>
               </header>
 
-              <div ref={scrollRef} className="flex-1 space-y-2 overflow-y-auto bg-muted/20 px-4 py-4">
+              <div ref={scrollRef} className="min-h-0 flex-1 space-y-2 overflow-y-auto bg-muted/20 px-4 py-4">
                 {loadingMsgs ? (
                   <div className="space-y-2">{[1,2,3].map((i) => <div key={i} className="h-10 animate-pulse rounded-lg bg-muted/60" />)}</div>
                 ) : messages.length === 0 ? (
@@ -267,7 +268,7 @@ export function MessagesView({ contactRole, emptyTitle, emptyDesc, subtitle }: P
 
               <form
                 onSubmit={(e) => { e.preventDefault(); send(); }}
-                className="flex items-center gap-2 border-t border-border bg-background px-3 py-2.5"
+                className="flex shrink-0 items-center gap-2 border-t border-border bg-background px-3 py-2.5"
               >
                 <Input
                   value={text}
