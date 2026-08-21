@@ -1206,6 +1206,61 @@ export type Database = {
           },
         ]
       }
+      taping_requests: {
+        Row: {
+          club_id: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          player_id: string
+          updated_at: string
+          week_start: string
+          zones: string[]
+        }
+        Insert: {
+          club_id?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          player_id: string
+          updated_at?: string
+          week_start: string
+          zones?: string[]
+        }
+        Update: {
+          club_id?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          player_id?: string
+          updated_at?: string
+          week_start?: string
+          zones?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "taping_requests_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "taping_requests_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "taping_requests_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
