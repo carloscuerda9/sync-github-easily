@@ -143,7 +143,7 @@ export function AppLayout({ role, items, children }: AppLayoutProps) {
           </div>
         </header>
 
-        <main className="flex-1 px-4 pb-24 pt-4 md:px-8 md:pb-8 md:pt-6">
+        <main className="flex-1 px-4 pb-24 pt-4 md:min-h-0 md:overflow-y-auto md:px-8 md:pb-8 md:pt-6">
           {children}
         </main>
 
