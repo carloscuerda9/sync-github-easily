@@ -230,7 +230,7 @@ export function MessagesView({ contactRole, emptyTitle, emptyDesc, subtitle }: P
             </div>
           ) : (
             <>
-              <header className="flex items-center gap-3 border-b border-border px-4 py-3">
+              <header className="flex shrink-0 items-center gap-3 border-b border-border px-4 py-3">
                 <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setActive(null)} aria-label="Volver">
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
