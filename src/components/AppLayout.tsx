@@ -53,7 +53,7 @@ export function AppLayout({ role, items, children }: AppLayoutProps) {
   const isActive = (to: string) => pathname === to || pathname.startsWith(to + "/");
 
   return (
-    <div className="flex min-h-screen w-full bg-muted/20">
+    <div className="flex min-h-screen w-full bg-muted/20 md:h-screen md:overflow-hidden">
       {/* Desktop sidebar */}
       <aside className="hidden w-64 shrink-0 border-r border-border bg-sidebar md:flex md:flex-col">
         <div className="border-b border-border p-4"><Logo /></div>
@@ -143,7 +143,7 @@ export function AppLayout({ role, items, children }: AppLayoutProps) {
           </div>
         </header>
 
-        <main className="flex-1 px-4 pb-24 pt-4 md:px-8 md:pb-8 md:pt-6">
+        <main className="flex-1 px-4 pb-24 pt-4 md:min-h-0 md:overflow-y-auto md:px-8 md:pb-8 md:pt-6">
           {children}
         </main>
 
