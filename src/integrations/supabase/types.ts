@@ -1066,7 +1066,36 @@ export type Database = {
           type?: Database["public"]["Enums"]["leave_type"]
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "player_leaves_physio_id_fkey"
+            columns: ["physio_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_leaves_physio_id_fkey"
+            columns: ["physio_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "player_leaves_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_leaves_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+        ]
       }
       player_tag_history: {
         Row: {
@@ -1162,7 +1191,36 @@ export type Database = {
           player_id?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "player_tags_physio_id_fkey"
+            columns: ["physio_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_tags_physio_id_fkey"
+            columns: ["physio_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "player_tags_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_tags_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "v_dash_squad_status"
+            referencedColumns: ["player_id"]
+          },
+        ]
       }
       profiles: {
         Row: {
