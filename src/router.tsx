@@ -2,6 +2,7 @@ import { createRouter, useRouter, type ErrorComponentProps } from "@tanstack/rea
 import { routeTree } from "./routeTree.gen";
 
 function DefaultErrorComponent({ error, reset }: ErrorComponentProps) {
+  const err = error as Error;
   const router = useRouter();
 
   return (
